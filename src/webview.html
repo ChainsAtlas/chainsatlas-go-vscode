@@ -1,59 +1,54 @@
+<!-- Test: npx http-server -->
+
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cat Coding</title>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/client@1.6.6/dist/cjs/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/qrcode-modal@1.6.3/dist/cjs/index.min.js"></script>
+    <title>ChainAtlas GO</title>
   </head>
   <body>
-    <img
-      src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"
-      width="300"
-    />
-    <button id="connect-wallet">Connect Wallet</button>
-    <script>
-      document
-        .getElementById("connect-wallet")
-        .addEventListener("click", async () => {
-          const connector = new WalletConnect.default({
-            bridge: "https://bridge.walletconnect.org", // Required
-            qrcodeModal: WalletConnectQRCodeModal.default,
+    <button id="connect-button">Connect Wallet</button>
+    <script type="module">
+      import { WalletConnectModalSign } from "https://unpkg.com/@walletconnect/modal-sign-html@2.5.8";
+
+      // 1. Define ui elements
+      const connectButton = document.getElementById("connect-button");
+
+      // 2. Create modal client, add your project id
+      const web3Modal = new WalletConnectModalSign({
+        projectId: "7b1ecd906a131e3a323a225589f75287",
+        metadata: {
+          name: "My Dapp",
+          description: "My Dapp description",
+          url: "https://my-dapp.com",
+          icons: ["https://my-dapp.com/logo.png"],
+        },
+      });
+
+      // 3. Connect
+      async function onConnect() {
+        try {
+          connectButton.disabled = true;
+          const session = await web3Modal.connect({
+            requiredNamespaces: {
+              eip155: {
+                methods: ["eth_sendTransaction", "personal_sign"],
+                chains: ["eip155:1"],
+                events: ["chainChanged", "accountsChanged"],
+              },
+            },
           });
+          console.info(session);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          connectButton.disabled = false;
+        }
+      }
 
-          if (!connector.connected) {
-            await connector.createSession();
-          }
-
-          connector.on("connect", (error, payload) => {
-            if (error) {
-              throw error;
-            }
-
-            // Get provided accounts and chainId
-            const { accounts, chainId } = payload.params[0];
-            console.log(accounts, chainId);
-          });
-
-          connector.on("session_update", (error, payload) => {
-            if (error) {
-              throw error;
-            }
-
-            // Get updated accounts and chainId
-            const { accounts, chainId } = payload.params[0];
-            console.log(accounts, chainId);
-          });
-
-          connector.on("disconnect", (error, payload) => {
-            if (error) {
-              throw error;
-            }
-
-            // Delete connector
-          });
-        });
+      // 4. Create connection handler
+      connectButton.addEventListener("click", onConnect);
     </script>
   </body>
 </html>

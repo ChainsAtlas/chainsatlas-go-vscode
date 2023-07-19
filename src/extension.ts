@@ -11,10 +11,10 @@ const activate = (context: vscode.ExtensionContext) => {
     "chainsatlas-go.helloWorld",
     () => {
       const panel = vscode.window.createWebviewPanel(
-        "catCoding",
-        "Cat Coding",
+        "chainsAtlasGO",
+        "ChainsAtlas GO",
         vscode.ViewColumn.One,
-        {},
+        { enableScripts: true },
       );
 
       panel.webview.html = getWebviewContent(context);
@@ -24,8 +24,8 @@ const activate = (context: vscode.ExtensionContext) => {
   context.subscriptions.push(disposable);
 };
 
-const getWebviewContent = (context: vscode.ExtensionContext) => {
-  const templatePath = path.join(context.extensionPath, "src", "webview.html");
+const getWebviewContent = (context: vscode.ExtensionContext): string => {
+  const templatePath = path.join(context.extensionPath, "src", "webview2.html");
 
   return fs.readFileSync(templatePath, "utf8");
 };
