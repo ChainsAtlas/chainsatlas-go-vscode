@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cat Coding</title>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/client@1.6.6/dist/cjs/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/qrcode-modal@1.6.3/dist/cjs/index.min.js"></script>
+  </head>
+  <body>
+    <img
+      src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"
+      width="300"
+    />
+    <button id="connect-wallet">Connect Wallet</button>
+    <script>
+      document
+        .getElementById("connect-wallet")
+        .addEventListener("click", async () => {
+          const connector = new WalletConnect.default({
+            bridge: "https://bridge.walletconnect.org", // Required
+            qrcodeModal: WalletConnectQRCodeModal.default,
+          });
+
+          if (!connector.connected) {
+            await connector.createSession();
+          }
+
+          connector.on("connect", (error, payload) => {
+            if (error) {
+              throw error;
+            }
+
+            // Get provided accounts and chainId
+            const { accounts, chainId } = payload.params[0];
+            console.log(accounts, chainId);
+          });
+
+          connector.on("session_update", (error, payload) => {
+            if (error) {
+              throw error;
+            }
+
+            // Get updated accounts and chainId
+            const { accounts, chainId } = payload.params[0];
+            console.log(accounts, chainId);
+          });
+
+          connector.on("disconnect", (error, payload) => {
+            if (error) {
+              throw error;
+            }
+
+            // Delete connector
+          });
+        });
+    </script>
+  </body>
+</html>
