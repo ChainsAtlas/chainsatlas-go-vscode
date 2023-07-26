@@ -1,5 +1,5 @@
-import * as path from "path";
-import * as vscode from "vscode";
+import path from "path";
+import vscode from "vscode";
 
 // Create a new webview and set its HTML content.
 const createWebview = (context: vscode.ExtensionContext): void => {
