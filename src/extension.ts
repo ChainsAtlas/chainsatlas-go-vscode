@@ -1,8 +1,20 @@
 import path from "path";
 import vscode from "vscode";
+import ChainsAtlasGO from "./ChainsAtlasGO";
+
+const initializeChainsAtlasGO = (panel: vscode.WebviewPanel): void => {
+  const chainsAtlasGO = new ChainsAtlasGO(
+    "7b1ecd906a131e3a323a225589f75287",
+    panel,
+  );
+
+  chainsAtlasGO.initializeWalletConnectClient();
+};
 
 // Create a new webview and set its HTML content.
-const createWebview = (context: vscode.ExtensionContext): void => {
+const createWebview = (
+  context: vscode.ExtensionContext,
+): vscode.WebviewPanel => {
   const panel = vscode.window.createWebviewPanel(
     "ChainsAtlasGO",
     "ChainsAtlas GO",
@@ -49,14 +61,17 @@ const createWebview = (context: vscode.ExtensionContext): void => {
         <script src="${scriptUri}"></script>
     </body>
     </html>`;
+
+  return panel;
 };
 
 // This method is called when your extension is activated.
 const activate = (context: vscode.ExtensionContext): void => {
   const disposable = vscode.commands.registerCommand(
     "chainsatlas-go.activate",
-    () => {
-      createWebview(context);
+    async () => {
+      const panel = createWebview(context);
+      initializeChainsAtlasGO(panel);
     },
   );
 
