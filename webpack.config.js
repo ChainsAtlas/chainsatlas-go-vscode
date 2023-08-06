@@ -3,6 +3,7 @@
 "use strict";
 
 const path = require("path");
+const webpack = require("webpack");
 const nodeExternals = require("webpack-node-externals");
 
 //@ts-check
@@ -51,21 +52,13 @@ const extensionConfig = {
   },
 };
 
-const reactAppConfig = {
-  entry: "./src/app/App.tsx",
+const walletViewConfig = {
+  entry: "./src/views/Wallet.tsx",
   output: {
-    filename: "app.js",
+    filename: "wallet.js",
     path: path.resolve(__dirname, "dist"),
   },
   resolve: {
-    // fallback: {
-    //   assert: require.resolve("assert/"),
-    //   http: require.resolve("stream-http"),
-    //   https: require.resolve("https-browserify"),
-    //   os: require.resolve("os-browserify/browser"),
-    //   stream: require.resolve("stream-browserify"),
-    //   url: require.resolve("url/"),
-    // },
     extensions: [".tsx", ".ts", ".js", ".json"],
   },
   module: {
@@ -86,13 +79,12 @@ const reactAppConfig = {
       },
     ],
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      React: "react",
+    }),
+  ],
   mode: "production",
-  // plugins: [
-  //   new webpack.ProvidePlugin({
-  //     Buffer: ["buffer", "Buffer"],
-  //     process: "process/browser",
-  //   }),
-  // ],
 };
 
-module.exports = [extensionConfig, reactAppConfig];
+module.exports = [extensionConfig, walletViewConfig];

@@ -11,13 +11,24 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "chainsatlas-go.activate",
-        "title": "ChainsAtlas GO",
-        "icon": "media/logo.svg"
-      }
-    ]
+    "views": {
+      "chainsatlas-go": [
+        {
+          "type": "webview",
+          "id": "wallet",
+          "name": "Wallet"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "chainsatlas-go",
+          "title": "ChainsAtlas GO",
+          "icon": "assets/img/logo.svg"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run package",
@@ -66,7 +77,6 @@
     "@wagmi/chains": "^1.6.0",
     "@walletconnect/sign-client": "^2.9.1",
     "@walletconnect/universal-provider": "^2.9.1",
-    "bignumber.js": "^9.1.1",
     "husky": "^8.0.3",
     "lokijs": "^1.5.12",
     "qrcode.react": "^3.1.0",

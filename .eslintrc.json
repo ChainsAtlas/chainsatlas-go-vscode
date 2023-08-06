@@ -11,6 +11,7 @@
     "curly": "warn",
     "eqeqeq": "warn",
     "no-throw-literal": "warn",
+    "react/react-in-jsx-scope": "off",
     "semi": "off"
   },
   "ignorePatterns": ["out", "dist", "**/*.d.ts"],

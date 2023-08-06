@@ -1,81 +1,32 @@
-import path from "path";
 import vscode from "vscode";
-import ChainsAtlasGO from "./ChainsAtlasGO";
+import ChainsAtlasGO from "./lib/ChainsAtlasGO";
+import CustomViewProvider from "./lib/CustomViewProvider";
 
-const initializeChainsAtlasGO = (panel: vscode.WebviewPanel): void => {
-  const chainsAtlasGO = new ChainsAtlasGO(
-    "7b1ecd906a131e3a323a225589f75287",
-    panel,
-  );
+const waitForViewResolvedEvent = (
+  viewProvider: CustomViewProvider,
+): Promise<vscode.WebviewView> =>
+  new Promise((resolve) => {
+    viewProvider.on("viewResolved", (view) => resolve(view));
+  });
 
-  chainsAtlasGO.initializeWalletConnectClient();
-};
-
-// Create a new webview and set its HTML content.
-const createWebview = (
-  context: vscode.ExtensionContext,
-): vscode.WebviewPanel => {
-  const panel = vscode.window.createWebviewPanel(
-    "ChainsAtlasGO",
-    "ChainsAtlas GO",
-    vscode.ViewColumn.Two,
-    {
-      enableScripts: true,
-      retainContextWhenHidden: true,
-      localResourceRoots: [
-        vscode.Uri.joinPath(context.extensionUri, "asset"),
-        vscode.Uri.file(path.join(context.extensionPath, "dist")),
-      ],
-    },
-  );
-
-  const scriptUri = panel.webview.asWebviewUri(
-    vscode.Uri.file(path.join(context.extensionPath, "dist", "app.js")),
-  );
-
-  const styleUris = {
-    main: panel.webview.asWebviewUri(
-      vscode.Uri.joinPath(context.extensionUri, "asset", "style", "main.css"),
-    ),
-    reset: panel.webview.asWebviewUri(
-      vscode.Uri.joinPath(context.extensionUri, "asset", "style", "reset.css"),
-    ),
-    vscode: panel.webview.asWebviewUri(
-      vscode.Uri.joinPath(context.extensionUri, "asset", "style", "vscode.css"),
-    ),
-  };
-
-  panel.webview.html = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="${styleUris.reset}" rel="stylesheet">
-        <link href="${styleUris.vscode}" rel="stylesheet">
-        <link href="${styleUris.main}" rel="stylesheet">
-        <title>ChainsAtlas GO</title>
-    </head>
-    <body>
-        <div id="root" />
-        <script src="${scriptUri}"></script>
-    </body>
-    </html>`;
-
-  return panel;
-};
-
-// This method is called when your extension is activated.
 const activate = (context: vscode.ExtensionContext): void => {
-  const disposable = vscode.commands.registerCommand(
-    "chainsatlas-go.activate",
-    async () => {
-      const panel = createWebview(context);
-      initializeChainsAtlasGO(panel);
-    },
+  const walletViewProvider = new CustomViewProvider(
+    context.extensionUri,
+    "wallet",
   );
 
-  context.subscriptions.push(disposable);
+  const wallletViewResolved = waitForViewResolvedEvent(walletViewProvider);
+
+  walletViewProvider.register();
+
+  Promise.all([wallletViewResolved]).then(async (views) => {
+    const chainsAtlasGO = new ChainsAtlasGO(context, views);
+    await chainsAtlasGO.init();
+
+    context.subscriptions.push(chainsAtlasGO);
+  });
+
+  context.subscriptions.push(walletViewProvider);
 };
 
 export { activate };
