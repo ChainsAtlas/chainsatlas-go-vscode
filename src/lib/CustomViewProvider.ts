@@ -51,22 +51,14 @@ class CustomViewProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(view: vscode.WebviewView): string {
-    const styleUris = {
-      main: view.webview.asWebviewUri(
-        vscode.Uri.joinPath(this._extensionUri, "assets", "style", "main.css"),
+    const styleUri = view.webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._extensionUri,
+        "assets",
+        "style",
+        `${this._viewType}.css`,
       ),
-      reset: view.webview.asWebviewUri(
-        vscode.Uri.joinPath(this._extensionUri, "assets", "style", "reset.css"),
-      ),
-      vscode: view.webview.asWebviewUri(
-        vscode.Uri.joinPath(
-          this._extensionUri,
-          "assets",
-          "style",
-          "vscode.css",
-        ),
-      ),
-    };
+    );
 
     const scriptUri = view.webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "dist", `${this._viewType}.js`),
@@ -84,13 +76,11 @@ class CustomViewProvider implements vscode.WebviewViewProvider {
 					and only allow scripts that have a specific nonce.
 					(See the 'webview-sample' extension sample for img-src content security policy examples)
 				-->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${view.webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${view.webview.cspSource}">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src * 'unsafe-inline'; script-src 'nonce-${nonce}'; img-src ${view.webview.cspSource}">
 
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-				<link href="${styleUris.reset}" rel="stylesheet">
-				<link href="${styleUris.vscode}" rel="stylesheet">
-				<link href="${styleUris.main}" rel="stylesheet">
+				<link href="${styleUri}" rel="stylesheet">
 
 				<title>ChainsAtlas GO</title>
 			</head>

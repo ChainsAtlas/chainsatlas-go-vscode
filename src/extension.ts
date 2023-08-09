@@ -14,19 +14,30 @@ const activate = (context: vscode.ExtensionContext): void => {
     context.extensionUri,
     "wallet",
   );
+  const virtualizationUnitViewProvider = new CustomViewProvider(
+    context.extensionUri,
+    "virtualizationUnit",
+  );
 
   const wallletViewResolved = waitForViewResolvedEvent(walletViewProvider);
+  const virtualizationUnitViewResolved = waitForViewResolvedEvent(
+    virtualizationUnitViewProvider,
+  );
 
   walletViewProvider.register();
+  virtualizationUnitViewProvider.register();
 
-  Promise.all([wallletViewResolved]).then(async (views) => {
-    const chainsAtlasGO = new ChainsAtlasGO(context, views);
-    await chainsAtlasGO.init();
+  Promise.all([wallletViewResolved, virtualizationUnitViewResolved]).then(
+    async (views) => {
+      const chainsAtlasGO = new ChainsAtlasGO(context, views);
+      await chainsAtlasGO.init();
 
-    context.subscriptions.push(chainsAtlasGO);
-  });
+      context.subscriptions.push(chainsAtlasGO);
+    },
+  );
 
   context.subscriptions.push(walletViewProvider);
+  context.subscriptions.push(virtualizationUnitViewProvider);
 };
 
 export { activate };

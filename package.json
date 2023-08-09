@@ -17,6 +17,11 @@
           "type": "webview",
           "id": "wallet",
           "name": "Wallet"
+        },
+        {
+          "type": "webview",
+          "id": "virtualizationUnit",
+          "name": "Virtualization Unit"
         }
       ]
     },
@@ -74,6 +79,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
+    "@vscode/webview-ui-toolkit": "^1.2.2",
     "@wagmi/chains": "^1.6.0",
     "@walletconnect/sign-client": "^2.9.1",
     "@walletconnect/universal-provider": "^2.9.1",

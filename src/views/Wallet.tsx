@@ -1,85 +1,67 @@
-import { Chain } from "@wagmi/chains";
-import { QRCodeSVG } from "qrcode.react";
 import {
-  CSSProperties,
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+  VSCodeButton,
+  VSCodeDropdown,
+  VSCodeLink,
+  VSCodeOption,
+  VSCodeProgressRing,
+  VSCodeTextField,
+} from "@vscode/webview-ui-toolkit/react";
+import { QRCodeSVG } from "qrcode.react";
+import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { VsCodeApi, WalletData } from "../types/types";
-
-const containerStyle: CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: 12,
-};
-const qrCodeWrapperStyle: CSSProperties = {
-  alignItems: "center",
-  display: "flex",
-  justifyContent: "flex-start",
-  width: "100%",
-};
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
-const App = (): JSX.Element => {
+const Wallet = (): JSX.Element => {
   const [_accounts, setAccounts] = useState<WalletData["accounts"]>();
-  const [_isConnected, setIsConnected] = useState<WalletData["isConnected"]>();
   const [_chain, setChain] = useState<WalletData["chain"]>();
   const [_balance, setBalance] = useState<WalletData["balance"]>();
   const [_chains, setChains] = useState<WalletData["chains"]>([]);
   const [_currentAccount, setCurrentAccount] =
     useState<WalletData["currentAccount"]>();
+  const [_isConnected, setIsConnected] = useState<WalletData["isConnected"]>();
+  const [_uri, setUri] = useState<string | undefined>();
   const [loadingBalance, setLoadingBalance] = useState<boolean>(false);
-  const [uri, setUri] = useState<string | undefined>();
 
-  const connect = useCallback(
-    (chain?: Chain) => {
-      setUri(undefined);
+  const connect = useCallback((chainId: number) => {
+    setUri(undefined);
 
-      const chainId =
-        chain?.id || _chains.find((c) => c.name === "Sepolia")?.id;
-
-      setChain(chain);
-
-      vscodeApi.postMessage({
-        type: "connect",
-        value: chain?.id,
-      });
-    },
-    [_chains],
-  );
+    vscodeApi.postMessage({
+      type: "connect",
+      value: chainId,
+    });
+  }, []);
 
   const disconnect = (): void => {
     vscodeApi.postMessage({ type: "disconnect" });
   };
 
   const onAccountChange = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>): void => {
-      const { value } = e.target;
-
-      if (value !== _currentAccount) {
-        setCurrentAccount(value);
+    (account: string): void => {
+      if (account !== _currentAccount) {
+        setCurrentAccount(account);
         setLoadingBalance(true);
 
-        vscodeApi.postMessage({ type: "changeAccount", value });
+        vscodeApi.postMessage({ type: "changeAccount", value: account });
       }
     },
     [_currentAccount],
   );
 
   const onChainChange = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>): void => {
-      const { value } = e.target;
+    (chainId: number): void => {
+      if (chainId !== _chain?.id) {
+        const chain = _chains.find((c) => c.id === chainId);
 
-      if (value !== String(_chain?.id)) {
-        const chain = _chains.find((c) => String(c.id) === value);
-
-        disconnect();
-        connect(chain);
+        if (chain) {
+          setChain(chain);
+          setIsConnected(false);
+          connect(chain.id);
+        } else {
+          console.error("Invalid chain option.");
+        }
       }
     },
     [_chain?.id, _chains, connect],
@@ -87,9 +69,15 @@ const App = (): JSX.Element => {
 
   const updateState = useCallback(
     (data: WalletData): void => {
-      console.log("updated state sync: ", data);
-      const { accounts, balance, chain, chains, currentAccount, isConnected } =
-        data;
+      const {
+        accounts,
+        balance,
+        chain,
+        chains,
+        currentAccount,
+        isConnected,
+        uri,
+      } = data;
 
       setAccounts(accounts);
       setBalance(balance);
@@ -97,101 +85,122 @@ const App = (): JSX.Element => {
       setChains(chains);
       setCurrentAccount(currentAccount);
       setIsConnected(isConnected);
+      setUri(uri);
       setLoadingBalance(false);
 
-      if (!isConnected) {
-        connect(chain);
+      if (chain && !isConnected && !uri) {
+        connect(chain.id);
       }
     },
     [connect],
   );
 
   const addEventListeners = useCallback((): void => {
-    window.addEventListener("message", (event) => {
-      const message:
-        | { type: "sync"; value: WalletData }
-        | { type: "uri"; value: string } = event.data;
-
-      switch (message.type) {
-        case "sync":
-          updateState(message.value);
-          break;
-        case "uri":
-          setUri(message.value);
-          break;
-        default:
-          break;
-      }
-    });
+    window.addEventListener("message", (event) => updateState(event.data));
   }, [updateState]);
 
   useEffect(() => {
     addEventListeners();
+    vscodeApi.postMessage({ type: "sync" });
   }, [addEventListeners]);
 
   return (
-    <div style={containerStyle}>
-      {_chains ? (
-        <div>
-          <label htmlFor="chain">Chain</label>
-          <select
-            id="chain"
-            name="chain"
-            value={_chain?.id || "empty"}
-            onChange={onChainChange}
-          >
-            <option disabled value={"empty"}>
-              Select a chain
-            </option>
-            {_chains.map((chain) => (
-              <option value={chain.id} key={chain.id}>
+    <div className="container">
+      <div className="dropdown-container">
+        <label htmlFor="chain">Chain</label>
+        <VSCodeDropdown
+          disabled={!_chains.length}
+          id="chain"
+          value={_chain?.id.toString()}
+        >
+          {_chains.length > 0 ? (
+            _chains.map((chain) => (
+              <VSCodeOption
+                key={chain.id}
+                value={chain.id.toString()}
+                onClick={() => onChainChange(chain.id)}
+              >
                 {chain.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      ) : null}
-      {!_isConnected ? (
-        <div style={qrCodeWrapperStyle}>
-          {uri ? (
-            <QRCodeSVG size={200} value={uri} includeMargin />
+              </VSCodeOption>
+            ))
           ) : (
-            <p>Loading...</p>
+            <VSCodeOption selected>No chains available.</VSCodeOption>
           )}
-        </div>
+        </VSCodeDropdown>
+      </div>
+
+      {!_isConnected ? (
+        <>
+          <div className="qrcode-container">
+            {_uri ? (
+              <QRCodeSVG
+                className="qrcode-svg"
+                includeMargin
+                size={380}
+                value={_uri}
+              />
+            ) : (
+              <VSCodeProgressRing />
+            )}
+          </div>
+          <div className="walletconnect-link-container">
+            <span>
+              <VSCodeLink href="https://walletconnect.com/explorer?type=wallet&chains=eip155%3A1">
+                View list of 300+ supported wallets
+              </VSCodeLink>{" "}
+              through the WalletConnect protocol.
+            </span>
+          </div>
+        </>
       ) : (
         <>
-          {_accounts ? (
-            <div>
-              <label htmlFor="account">Account</label>
-              <select
-                id="account"
-                name="account"
-                value={_currentAccount}
-                onChange={onAccountChange}
-              >
-                <option disabled value={undefined}>
-                  Select an account
-                </option>
-                {_accounts.map((acc) => (
-                  <option value={acc} key={acc}>
+          <div className="dropdown-container">
+            <label htmlFor="account">Account</label>
+            <VSCodeDropdown
+              disabled={!_accounts?.length}
+              id="account"
+              value={_currentAccount}
+            >
+              {_accounts && _accounts.length > 0 ? (
+                _accounts.map((acc) => (
+                  <VSCodeOption
+                    key={acc}
+                    value={acc}
+                    onClick={() => onAccountChange(acc)}
+                  >
                     {acc}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : null}
-          {_balance && _chain ? (
-            <div>
-              <p>
-                Balance (wei):{" "}
-                <span>{loadingBalance ? "Loading..." : _balance}</span>
-              </p>
-            </div>
-          ) : null}
+                  </VSCodeOption>
+                ))
+              ) : (
+                <VSCodeOption selected>No accounts available.</VSCodeOption>
+              )}
+            </VSCodeDropdown>
+          </div>
+          <div>
+            {loadingBalance ? (
+              <>
+                <label>Balance (wei)</label>
+                <VSCodeProgressRing />
+              </>
+            ) : (
+              <VSCodeTextField
+                className="balance-text-field"
+                readOnly
+                value={_balance ?? "0"}
+              >
+                Balance (wei)
+              </VSCodeTextField>
+            )}
+          </div>
           {_accounts && _chain ? (
             <div>
-              <button onClick={disconnect}>Disconnect</button>
+              <VSCodeButton
+                appearance="primary"
+                aria-label="Disconnect"
+                onClick={disconnect}
+              >
+                Disconnect
+              </VSCodeButton>
             </div>
           ) : null}
         </>
@@ -201,4 +210,4 @@ const App = (): JSX.Element => {
 };
 
 const root = createRoot(document.getElementById("root") as HTMLElement);
-root.render(<App />);
+root.render(<Wallet />);

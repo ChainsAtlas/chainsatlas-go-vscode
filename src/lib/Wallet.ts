@@ -1,9 +1,10 @@
-import { Chain, bscTestnet, sepolia } from "@wagmi/chains";
+import type { Chain } from "@wagmi/chains";
+import * as chains from "@wagmi/chains";
 import { ProviderAccounts } from "@walletconnect/universal-provider";
 import UniversalProvider from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 
 class Wallet {
-  public static readonly CHAINS: Chain[] = [bscTestnet, sepolia];
+  public static readonly CHAINS: Chain[] = Object.values(chains);
 
   private static readonly _EIP155_EVENTS = ["chainChanged", "accountsChanged"];
   private static readonly _EIP155_METHODS = [
@@ -15,19 +16,16 @@ class Wallet {
   ];
 
   public accounts?: ProviderAccounts;
-  public chain?: Chain = sepolia;
+  public chain: Chain = chains.sepolia;
   public currentAccount?: string;
   public isConnected?: boolean;
+  public uri?: string;
 
   private _controller = new AbortController();
 
   constructor(private readonly _provider: UniversalProvider) {}
 
-  public async connect(id: number): Promise<{
-    accounts?: ProviderAccounts;
-    chain?: Chain;
-    currentAccount?: string;
-  }> {
+  public async connect(id: number): Promise<void> {
     this._controller.abort();
 
     try {
@@ -35,16 +33,20 @@ class Wallet {
         this._provider.abortPairingAttempt();
         this._provider.cleanupPendingPairings({ deletePairings: true });
 
-        this.isConnected = false;
+        this.uri = undefined;
 
         throw new Error("Aborted!");
       });
+
+      await this.disconnect();
 
       const chain = Wallet.CHAINS.find((c) => c.id === id);
 
       if (!chain) {
         throw new Error("invalid chain id.");
       }
+
+      this.chain = chain; // important to sync correct state when provider emits uri
 
       await this._provider.connect({
         namespaces: {
@@ -60,6 +62,7 @@ class Wallet {
       this.accounts = await this._provider.enable();
       this.chain = chain;
       this.isConnected = true;
+      this.uri = undefined;
 
       if (this.accounts.length > 0) {
         this.currentAccount = this.accounts[0];
@@ -71,17 +74,14 @@ class Wallet {
 
       throw new Error(JSON.stringify(e));
     }
-
-    return {
-      accounts: this.accounts,
-      chain: this.chain,
-      currentAccount: this.currentAccount,
-    };
   }
 
   public async disconnect(): Promise<void> {
     try {
-      await this._provider.disconnect();
+      if (this._provider.session) {
+        await this._provider.disconnect();
+      }
+
       this.isConnected = false;
     } catch (e) {
       if (e instanceof Error) {

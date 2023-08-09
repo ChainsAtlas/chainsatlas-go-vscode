@@ -1,7 +1,7 @@
 import { Chain } from "@wagmi/chains";
 import { ProviderAccounts } from "@walletconnect/universal-provider";
 
-type ViewType = "executor" | "history" | "vUnit" | "wallet";
+type ViewType = "executor" | "history" | "virtualizationUnit" | "wallet";
 
 type VsCodeApi = {
   postMessage(message: { type: string; value?: any }): void;
@@ -14,6 +14,7 @@ type WalletData = {
   chains: Chain[];
   currentAccount?: string;
   isConnected?: boolean;
+  uri?: string;
 };
 
 export { ViewType, VsCodeApi, WalletData };

@@ -1,0 +1,51 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.dropdown-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.dropdown-container label {
+  display: block;
+  color: var(--vscode-foreground);
+  cursor: pointer;
+  font-size: var(--vscode-font-size);
+  line-height: normal;
+  margin-bottom: 2px;
+}
+
+.dropdown-container #chain,
+.dropdown-container #account {
+  max-width: 380px;
+  min-width: 130px;
+  width: 100%;
+}
+
+.qrcode-container {
+  aspect-ratio: 1 / 1;
+  align-items: center;
+  display: flex;
+  height: 380px;
+  justify-content: center;
+  max-height: 380px;
+  min-height: 130px;
+  height: 100%;
+  max-width: 380px;
+  min-width: 130px;
+  width: 100%;
+}
+
+.walletconnect-link-container,
+.balance-text-field {
+  max-width: 380px;
+  min-width: 130px;
+  width: 100%;
+}
