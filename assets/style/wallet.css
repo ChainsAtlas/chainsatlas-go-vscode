@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 10px 0;
   width: 100%;
 }
 
@@ -22,18 +23,10 @@
   margin-bottom: 2px;
 }
 
-.dropdown-container #chain,
-.dropdown-container #account {
-  max-width: 380px;
-  min-width: 130px;
-  width: 100%;
-}
-
 .qrcode-container {
   aspect-ratio: 1 / 1;
   align-items: center;
   display: flex;
-  height: 380px;
   justify-content: center;
   max-height: 380px;
   min-height: 130px;
@@ -43,9 +36,27 @@
   width: 100%;
 }
 
-.walletconnect-link-container,
-.balance-text-field {
+.width-constraint {
   max-width: 380px;
   min-width: 130px;
   width: 100%;
+}
+
+.block-width {
+  width: 100%;
+}
+
+.progress-ring-container {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  max-width: 380px;
+  min-width: 130px;
+  width: 100%;
+  height: 100vh;
+}
+
+vscode-button {
+  box-sizing: border-box;
+  padding: 1.5px;
 }

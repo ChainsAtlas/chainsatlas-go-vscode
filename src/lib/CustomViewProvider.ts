@@ -1,58 +1,57 @@
 import { EventEmitter } from "events";
-import vscode from "vscode";
-import { ViewType } from "../types/types";
+import {
+  CancellationToken,
+  Disposable,
+  Uri,
+  WebviewView,
+  WebviewViewProvider,
+  WebviewViewResolveContext,
+  window,
+} from "vscode";
+import { ViewType } from "../types";
 
-class CustomViewProvider implements vscode.WebviewViewProvider {
-  private _disposable?: vscode.Disposable;
-  private _eventEmitter = new EventEmitter();
-  private _view!: vscode.WebviewView;
+class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
+  private _disposable?: Disposable;
+  private _view!: WebviewView;
 
   constructor(
-    private readonly _extensionUri: vscode.Uri,
+    private readonly _extensionUri: Uri,
     private readonly _viewType: ViewType,
-  ) {}
+  ) {
+    super();
+  }
 
   public dispose(): void {
     this._disposable?.dispose();
   }
 
-  public on(
-    event: "viewResolved",
-    listener: (view: vscode.WebviewView) => void,
-  ): void {
-    this._eventEmitter.on(event, listener);
-  }
-
   public register(): void {
-    this._disposable = vscode.window.registerWebviewViewProvider(
-      this._viewType,
-      this,
-    );
+    this._disposable = window.registerWebviewViewProvider(this._viewType, this);
   }
 
   public resolveWebviewView(
-    webviewView: vscode.WebviewView,
-    _context: vscode.WebviewViewResolveContext,
-    _token: vscode.CancellationToken,
+    webviewView: WebviewView,
+    _context: WebviewViewResolveContext,
+    _token: CancellationToken,
   ): void {
     this._view = webviewView;
 
     this._view.webview.options = {
       enableScripts: true,
       localResourceRoots: [
-        vscode.Uri.joinPath(this._extensionUri, "assets"),
-        vscode.Uri.joinPath(this._extensionUri, "dist"),
+        Uri.joinPath(this._extensionUri, "assets"),
+        Uri.joinPath(this._extensionUri, "dist"),
       ],
     };
 
     this._view.webview.html = this._getHtmlForWebview(this._view);
 
-    this._eventEmitter.emit("viewResolved", this._view);
+    this.emit("viewResolved", this._view);
   }
 
-  private _getHtmlForWebview(view: vscode.WebviewView): string {
+  private _getHtmlForWebview(view: WebviewView): string {
     const styleUri = view.webview.asWebviewUri(
-      vscode.Uri.joinPath(
+      Uri.joinPath(
         this._extensionUri,
         "assets",
         "style",
@@ -61,7 +60,7 @@ class CustomViewProvider implements vscode.WebviewViewProvider {
     );
 
     const scriptUri = view.webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "dist", `${this._viewType}.js`),
+      Uri.joinPath(this._extensionUri, "dist", `${this._viewType}.js`),
     );
 
     const nonce = this._getNonce();

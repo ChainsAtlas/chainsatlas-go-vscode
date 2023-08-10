@@ -1,5 +1,6 @@
 import {
   VSCodeButton,
+  VSCodeDivider,
   VSCodeDropdown,
   VSCodeLink,
   VSCodeOption,
@@ -9,7 +10,7 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { VsCodeApi, WalletData } from "../types/types";
+import { VsCodeApi, WalletData } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
@@ -18,7 +19,7 @@ const Wallet = (): JSX.Element => {
   const [_accounts, setAccounts] = useState<WalletData["accounts"]>();
   const [_chain, setChain] = useState<WalletData["chain"]>();
   const [_balance, setBalance] = useState<WalletData["balance"]>();
-  const [_chains, setChains] = useState<WalletData["chains"]>([]);
+  const [_chains, setChains] = useState<WalletData["chains"]>();
   const [_currentAccount, setCurrentAccount] =
     useState<WalletData["currentAccount"]>();
   const [_isConnected, setIsConnected] = useState<WalletData["isConnected"]>();
@@ -51,9 +52,9 @@ const Wallet = (): JSX.Element => {
   );
 
   const onChainChange = useCallback(
-    (chainId: number): void => {
-      if (chainId !== _chain?.id) {
-        const chain = _chains.find((c) => c.id === chainId);
+    (chainId: string): void => {
+      if (chainId !== _chain?.id.toString()) {
+        const chain = _chains?.find((c) => c.id.toString() === chainId);
 
         if (chain) {
           setChain(chain);
@@ -95,40 +96,33 @@ const Wallet = (): JSX.Element => {
     [connect],
   );
 
-  const addEventListeners = useCallback((): void => {
+  const initMessageHandler = useCallback((): void => {
     window.addEventListener("message", (event) => updateState(event.data));
+    vscodeApi.postMessage({ type: "ready" });
   }, [updateState]);
 
   useEffect(() => {
-    addEventListeners();
-    vscodeApi.postMessage({ type: "sync" });
-  }, [addEventListeners]);
+    initMessageHandler();
+  }, [initMessageHandler]);
 
-  return (
+  return _chains && _chain ? (
     <div className="container">
       <div className="dropdown-container">
         <label htmlFor="chain">Chain</label>
         <VSCodeDropdown
+          className="width-constraint"
           disabled={!_chains.length}
           id="chain"
-          value={_chain?.id.toString()}
+          onChange={(e) => onChainChange((e.target as HTMLSelectElement).value)}
+          value={_chain.id.toString()}
         >
-          {_chains.length > 0 ? (
-            _chains.map((chain) => (
-              <VSCodeOption
-                key={chain.id}
-                value={chain.id.toString()}
-                onClick={() => onChainChange(chain.id)}
-              >
-                {chain.name}
-              </VSCodeOption>
-            ))
-          ) : (
-            <VSCodeOption selected>No chains available.</VSCodeOption>
-          )}
+          {_chains.map((chain) => (
+            <VSCodeOption key={chain.id} value={chain.id.toString()}>
+              {chain.name}
+            </VSCodeOption>
+          ))}
         </VSCodeDropdown>
       </div>
-
       {!_isConnected ? (
         <>
           <div className="qrcode-container">
@@ -143,7 +137,7 @@ const Wallet = (): JSX.Element => {
               <VSCodeProgressRing />
             )}
           </div>
-          <div className="walletconnect-link-container">
+          <div className="width-constraint">
             <span>
               <VSCodeLink href="https://walletconnect.com/explorer?type=wallet&chains=eip155%3A1">
                 View list of 300+ supported wallets
@@ -157,22 +151,24 @@ const Wallet = (): JSX.Element => {
           <div className="dropdown-container">
             <label htmlFor="account">Account</label>
             <VSCodeDropdown
+              className="width-constraint"
               disabled={!_accounts?.length}
               id="account"
-              value={_currentAccount}
+              onChange={(e) =>
+                onAccountChange((e.target as HTMLSelectElement).value)
+              }
+              value={_accounts?.length ? _currentAccount : "empty"}
             >
               {_accounts && _accounts.length > 0 ? (
                 _accounts.map((acc) => (
-                  <VSCodeOption
-                    key={acc}
-                    value={acc}
-                    onClick={() => onAccountChange(acc)}
-                  >
+                  <VSCodeOption key={acc} value={acc}>
                     {acc}
                   </VSCodeOption>
                 ))
               ) : (
-                <VSCodeOption selected>No accounts available.</VSCodeOption>
+                <VSCodeOption value="empty">
+                  No accounts available.
+                </VSCodeOption>
               )}
             </VSCodeDropdown>
           </div>
@@ -184,7 +180,7 @@ const Wallet = (): JSX.Element => {
               </>
             ) : (
               <VSCodeTextField
-                className="balance-text-field"
+                className="width-constraint"
                 readOnly
                 value={_balance ?? "0"}
               >
@@ -192,19 +188,22 @@ const Wallet = (): JSX.Element => {
               </VSCodeTextField>
             )}
           </div>
-          {_accounts && _chain ? (
-            <div>
-              <VSCodeButton
-                appearance="primary"
-                aria-label="Disconnect"
-                onClick={disconnect}
-              >
-                Disconnect
-              </VSCodeButton>
-            </div>
-          ) : null}
+          <VSCodeDivider className="width-constraint" />
+          <div className="width-constraint">
+            <VSCodeButton
+              appearance="primary"
+              className="block-width"
+              onClick={disconnect}
+            >
+              Disconnect
+            </VSCodeButton>
+          </div>
         </>
       )}
+    </div>
+  ) : (
+    <div className="progress-ring-container">
+      <VSCodeProgressRing />
     </div>
   );
 };

@@ -1,43 +1,26 @@
-import vscode from "vscode";
+import { ExtensionContext } from "vscode";
 import ChainsAtlasGO from "./lib/ChainsAtlasGO";
 import CustomViewProvider from "./lib/CustomViewProvider";
 
-const waitForViewResolvedEvent = (
-  viewProvider: CustomViewProvider,
-): Promise<vscode.WebviewView> =>
-  new Promise((resolve) => {
-    viewProvider.on("viewResolved", (view) => resolve(view));
+const activate = async (context: ExtensionContext): Promise<void> => {
+  const chainsAtlasGO = new ChainsAtlasGO(context);
+  await chainsAtlasGO.init();
+
+  const viewProviders = {
+    virtualizationUnit: new CustomViewProvider(
+      context.extensionUri,
+      "virtualizationUnit",
+    ),
+    wallet: new CustomViewProvider(context.extensionUri, "wallet"),
+  };
+
+  Object.values(viewProviders).forEach((vProvider) => {
+    vProvider.register();
+    vProvider.on("viewResolved", (view) => chainsAtlasGO.addView(view));
+    context.subscriptions.push(vProvider);
   });
 
-const activate = (context: vscode.ExtensionContext): void => {
-  const walletViewProvider = new CustomViewProvider(
-    context.extensionUri,
-    "wallet",
-  );
-  const virtualizationUnitViewProvider = new CustomViewProvider(
-    context.extensionUri,
-    "virtualizationUnit",
-  );
-
-  const wallletViewResolved = waitForViewResolvedEvent(walletViewProvider);
-  const virtualizationUnitViewResolved = waitForViewResolvedEvent(
-    virtualizationUnitViewProvider,
-  );
-
-  walletViewProvider.register();
-  virtualizationUnitViewProvider.register();
-
-  Promise.all([wallletViewResolved, virtualizationUnitViewResolved]).then(
-    async (views) => {
-      const chainsAtlasGO = new ChainsAtlasGO(context, views);
-      await chainsAtlasGO.init();
-
-      context.subscriptions.push(chainsAtlasGO);
-    },
-  );
-
-  context.subscriptions.push(walletViewProvider);
-  context.subscriptions.push(virtualizationUnitViewProvider);
+  context.subscriptions.push(chainsAtlasGO);
 };
 
 export { activate };

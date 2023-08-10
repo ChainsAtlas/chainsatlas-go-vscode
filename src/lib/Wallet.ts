@@ -26,9 +26,9 @@ class Wallet {
   constructor(private readonly _provider: UniversalProvider) {}
 
   public async connect(id: number): Promise<void> {
-    this._controller.abort();
-
     try {
+      this._controller.abort();
+
       this._controller.signal.addEventListener("abort", () => {
         this._provider.abortPairingAttempt();
         this._provider.cleanupPendingPairings({ deletePairings: true });
