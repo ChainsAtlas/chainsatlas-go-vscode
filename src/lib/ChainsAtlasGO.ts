@@ -261,6 +261,12 @@ class ChainsAtlasGO {
 
             this._web3 = new Web3(this._provider);
 
+            if (this._virtualizationUnit) {
+              this._virtualizationUnit.clearDeployment();
+              this._virtualizationUnit.contracts = [];
+              this._virtualizationUnit.currentContract = undefined;
+            }
+
             this._syncView(["wallet", "virtualizationUnit"]);
           } catch (e) {
             console.error(e);
@@ -269,6 +275,12 @@ class ChainsAtlasGO {
         case "disconnect":
           try {
             await this._wallet.disconnect();
+
+            if (this._virtualizationUnit) {
+              this._virtualizationUnit.clearDeployment();
+              this._virtualizationUnit.contracts = [];
+              this._virtualizationUnit.currentContract = undefined;
+            }
 
             this._syncView(["wallet", "virtualizationUnit"]);
           } catch (e) {
@@ -394,7 +406,7 @@ class ChainsAtlasGO {
     });
   }
 
-  private _handleUserGas(gas: string) {
+  private _handleUserGas(gas: string): void {
     this._userGas = gas;
     if (this._gasResolver) {
       this._gasResolver(gas);

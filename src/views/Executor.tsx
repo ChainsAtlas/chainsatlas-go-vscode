@@ -16,7 +16,7 @@ const vscodeApi = acquireVsCodeApi();
 
 type GasOption = "buffer" | "custom" | "estimate";
 
-const VirtualizationUnit = (): JSX.Element => {
+const Executor = (): JSX.Element => {
   const [_contracts, setContracts] = useState<
     VirtualizationUnitData["contracts"]
   >([]);
@@ -26,7 +26,7 @@ const VirtualizationUnit = (): JSX.Element => {
     useState<VirtualizationUnitData["disabled"]>(true);
   const [_gasEstimate, setGasEstimate] =
     useState<VirtualizationUnitData["gasEstimate"]>();
-  const [gas, setGas] = useState<string>("");
+  const [gas, setGas] = useState<string>("36408");
   const [gasOption, setGasOption] = useState<GasOption>("buffer");
 
   const calculateBuffer = (gas: string): string =>
@@ -185,4 +185,4 @@ const VirtualizationUnit = (): JSX.Element => {
 };
 
 const root = createRoot(document.getElementById("root") as HTMLElement);
-root.render(<VirtualizationUnit />);
+root.render(<Executor />);

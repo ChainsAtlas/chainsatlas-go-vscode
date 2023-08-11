@@ -52,6 +52,41 @@ const extensionConfig = {
   },
 };
 
+const executorViewConfig = {
+  entry: "./src/views/Executor.tsx",
+  output: {
+    filename: "executor.js",
+    path: path.resolve(__dirname, "dist"),
+  },
+  resolve: {
+    extensions: [".tsx", ".ts", ".js", ".json"],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(ts|js)x?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              "@babel/preset-env",
+              "@babel/preset-react",
+              "@babel/preset-typescript",
+            ],
+          },
+        },
+      },
+    ],
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      React: "react",
+    }),
+  ],
+  mode: "production",
+};
+
 const virtualizationUnitViewConfig = {
   entry: "./src/views/VirtualizationUnit.tsx",
   output: {
@@ -123,6 +158,7 @@ const walletViewConfig = {
 };
 
 module.exports = [
+  executorViewConfig,
   extensionConfig,
   virtualizationUnitViewConfig,
   walletViewConfig,

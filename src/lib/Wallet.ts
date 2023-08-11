@@ -54,7 +54,11 @@ class Wallet {
             methods: Wallet._EIP155_METHODS,
             chains: [`eip155:${chain.id}`],
             events: Wallet._EIP155_EVENTS,
-            rpcMap: { [chain.id]: chain.rpcUrls.default.http[0] },
+            // rpcMap: { [chain.id]: chain.rpcUrls.default.http[0] },
+            rpcMap: {
+              [chain.id]:
+                "https://sepolia.infura.io/v3/293dd006da85467bbcb9ee8fd02cb40b", // Hardcoded for development purposes
+            },
           },
         },
       });

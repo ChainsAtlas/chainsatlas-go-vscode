@@ -49,6 +49,8 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
     this.emit("viewResolved", this._view);
   }
 
+  // -------------------- Private --------------------
+
   private _getHtmlForWebview(view: WebviewView): string {
     const styleUri = view.webview.asWebviewUri(
       Uri.joinPath(
