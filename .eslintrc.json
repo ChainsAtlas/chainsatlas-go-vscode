@@ -14,6 +14,7 @@
     "react/react-in-jsx-scope": "off",
     "semi": "off"
   },
+  "settings": { "react": { "version": "detect" } },
   "ignorePatterns": ["out", "dist", "**/*.d.ts"],
   "extends": [
     "plugin:react/recommended",
