@@ -10,15 +10,19 @@ type BytecodeStructure = {
 };
 
 type ExecutorData = {
-  bytecodeStruct?: BytecodeStructure;
+  currentFile?: ExecutorFile;
   disabled: boolean;
   gasEstimate?: string;
+  nargs?: number;
 };
 
-type SupportedLanguage = {
-  fileExtension: "c" | "js";
-  name: "C" | "JavaScript";
+type ExecutorFile = {
+  content: string;
+  extension: SupportedLanguage;
+  path: string;
 };
+
+type SupportedLanguage = "c" | "js";
 
 type ViewMap = Record<ViewType, WebviewView>;
 
@@ -62,6 +66,7 @@ type WalletData = {
 export {
   BytecodeStructure,
   ExecutorData,
+  ExecutorFile,
   SupportedLanguage,
   ViewMap,
   ViewType,

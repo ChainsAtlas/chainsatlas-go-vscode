@@ -1,12 +1,18 @@
 import UniversalProvider from "@walletconnect/universal-provider";
-import { ExtensionContext, WebviewView } from "vscode";
+import { dirname, extname } from "path";
+import { ExtensionContext, WebviewView, window, workspace } from "vscode";
 import Web3, { FMT_BYTES, FMT_NUMBER } from "web3";
+import { SUPPORTED_LANGUAGES } from "../constants";
 import {
+  ExecutorData,
+  ExecutorFile,
+  SupportedLanguage,
   ViewMap,
   ViewType,
   VirtualizationUnitData,
   WalletData,
 } from "../types";
+import Executor from "./Executor";
 import VirtualizationUnit from "./VirtualizationUnit";
 import Wallet from "./Wallet";
 
@@ -14,8 +20,12 @@ class ChainsAtlasGO {
   private static readonly _WALLETCONNECT_PROJECT_ID =
     "7b1ecd906a131e3a323a225589f75287";
 
+  private _argsResolver?: (value: any[] | PromiseLike<any[]>) => void;
+  private _executor?: Executor;
   private _gasResolver?: (value: string | PromiseLike<string>) => void;
   private _provider?: UniversalProvider;
+  private _userArgs?: any[];
+  private _userFile?: Partial<ExecutorFile>;
   private _userGas?: string;
   private _viewMap: Partial<ViewMap> = {};
   private _virtualizationUnit?: VirtualizationUnit;
@@ -23,8 +33,9 @@ class ChainsAtlasGO {
   private _web3?: Web3;
 
   constructor(private readonly _context: ExtensionContext) {
-    this._VUnitViewMsgHandler = this._VUnitViewMsgHandler.bind(this);
-    this._WalletViewMsgHandler = this._WalletViewMsgHandler.bind(this);
+    this._executorViewMsgHandler = this._executorViewMsgHandler.bind(this);
+    this._vUnitViewMsgHandler = this._vUnitViewMsgHandler.bind(this);
+    this._walletViewMsgHandler = this._walletViewMsgHandler.bind(this);
   }
 
   public async addView(view: WebviewView): Promise<void> {
@@ -33,17 +44,27 @@ class ChainsAtlasGO {
         throw new Error("Call init() before adding views.");
       }
 
-      if (!this._isValidViewType(view.viewType)) {
+      if (!this._isViewType(view.viewType)) {
         throw new Error("Invalid view type.");
       }
 
       this._viewMap[view.viewType] = view;
 
       switch (view.viewType) {
+        case "executor":
+          try {
+            view.webview.onDidReceiveMessage(
+              this._executorViewMsgHandler,
+              undefined,
+              this._context.subscriptions,
+            );
+          } catch (e) {
+            console.error(e);
+          }
         case "virtualizationUnit":
           try {
             view.webview.onDidReceiveMessage(
-              this._VUnitViewMsgHandler,
+              this._vUnitViewMsgHandler,
               undefined,
               this._context.subscriptions,
             );
@@ -63,7 +84,7 @@ class ChainsAtlasGO {
             });
 
             view.webview.onDidReceiveMessage(
-              this._WalletViewMsgHandler,
+              this._walletViewMsgHandler,
               undefined,
               this._context.subscriptions,
             );
@@ -104,8 +125,9 @@ class ChainsAtlasGO {
         },
       });
 
-      this._wallet = new Wallet(this._provider);
+      this._executor = new Executor();
       this._virtualizationUnit = new VirtualizationUnit();
+      this._wallet = new Wallet(this._provider);
     } catch (e) {
       console.error(e);
     }
@@ -113,7 +135,157 @@ class ChainsAtlasGO {
 
   // -------------------- Private --------------------
 
-  private async _VUnitViewMsgHandler(message: {
+  private async _executorViewMsgHandler(message: {
+    type: string;
+    value?: string;
+    args?: any[];
+  }): Promise<void> {
+    try {
+      switch (message.type) {
+        case "compile":
+          try {
+            if (!this._executor) {
+              throw new Error("Executor not initialized.");
+            }
+
+            if (!message.value) {
+              throw new Error("Invalid number of arguments.");
+            }
+
+            if (!this._isExecutorFile(this._userFile)) {
+              throw new Error("Invalid file.");
+            }
+
+            this._executor.currentFile = this._userFile;
+
+            await this._executor.compileBytecode();
+
+            this._syncView(["executor"]);
+          } catch (e) {
+            console.error(e);
+          }
+          break;
+        case "nargs":
+          try {
+            if (!this._executor) {
+              throw new Error("Executor not initiliazed.");
+            }
+
+            if (!message.value) {
+              throw new Error("Invalid number of arguments.");
+            }
+
+            this._executor.nargs = Number(message.value);
+
+            this._syncView(["executor"]);
+          } catch (e) {
+            console.error(e);
+          }
+          break;
+        case "run":
+          try {
+            if (!this._executor) {
+              throw new Error("Executor not initialized.");
+            }
+
+            if (!this._virtualizationUnit) {
+              throw new Error("VirtualizationUnit not initialized.");
+            }
+
+            if (!this._virtualizationUnit.currentContract) {
+              throw new Error("Invalid virtualization unit.");
+            }
+
+            if (!this._wallet) {
+              throw new Error("Wallet not initialized");
+            }
+
+            if (!this._wallet.currentAccount) {
+              throw new Error("Invalid account.");
+            }
+
+            if (!this._web3) {
+              throw new Error("Web3 not initialized.");
+            }
+
+            if (!message.value) {
+              throw new Error("Invalid arguments.");
+            }
+
+            this._executor.on("contractInstantiated", async () => {
+              if (!this._executor) {
+                throw new Error("Executor not initialized.");
+              }
+
+              const userArgs = await this._getUserArgs();
+
+              this._executor.emit("userArgsReceived");
+            });
+
+            this._executor.on("gasEstimated", async () => {
+              if (!this._executor) {
+                throw new Error("Executor not initialized.");
+              }
+
+              this._syncView(["executor"]);
+
+              const userGas = await this._getUserGas();
+
+              this._executor.emit("userGasReceived", userGas);
+            });
+
+            const { transactionHash, output } =
+              await this._executor.runBytecode(
+                this._wallet?.currentAccount,
+                this._virtualizationUnit?.currentContract,
+                this._web3,
+              );
+
+            console.log(transactionHash, output);
+
+            this._syncView(["executor"]);
+          } catch (e) {
+            console.error(e);
+          }
+          break;
+        case "run":
+          try {
+            if (!message.value) {
+              throw new Error("Invalid user gas.");
+            }
+
+            if (!message.args) {
+              throw new Error("Invalid user gas.");
+            }
+
+            this._handleUserGas(message.value);
+            this._handleUserArgs(message.args);
+          } catch (e) {
+            console.error(e);
+          }
+          break;
+        case "selectFile":
+          try {
+            await this._getUserFile();
+
+            this._syncView(["executor"]);
+          } catch (e) {
+            console.error(e);
+          }
+          break;
+        default:
+          break;
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        throw e;
+      }
+
+      throw new Error(JSON.stringify(e));
+    }
+  }
+
+  private async _vUnitViewMsgHandler(message: {
     type: string;
     value?: string;
   }): Promise<void> {
@@ -225,7 +397,7 @@ class ChainsAtlasGO {
     }
   }
 
-  private async _WalletViewMsgHandler(message: {
+  private async _walletViewMsgHandler(message: {
     type: string;
     value?: string;
   }): Promise<void> {
@@ -304,6 +476,40 @@ class ChainsAtlasGO {
         default:
           break;
       }
+    } catch (e) {
+      if (e instanceof Error) {
+        throw e;
+      }
+
+      throw new Error(JSON.stringify(e));
+    }
+  }
+
+  private _generateExecutorData(): ExecutorData {
+    try {
+      if (!this._executor) {
+        throw new Error("Executor not initialized.");
+      }
+
+      if (!this._virtualizationUnit) {
+        throw new Error("VirtualizationUnit not initialized.");
+      }
+
+      if (!this._wallet) {
+        throw new Error("Wallet not initialized.");
+      }
+
+      const { currentFile, gasEstimate, nargs } = this._executor;
+
+      return {
+        currentFile,
+        disabled: !Boolean(
+          this._wallet.currentAccount &&
+            this._virtualizationUnit.currentContract,
+        ),
+        gasEstimate,
+        nargs,
+      };
     } catch (e) {
       if (e instanceof Error) {
         throw e;
@@ -394,16 +600,54 @@ class ChainsAtlasGO {
     }
   }
 
+  private async _getUserFile(): Promise<void> {
+    const uris = await window.showOpenDialog({
+      canSelectMany: false,
+      openLabel: "Open",
+      filters: { "Supported files": SUPPORTED_LANGUAGES },
+    });
+
+    if (uris && uris.length > 0) {
+      const selectedFileUri = uris[0];
+
+      this._userFile = {
+        content: await workspace.fs.readFile(selectedFileUri).toString(),
+        extension: extname(selectedFileUri.fsPath).slice(
+          1,
+        ) as SupportedLanguage,
+        path: dirname(selectedFileUri.fsPath),
+      };
+    } else {
+      window.showWarningMessage("No file selected.");
+    }
+  }
+
+  private _getUserArgs(): Promise<any[]> {
+    return new Promise((resolve) => {
+      if (this._userArgs) {
+        resolve(this._userArgs);
+      } else {
+        this._argsResolver = resolve;
+      }
+    });
+  }
+
   private _getUserGas(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      // If userGasPrice is already set, resolve immediately.
+    return new Promise((resolve) => {
       if (this._userGas) {
         resolve(this._userGas);
       } else {
-        // Otherwise, store the resolve function to be called later.
         this._gasResolver = resolve;
       }
     });
+  }
+
+  private _handleUserArgs(args: any[]): void {
+    this._userArgs = args;
+    if (this._argsResolver) {
+      this._argsResolver(args);
+      this._argsResolver = undefined;
+    }
   }
 
   private _handleUserGas(gas: string): void {
@@ -414,7 +658,19 @@ class ChainsAtlasGO {
     }
   }
 
-  private _isValidViewType(value: string): value is ViewType {
+  private _isExecutorFile(obj: any): obj is ExecutorFile {
+    return (
+      typeof obj.content === "string" &&
+      this._isSupportedLanguage(obj.extension) &&
+      typeof obj.path === "string"
+    );
+  }
+
+  private _isSupportedLanguage(lang: any): lang is SupportedLanguage {
+    return SUPPORTED_LANGUAGES.includes(lang);
+  }
+
+  private _isViewType(value: any): value is ViewType {
     return (
       value === "executor" ||
       value === "history" ||
@@ -429,6 +685,9 @@ class ChainsAtlasGO {
         case "history":
           break;
         case "executor":
+          this._viewMap.executor?.webview.postMessage(
+            await this._generateExecutorData(),
+          );
           break;
         case "virtualizationUnit":
           this._viewMap.virtualizationUnit?.webview.postMessage(

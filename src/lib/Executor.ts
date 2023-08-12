@@ -3,14 +3,16 @@ import Web3, { AbiFragment, AbiParameter, Bytes } from "web3";
 import { V_UNIT_ABI } from "../constants";
 import {
   BytecodeStructure,
-  SupportedLanguage,
+  ExecutorFile,
   VirtualizationUnitMethods,
 } from "../types";
 
 class Executor extends EventEmitter {
   private static readonly _API_TOKEN = "rBzCg5dLhoBdXdC15vNa2";
 
+  public currentFile?: ExecutorFile;
   public gasEstimate?: string;
+  public nargs?: number;
 
   private _bytecodeStruct?: BytecodeStructure;
 
@@ -18,16 +20,20 @@ class Executor extends EventEmitter {
     super();
   }
 
-  public async compileBytecode(
-    code: string,
-    nargs: number,
-    language: SupportedLanguage["fileExtension"],
-  ): Promise<void> {
+  public async compileBytecode(): Promise<void> {
     try {
+      if (!this.currentFile) {
+        throw new Error("file invalid");
+      }
+
+      if (!this.nargs) {
+        throw new Error("Invalid number or arguments.");
+      }
+
       const data = {
-        entrypoint_nargs: nargs,
-        language,
-        source_code: code,
+        entrypoint_nargs: this.nargs,
+        language: this.currentFile.extension,
+        source_code: this.currentFile.content,
       };
 
       const response = await fetch(
@@ -56,7 +62,6 @@ class Executor extends EventEmitter {
   }
 
   public async runBytecode(
-    args: any[],
     from: string,
     vUnitAddress: string,
     web3: Web3,
@@ -67,6 +72,10 @@ class Executor extends EventEmitter {
       }
 
       const contractInstance = new web3.eth.Contract(V_UNIT_ABI, vUnitAddress);
+
+      this.emit("contractInstantiated");
+
+      const args = await this._getUserArgs();
 
       const inputBytecode = await this._composeInput(
         this._bytecodeStruct,
@@ -82,6 +91,8 @@ class Executor extends EventEmitter {
       this.gasEstimate = (await call.estimateGas({ from })).toString();
 
       console.log("gas estimated", this.gasEstimate);
+
+      this.emit("gasEstimated");
 
       const gas = await this._getUserGas();
 
@@ -181,6 +192,14 @@ class Executor extends EventEmitter {
 
       throw new Error(JSON.stringify(e));
     }
+  }
+
+  private _getUserArgs(): Promise<any[]> {
+    return new Promise((resolve) => {
+      this.once("userArgsReceived", (args: any[]) => {
+        resolve(args);
+      });
+    });
   }
 
   private _getUserGas(): Promise<string> {
