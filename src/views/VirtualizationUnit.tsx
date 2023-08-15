@@ -21,11 +21,11 @@ const VirtualizationUnit = (): JSX.Element => {
     VirtualizationUnitData["contracts"]
   >([]);
   const [_currentContract, setCurrentContract] =
-    useState<VirtualizationUnitData["currentContract"]>();
+    useState<VirtualizationUnitData["currentContract"]>(undefined);
   const [_disabled, setDisabled] =
     useState<VirtualizationUnitData["disabled"]>(true);
   const [_gasEstimate, setGasEstimate] =
-    useState<VirtualizationUnitData["gasEstimate"]>();
+    useState<VirtualizationUnitData["gasEstimate"]>("");
   const [gas, setGas] = useState<string>("");
   const [gasOption, setGasOption] = useState<GasOption>("buffer");
 
@@ -109,13 +109,6 @@ const VirtualizationUnit = (): JSX.Element => {
     <div className="container">
       {_gasEstimate ? (
         <>
-          <div className="width-constraints">
-            <p className="disabled-text">Estimated gas: {_gasEstimate}</p>
-            <p className="disabled-text">
-              Estimated gas + 15% buffer: {calculateBuffer(_gasEstimate)}
-            </p>
-          </div>
-
           <VSCodeRadioGroup
             onChange={(e) => {
               onGasOptionChange(
@@ -126,8 +119,16 @@ const VirtualizationUnit = (): JSX.Element => {
             value={gasOption}
           >
             <label slot="label">Gas</label>
-            <VSCodeRadio value="estimate">Estimated gas</VSCodeRadio>
-            <VSCodeRadio value="buffer">Estimated gas + 15% buffer</VSCodeRadio>
+            <VSCodeRadio value="estimate">
+              Estimated gas{" "}
+              <span className="disabled-text">{_gasEstimate}</span>
+            </VSCodeRadio>
+            <VSCodeRadio value="buffer">
+              Estimated gas + 15% buffer{" "}
+              <span className="disabled-text">
+                {calculateBuffer(_gasEstimate)}
+              </span>
+            </VSCodeRadio>
             <VSCodeRadio value="custom">Custom</VSCodeRadio>
           </VSCodeRadioGroup>
           {gasOption === "custom" ? (

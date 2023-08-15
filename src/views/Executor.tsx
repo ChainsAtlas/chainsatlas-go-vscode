@@ -1,15 +1,13 @@
 import {
   VSCodeButton,
   VSCodeDivider,
-  VSCodeDropdown,
-  VSCodeOption,
   VSCodeRadio,
   VSCodeRadioGroup,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { VirtualizationUnitData, VsCodeApi } from "../types";
+import { ExecutorData, VsCodeApi } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
@@ -17,31 +15,50 @@ const vscodeApi = acquireVsCodeApi();
 type GasOption = "buffer" | "custom" | "estimate";
 
 const Executor = (): JSX.Element => {
-  const [_contracts, setContracts] = useState<
-    VirtualizationUnitData["contracts"]
-  >([]);
-  const [_currentContract, setCurrentContract] =
-    useState<VirtualizationUnitData["currentContract"]>();
-  const [_disabled, setDisabled] =
-    useState<VirtualizationUnitData["disabled"]>(true);
+  const firstRender = useRef(true);
+
+  const [_currentFile, setCurrentFile] =
+    useState<ExecutorData["currentFile"]>();
+  const [_disabled, setDisabled] = useState<ExecutorData["disabled"]>(true);
   const [_gasEstimate, setGasEstimate] =
-    useState<VirtualizationUnitData["gasEstimate"]>();
-  const [gas, setGas] = useState<string>("36408");
+    useState<ExecutorData["gasEstimate"]>();
+  const [_nargs, setNargs] = useState<ExecutorData["nargs"]>();
+  const [_userFile, setUserFile] = useState<ExecutorData["userFile"]>();
+  const [args, setArgs] = useState<string[]>([]);
+  const [compileFormOpen, setCompileFormOpen] = useState<boolean>(false);
+  const [gas, setGas] = useState<string>("");
+  const [gasEstimated, setGasEstimated] = useState<boolean>(false);
   const [gasOption, setGasOption] = useState<GasOption>("buffer");
+  const [userNargs, setUserNargs] = useState<string>("0");
 
   const calculateBuffer = (gas: string): string =>
     ((BigInt(gas) * BigInt(115)) / BigInt(100)).toString();
 
-  const onCancel = (): void => {
-    vscodeApi.postMessage({ type: "clearDeployment" });
+  const onCompile = (): void => {
+    vscodeApi.postMessage({ type: "compile", value: userNargs });
+    setArgs(Array(Number(userNargs)).fill(""));
+    setCompileFormOpen(false);
   };
 
-  const onContractChange = (contract: string): void => {
-    vscodeApi.postMessage({ type: "setContract", value: contract });
+  const onCompileCancel = (): void => {
+    setCompileFormOpen(false);
+    setUserNargs("0");
+    vscodeApi.postMessage({ type: "cancelCompile" });
   };
 
-  const onDeploy = (): void => {
-    vscodeApi.postMessage({ type: "deploy" });
+  const onEstimate = (): void => {
+    vscodeApi.postMessage({ type: "estimate", value: JSON.stringify(args) });
+  };
+
+  const onExecute = (): void => {
+    vscodeApi.postMessage({ type: "execute", value: gas });
+  };
+
+  const onExecuteCancel = (): void => {
+    setArgs(Array.from({ length: Number(_nargs) }));
+    setGas("");
+    setGasEstimated(false);
+    setGasOption("buffer");
   };
 
   const onGasOptionChange = useCallback(
@@ -67,22 +84,26 @@ const Executor = (): JSX.Element => {
     [_gasEstimate],
   );
 
-  const onSend = useCallback(() => {
-    console.log("GAS SEND:", gas);
-    vscodeApi.postMessage({ type: "send", value: gas });
-  }, [gas]);
+  const selectFile = (): void => {
+    vscodeApi.postMessage({ type: "selectFile" });
+  };
 
   const updateState = useCallback(
-    (data: VirtualizationUnitData): void => {
-      const { contracts, currentContract, disabled, gasEstimate } = data;
+    (data: ExecutorData): void => {
+      const { currentFile, disabled, gasEstimate, nargs, userFile } = data;
 
-      setContracts(contracts);
-      setCurrentContract(currentContract);
+      setCurrentFile(currentFile);
       setDisabled(disabled);
       setGasEstimate(gasEstimate);
+      setNargs(nargs);
+      setUserFile(userFile);
 
       if (!gas && gasEstimate) {
         setGas(gasEstimate);
+      }
+
+      if (gasEstimate) {
+        setGasEstimated(true);
       }
     },
     [gas],
@@ -94,55 +115,56 @@ const Executor = (): JSX.Element => {
   }, [updateState]);
 
   useEffect(() => {
-    initMessageHandler();
+    if (firstRender.current) {
+      initMessageHandler();
+      firstRender.current = false;
+    }
   }, [initMessageHandler]);
 
   return _disabled ? (
     <div className="container">
       <div className="width-constraints">
         <span className="disabled-text">
-          Connect wallet to deploy virtualization units.
+          You need to select an account and a virtualization unit to execute
+          code.
         </span>
       </div>
     </div>
   ) : (
     <div className="container">
-      {_gasEstimate ? (
+      {compileFormOpen ? (
         <>
-          <div className="width-constraints">
-            <p className="disabled-text">Estimated gas: {_gasEstimate}</p>
-            <p className="disabled-text">
-              Estimated gas + 15% buffer: {calculateBuffer(_gasEstimate)}
-            </p>
-          </div>
-
-          <VSCodeRadioGroup
-            onChange={(e) => {
-              onGasOptionChange(
-                (e.target as HTMLInputElement).value as GasOption,
-              );
-            }}
-            orientation="vertical"
-            value={gasOption}
+          <VSCodeTextField
+            className="width-constraint"
+            placeholder={_userFile ? _userFile.path : "Upload file"}
+            readOnly
+            title={_userFile?.path || undefined}
           >
-            <label slot="label">Gas</label>
-            <VSCodeRadio value="estimate">Estimated gas</VSCodeRadio>
-            <VSCodeRadio value="buffer">Estimated gas + 15% buffer</VSCodeRadio>
-            <VSCodeRadio value="custom">Custom</VSCodeRadio>
-          </VSCodeRadioGroup>
-          {gasOption === "custom" ? (
-            <VSCodeTextField
-              className="custom-gas-field width-constraint"
-              onInput={(e) => setGas((e.target as HTMLInputElement).value)}
-              value={gas}
-            />
-          ) : null}
+            File
+            <section slot="end">
+              <VSCodeButton
+                appearance="icon"
+                className="button-codicon"
+                onClick={selectFile}
+                title="Upload file"
+              >
+                <i className="codicon codicon-cloud-upload" />
+              </VSCodeButton>
+            </section>
+          </VSCodeTextField>
+          <VSCodeTextField
+            className="width-constraint"
+            onInput={(e) => setUserNargs((e.target as HTMLInputElement).value)}
+            value={userNargs}
+          >
+            Number of arguments
+          </VSCodeTextField>
           <div className="width-constraint action-button-container">
-            <VSCodeButton appearance="secondary" onClick={onCancel}>
+            <VSCodeButton appearance="secondary" onClick={onCompileCancel}>
               Cancel
             </VSCodeButton>
-            <VSCodeButton appearance="primary" onClick={onSend}>
-              Send
+            <VSCodeButton appearance="primary" onClick={onCompile}>
+              Compile
             </VSCodeButton>
           </div>
         </>
@@ -151,35 +173,115 @@ const Executor = (): JSX.Element => {
           <VSCodeButton
             appearance="primary"
             className="block-width"
-            onClick={onDeploy}
+            onClick={() => {
+              setCompileFormOpen(true);
+              selectFile();
+            }}
           >
-            Deploy
+            Compile Bytecode
           </VSCodeButton>
         </div>
       )}
       <VSCodeDivider className="width-constraint" />
-      <div className="dropdown-container">
-        <label htmlFor="contract">Contract</label>
-        <VSCodeDropdown
-          className="width-constraint"
-          disabled={!_contracts?.length}
-          id="contract"
-          onChange={(e) =>
-            onContractChange((e.target as HTMLSelectElement).value)
-          }
-          value={_contracts?.length ? _currentContract : "empty"}
-        >
-          {_contracts.length ? (
-            _contracts.map((contract) => (
-              <VSCodeOption key={contract} value={contract}>
-                {contract}
-              </VSCodeOption>
-            ))
+      {_currentFile && _nargs ? (
+        <>
+          <VSCodeTextField
+            className="width-constraint"
+            readOnly
+            title={_currentFile.path}
+            value={_currentFile.path}
+          >
+            File
+          </VSCodeTextField>
+          {args.map((_, i) => (
+            <VSCodeTextField
+              className="width-constraint"
+              key={i}
+              onInput={(e) => {
+                setArgs((currentArgs) => {
+                  const newArgs = [...currentArgs];
+                  newArgs[i] = (e.target as HTMLInputElement).value;
+                  return newArgs;
+                });
+                setGasEstimated(false);
+              }}
+              value={args[i]}
+            >
+              Argument {i + 1}
+            </VSCodeTextField>
+          ))}
+          {!gasEstimated ? (
+            <div className="width-constraint">
+              <VSCodeButton
+                appearance="primary"
+                className="block-width"
+                onClick={onEstimate}
+              >
+                Estimate Gas
+              </VSCodeButton>
+            </div>
           ) : (
-            <VSCodeOption value="empty">No contracts available.</VSCodeOption>
+            <>
+              {_gasEstimate ? (
+                <>
+                  <VSCodeRadioGroup
+                    onChange={(e) => {
+                      onGasOptionChange(
+                        (e.target as HTMLInputElement).value as GasOption,
+                      );
+                    }}
+                    orientation="vertical"
+                    value={gasOption}
+                  >
+                    <label slot="label">Gas</label>
+                    <VSCodeRadio value="estimate">
+                      Estimated gas{" "}
+                      <span className="disabled-text">{_gasEstimate}</span>
+                    </VSCodeRadio>
+                    <VSCodeRadio value="buffer">
+                      Estimated gas + 15% buffer{" "}
+                      <span className="disabled-text">
+                        {calculateBuffer(_gasEstimate)}
+                      </span>
+                    </VSCodeRadio>
+                    <VSCodeRadio value="custom">Custom</VSCodeRadio>
+                  </VSCodeRadioGroup>
+                  {gasOption === "custom" ? (
+                    <VSCodeTextField
+                      className="custom-gas-field width-constraint"
+                      onInput={(e) =>
+                        setGas((e.target as HTMLInputElement).value)
+                      }
+                      value={gas}
+                    />
+                  ) : null}
+                  <div className="width-constraint action-button-container">
+                    <VSCodeButton
+                      appearance="secondary"
+                      onClick={onExecuteCancel}
+                    >
+                      Cancel
+                    </VSCodeButton>
+                    <VSCodeButton
+                      appearance="primary"
+                      disabled={!gas}
+                      onClick={onExecute}
+                    >
+                      Execute
+                    </VSCodeButton>
+                  </div>
+                </>
+              ) : null}
+            </>
           )}
-        </VSCodeDropdown>
-      </div>
+        </>
+      ) : (
+        <div className="width-constraints">
+          <span className="disabled-text">
+            You need to compile your file before executing it.
+          </span>
+        </div>
+      )}
     </div>
   );
 };

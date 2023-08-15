@@ -14,6 +14,7 @@ type ExecutorData = {
   disabled: boolean;
   gasEstimate?: string;
   nargs?: number;
+  userFile?: ExecutorFile;
 };
 
 type ExecutorFile = {

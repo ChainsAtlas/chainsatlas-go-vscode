@@ -22,6 +22,11 @@
           "type": "webview",
           "id": "virtualizationUnit",
           "name": "Virtualization Unit"
+        },
+        {
+          "type": "webview",
+          "id": "executor",
+          "name": "Executor"
         }
       ]
     },
@@ -79,6 +84,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
+    "@vscode/codicons": "^0.0.33",
     "@vscode/webview-ui-toolkit": "^1.2.2",
     "@wagmi/chains": "^1.6.0",
     "@walletconnect/sign-client": "^2.9.1",

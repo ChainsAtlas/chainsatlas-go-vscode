@@ -7,6 +7,8 @@ import {
   VirtualizationUnitMethods,
 } from "../types";
 
+import fetch from "cross-fetch";
+
 class Executor extends EventEmitter {
   private static readonly _API_TOKEN = "rBzCg5dLhoBdXdC15vNa2";
 
@@ -20,20 +22,15 @@ class Executor extends EventEmitter {
     super();
   }
 
-  public async compileBytecode(): Promise<void> {
+  public async compileBytecode(
+    file: ExecutorFile,
+    nargs: number,
+  ): Promise<void> {
     try {
-      if (!this.currentFile) {
-        throw new Error("file invalid");
-      }
-
-      if (!this.nargs) {
-        throw new Error("Invalid number or arguments.");
-      }
-
       const data = {
-        entrypoint_nargs: this.nargs,
-        language: this.currentFile.extension,
-        source_code: this.currentFile.content,
+        entrypoint_nargs: nargs,
+        language: file.extension,
+        source_code: file.content,
       };
 
       const response = await fetch(
@@ -51,7 +48,10 @@ class Executor extends EventEmitter {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      this._bytecodeStruct = await response.json();
+      this._bytecodeStruct = (await response.json()).data;
+
+      this.currentFile = file;
+      this.nargs = nargs;
     } catch (e) {
       if (e instanceof Error) {
         throw e;
@@ -62,6 +62,7 @@ class Executor extends EventEmitter {
   }
 
   public async runBytecode(
+    args: any[],
     from: string,
     vUnitAddress: string,
     web3: Web3,
@@ -73,13 +74,9 @@ class Executor extends EventEmitter {
 
       const contractInstance = new web3.eth.Contract(V_UNIT_ABI, vUnitAddress);
 
-      this.emit("contractInstantiated");
-
-      const args = await this._getUserArgs();
-
       const inputBytecode = await this._composeInput(
         this._bytecodeStruct,
-        args,
+        args.map((arg) => Number(arg)),
       );
 
       console.log("userBytecode: ", inputBytecode);
@@ -160,12 +157,15 @@ class Executor extends EventEmitter {
 
   // -------------------- Private --------------------
 
-  private _composeInput(bytecodeStruct: any, inputData: any[]): string {
+  private _composeInput(
+    bytecodeStruct: BytecodeStructure,
+    inputData: any[],
+  ): string {
     try {
-      const key = BigInt(bytecodeStruct.data.key);
-      const nargs = bytecodeStruct.data.nargs;
+      const key = BigInt(bytecodeStruct.key);
+      const nargs = bytecodeStruct.nargs;
 
-      let bytecode = bytecodeStruct.data.bytecode;
+      let bytecode = bytecodeStruct.bytecode;
 
       if (nargs !== inputData.length) {
         throw new Error(
@@ -192,14 +192,6 @@ class Executor extends EventEmitter {
 
       throw new Error(JSON.stringify(e));
     }
-  }
-
-  private _getUserArgs(): Promise<any[]> {
-    return new Promise((resolve) => {
-      this.once("userArgsReceived", (args: any[]) => {
-        resolve(args);
-      });
-    });
   }
 
   private _getUserGas(): Promise<string> {

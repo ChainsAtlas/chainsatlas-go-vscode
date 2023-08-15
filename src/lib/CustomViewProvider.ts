@@ -41,6 +41,7 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
       localResourceRoots: [
         Uri.joinPath(this._extensionUri, "assets"),
         Uri.joinPath(this._extensionUri, "dist"),
+        Uri.joinPath(this._extensionUri, "node_modules/@vscode/codicons/dist"),
       ],
     };
 
@@ -61,6 +62,16 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
       ),
     );
 
+    const codiconsUri = view.webview.asWebviewUri(
+      Uri.joinPath(
+        this._extensionUri,
+        "node_modules",
+        "@vscode/codicons",
+        "dist",
+        "codicon.css",
+      ),
+    );
+
     const scriptUri = view.webview.asWebviewUri(
       Uri.joinPath(this._extensionUri, "dist", `${this._viewType}.js`),
     );
@@ -77,11 +88,13 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
 					and only allow scripts that have a specific nonce.
 					(See the 'webview-sample' extension sample for img-src content security policy examples)
 				-->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src * 'unsafe-inline'; script-src 'nonce-${nonce}'; img-src ${view.webview.cspSource}">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${view.webview.cspSource}; img-src ${view.webview.cspSource}; script-src 'nonce-${nonce}'; style-src * 'unsafe-inline'">
 
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 				<link href="${styleUri}" rel="stylesheet">
+        <link href="${codiconsUri}" rel="stylesheet" />
+        
 
 				<title>ChainsAtlas GO</title>
 			</head>
