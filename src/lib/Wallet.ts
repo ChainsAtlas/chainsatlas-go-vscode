@@ -55,6 +55,7 @@ class Wallet {
             rpcMap: {
               [chain.id]:
                 "https://sepolia.infura.io/v3/293dd006da85467bbcb9ee8fd02cb40b", // Hardcoded for development purposes
+              // `https://rpc.walletconnect.com?chainId=eip155:${chain.id}&projectId=${WALLETCONNECT_PROJECT_ID}`,
             },
           },
         },

@@ -118,7 +118,7 @@ const Executor = (): JSX.Element => {
 
   return _disabled ? (
     <div className="container">
-      <div className="width-constraints">
+      <div className="width-constraint">
         <span className="disabled-text">
           You need to select an account and a virtualization unit to execute
           code.
@@ -271,7 +271,7 @@ const Executor = (): JSX.Element => {
           )}
         </>
       ) : (
-        <div className="width-constraints">
+        <div className="width-constraint">
           <span className="disabled-text">
             You need to compile your file before executing it.
           </span>

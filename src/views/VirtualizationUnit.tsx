@@ -98,7 +98,7 @@ const VirtualizationUnit = (): JSX.Element => {
 
   return _disabled ? (
     <div className="container">
-      <div className="width-constraints">
+      <div className="width-constraint">
         <span className="disabled-text">
           Connect wallet to deploy virtualization units.
         </span>

@@ -2,7 +2,11 @@ import UniversalProvider from "@walletconnect/universal-provider";
 import { extname } from "path";
 import { ExtensionContext, WebviewView, window, workspace } from "vscode";
 import Web3, { FMT_BYTES, FMT_NUMBER } from "web3";
-import { SUPPORTED_CHAINS, SUPPORTED_LANGUAGES } from "../constants";
+import {
+  SUPPORTED_CHAINS,
+  SUPPORTED_LANGUAGES,
+  WALLETCONNECT_PROJECT_ID,
+} from "../constants";
 import {
   ExecutorData,
   ExecutorFile,
@@ -19,9 +23,6 @@ import VirtualizationUnit from "./VirtualizationUnit";
 import Wallet from "./Wallet";
 
 class ChainsAtlasGO {
-  private static readonly _WALLETCONNECT_PROJECT_ID =
-    "7b1ecd906a131e3a323a225589f75287";
-
   private _executor?: Executor;
   private _transactionHistory?: TransactionHistory;
   private _gasResolver?: (value: string | PromiseLike<string>) => void;
@@ -35,6 +36,8 @@ class ChainsAtlasGO {
 
   constructor(private readonly _context: ExtensionContext) {
     this._executorViewMsgHandler = this._executorViewMsgHandler.bind(this);
+    this._transactionHistoryViewMsgHandler =
+      this._transactionHistoryViewMsgHandler.bind(this);
     this._vUnitViewMsgHandler = this._vUnitViewMsgHandler.bind(this);
     this._walletViewMsgHandler = this._walletViewMsgHandler.bind(this);
   }
@@ -133,7 +136,7 @@ class ChainsAtlasGO {
   public async init(): Promise<void> {
     try {
       this._provider = await UniversalProvider.init({
-        projectId: ChainsAtlasGO._WALLETCONNECT_PROJECT_ID,
+        projectId: WALLETCONNECT_PROJECT_ID,
         metadata: {
           name: "ChainsAtlas GO",
           description: "ChainsAtlas GO VS Code",
@@ -174,13 +177,6 @@ class ChainsAtlasGO {
             if (!this._userFile) {
               throw new Error("Invalid file.");
             }
-
-            console.log(
-              "FILE:",
-              this._userFile,
-              "NARGS:",
-              Number(message.value),
-            );
 
             await this._executor.compileBytecode(
               this._userFile,
