@@ -38,7 +38,12 @@ class ChainsAtlasGO {
 
   public async addView(view: WebviewView): Promise<void> {
     try {
-      if (!this._provider || !this._wallet || !this._virtualizationUnit) {
+      if (
+        !this._provider ||
+        !this._wallet ||
+        !this._virtualizationUnit ||
+        !this._executor
+      ) {
         throw new Error("Call init() before adding views.");
       }
 

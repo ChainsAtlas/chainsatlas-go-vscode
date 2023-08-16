@@ -23,6 +23,17 @@ type ExecutorFile = {
   path: string;
 };
 
+type HistoryData = {
+  disabled: boolean;
+  rows: HistoryRow[];
+};
+
+type HistoryRow = {
+  output: string;
+  transactionHash: string;
+  transactionUrl: string;
+};
+
 type SupportedLanguage = "c" | "js";
 
 type ViewMap = Record<ViewType, WebviewView>;
@@ -68,6 +79,8 @@ export {
   BytecodeStructure,
   ExecutorData,
   ExecutorFile,
+  HistoryData,
+  HistoryRow,
   SupportedLanguage,
   ViewMap,
   ViewType,
