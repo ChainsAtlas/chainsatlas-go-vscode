@@ -1,11 +1,8 @@
-import type { Chain } from "@wagmi/chains";
-import * as chains from "@wagmi/chains";
 import { ProviderAccounts } from "@walletconnect/universal-provider";
 import UniversalProvider from "@walletconnect/universal-provider/dist/types/UniversalProvider";
+import { SUPPORTED_CHAINS } from "../constants";
 
 class Wallet {
-  public static readonly CHAINS: Chain[] = Object.values(chains);
-
   private static readonly _EIP155_EVENTS = ["chainChanged", "accountsChanged"];
   private static readonly _EIP155_METHODS = [
     "eth_sendTransaction",
@@ -16,7 +13,7 @@ class Wallet {
   ];
 
   public accounts?: ProviderAccounts;
-  public chain: Chain = chains.sepolia;
+  public chain = SUPPORTED_CHAINS.find((chain) => chain.id === 11_155_111); // sepolia
   public currentAccount?: string;
   public isConnected?: boolean;
   public uri?: string;
@@ -40,7 +37,7 @@ class Wallet {
 
       await this.disconnect();
 
-      const chain = Wallet.CHAINS.find((c) => c.id === id);
+      const chain = SUPPORTED_CHAINS.find((c) => c.id === id);
 
       if (!chain) {
         throw new Error("invalid chain id.");

@@ -8,7 +8,10 @@ const activate = async (context: ExtensionContext): Promise<void> => {
 
   const viewProviders = {
     executor: new CustomViewProvider(context.extensionUri, "executor"),
-    history: new CustomViewProvider(context.extensionUri, "history"),
+    transactionHistory: new CustomViewProvider(
+      context.extensionUri,
+      "transactionHistory",
+    ),
     virtualizationUnit: new CustomViewProvider(
       context.extensionUri,
       "virtualizationUnit",

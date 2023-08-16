@@ -5,7 +5,7 @@ import { VsCodeApi } from "../types";
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
-const History = (): JSX.Element => {
+const TransactionHistory = (): JSX.Element => {
   const updateState = useCallback((data: any): void => {}, []);
 
   useEffect(() => {
@@ -21,4 +21,4 @@ const History = (): JSX.Element => {
 };
 
 const root = createRoot(document.getElementById("root") as HTMLElement);
-root.render(<History />);
+root.render(<TransactionHistory />);

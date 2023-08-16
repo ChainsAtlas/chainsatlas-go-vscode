@@ -1,7 +1,7 @@
 import { Chain } from "@wagmi/chains";
 import { ProviderAccounts } from "@walletconnect/universal-provider";
 import { WebviewView } from "vscode";
-import { FMT_BYTES, FMT_NUMBER, NonPayableCallOptions } from "web3";
+import { Bytes, FMT_BYTES, FMT_NUMBER, NonPayableCallOptions } from "web3";
 
 type BytecodeStructure = {
   bytecode: string;
@@ -23,14 +23,14 @@ type ExecutorFile = {
   path: string;
 };
 
-type HistoryData = {
+type TransactionHistoryData = {
   disabled: boolean;
-  rows: HistoryRow[];
+  rows: TransactionHistoryRow[];
 };
 
-type HistoryRow = {
+type TransactionHistoryRow = {
   output: string;
-  transactionHash: string;
+  transactionHash: Bytes;
   transactionUrl: string;
 };
 
@@ -38,7 +38,11 @@ type SupportedLanguage = "c" | "js";
 
 type ViewMap = Record<ViewType, WebviewView>;
 
-type ViewType = "executor" | "history" | "virtualizationUnit" | "wallet";
+type ViewType =
+  | "executor"
+  | "transactionHistory"
+  | "virtualizationUnit"
+  | "wallet";
 
 type VirtualizationUnitData = {
   contracts: string[];
@@ -79,9 +83,9 @@ export {
   BytecodeStructure,
   ExecutorData,
   ExecutorFile,
-  HistoryData,
-  HistoryRow,
   SupportedLanguage,
+  TransactionHistoryData,
+  TransactionHistoryRow,
   ViewMap,
   ViewType,
   VirtualizationUnitData,

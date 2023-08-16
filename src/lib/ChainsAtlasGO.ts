@@ -2,17 +2,19 @@ import UniversalProvider from "@walletconnect/universal-provider";
 import { extname } from "path";
 import { ExtensionContext, WebviewView, window, workspace } from "vscode";
 import Web3, { FMT_BYTES, FMT_NUMBER } from "web3";
-import { SUPPORTED_LANGUAGES } from "../constants";
+import { SUPPORTED_CHAINS, SUPPORTED_LANGUAGES } from "../constants";
 import {
   ExecutorData,
   ExecutorFile,
   SupportedLanguage,
+  TransactionHistoryData,
   ViewMap,
   ViewType,
   VirtualizationUnitData,
   WalletData,
 } from "../types";
 import Executor from "./Executor";
+import TransactionHistory from "./TransactionHistory";
 import VirtualizationUnit from "./VirtualizationUnit";
 import Wallet from "./Wallet";
 
@@ -21,6 +23,7 @@ class ChainsAtlasGO {
     "7b1ecd906a131e3a323a225589f75287";
 
   private _executor?: Executor;
+  private _transactionHistory?: TransactionHistory;
   private _gasResolver?: (value: string | PromiseLike<string>) => void;
   private _provider?: UniversalProvider;
   private _userFile?: ExecutorFile;
@@ -42,7 +45,8 @@ class ChainsAtlasGO {
         !this._provider ||
         !this._wallet ||
         !this._virtualizationUnit ||
-        !this._executor
+        !this._executor ||
+        !this._transactionHistory
       ) {
         throw new Error("Call init() before adding views.");
       }
@@ -64,6 +68,18 @@ class ChainsAtlasGO {
           } catch (e) {
             console.error(e);
           }
+          break;
+        case "transactionHistory":
+          try {
+            view.webview.onDidReceiveMessage(
+              this._transactionHistoryViewMsgHandler,
+              undefined,
+              this._context.subscriptions,
+            );
+          } catch (e) {
+            console.error(e);
+          }
+          break;
         case "virtualizationUnit":
           try {
             view.webview.onDidReceiveMessage(
@@ -129,6 +145,7 @@ class ChainsAtlasGO {
       });
 
       this._executor = new Executor();
+      this._transactionHistory = new TransactionHistory();
       this._virtualizationUnit = new VirtualizationUnit();
       this._wallet = new Wallet(this._provider);
     } catch (e) {
@@ -141,7 +158,6 @@ class ChainsAtlasGO {
   private async _executorViewMsgHandler(message: {
     type: string;
     value?: string;
-    args?: any[];
   }): Promise<void> {
     try {
       switch (message.type) {
@@ -205,6 +221,10 @@ class ChainsAtlasGO {
               throw new Error("Executor not initialized.");
             }
 
+            if (!this._transactionHistory) {
+              throw new Error("TransactionHistory not initialized.");
+            }
+
             if (!this._virtualizationUnit) {
               throw new Error("VirtualizationUnit not initialized.");
             }
@@ -251,9 +271,13 @@ class ChainsAtlasGO {
                 this._web3,
               );
 
-            console.log(transactionHash, output);
+            this._transactionHistory.addRow({
+              output,
+              transactionHash,
+              transactionUrl: `${this._wallet.chain?.blockExplorers?.default.url}/tx/${transactionHash}`,
+            });
 
-            this._syncView(["wallet", "executor"]);
+            this._syncView(["wallet", "executor", "transactionHistory"]);
           } catch (e) {
             console.error(e);
           }
@@ -269,11 +293,43 @@ class ChainsAtlasGO {
             console.error(e);
           }
           break;
+        case "ready":
+          try {
+            this._syncView(["executor"]);
+          } catch (e) {
+            console.error(e);
+          }
+          break;
         case "selectFile":
           try {
             await this._getUserFile();
 
             this._syncView(["executor"]);
+          } catch (e) {
+            console.error(e);
+          }
+          break;
+        default:
+          break;
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        throw e;
+      }
+
+      throw new Error(JSON.stringify(e));
+    }
+  }
+
+  private async _transactionHistoryViewMsgHandler(message: {
+    type: string;
+    value?: string;
+  }): Promise<void> {
+    try {
+      switch (message.type) {
+        case "ready":
+          try {
+            this._syncView(["transactionHistory"]);
           } catch (e) {
             console.error(e);
           }
@@ -384,12 +440,6 @@ class ChainsAtlasGO {
             console.error(e);
           }
           break;
-        case "sync":
-          try {
-            this._syncView(["virtualizationUnit"]);
-          } catch (e) {
-            console.error(e);
-          }
         default:
           break;
       }
@@ -418,13 +468,23 @@ class ChainsAtlasGO {
       switch (message.type) {
         case "changeAccount":
           try {
+            if (!this._transactionHistory) {
+              throw new Error("TransactionHistory not initialized.");
+            }
             if (
               message.value &&
               this._wallet.accounts?.includes(message.value)
             ) {
               this._wallet.currentAccount = message.value;
+              this._transactionHistory.currentAccount = message.value;
+              this._transactionHistory.clear();
 
-              this._syncView(["wallet", "virtualizationUnit", "executor"]);
+              this._syncView([
+                "wallet",
+                "virtualizationUnit",
+                "executor",
+                "transactionHistory",
+              ]);
             } else {
               throw new Error("Invalid account.");
             }
@@ -434,44 +494,68 @@ class ChainsAtlasGO {
           break;
         case "connect":
           try {
+            if (!this._transactionHistory) {
+              throw new Error("TransactionHistory not initialized.");
+            }
+
+            if (!this._virtualizationUnit) {
+              throw new Error("VirtualizationUnit not initialized.");
+            }
+
             await this._wallet.connect(Number(message.value));
 
             this._web3 = new Web3(this._provider);
 
-            if (this._virtualizationUnit) {
-              this._virtualizationUnit.clearDeployment();
-              this._virtualizationUnit.contracts = [];
-              this._virtualizationUnit.currentContract = undefined;
-            }
+            this._virtualizationUnit.clearDeployment();
+            this._virtualizationUnit.contracts = [];
+            this._virtualizationUnit.currentContract = undefined;
 
-            this._syncView(["wallet", "virtualizationUnit", "executor"]);
+            this._transactionHistory.clear();
+
+            this._transactionHistory.currentAccount =
+              this._wallet.currentAccount;
+
+            this._syncView([
+              "wallet",
+              "virtualizationUnit",
+              "executor",
+              "transactionHistory",
+            ]);
           } catch (e) {
             console.error(e);
           }
           break;
         case "disconnect":
           try {
-            await this._wallet.disconnect();
-
-            if (this._virtualizationUnit) {
-              this._virtualizationUnit.clearDeployment();
-              this._virtualizationUnit.contracts = [];
-              this._virtualizationUnit.currentContract = undefined;
+            if (!this._transactionHistory) {
+              throw new Error("TransactionHistory not initialized.");
             }
 
-            this._syncView(["wallet", "virtualizationUnit", "executor"]);
+            if (!this._virtualizationUnit) {
+              throw new Error("VirtualizationUnit not initialized.");
+            }
+
+            await this._wallet.disconnect();
+
+            this._virtualizationUnit.clearDeployment();
+            this._virtualizationUnit.contracts = [];
+            this._virtualizationUnit.currentContract = undefined;
+
+            this._transactionHistory.clear();
+            this._transactionHistory.currentAccount =
+              this._wallet.currentAccount;
+
+            this._syncView([
+              "wallet",
+              "virtualizationUnit",
+              "executor",
+              "transactionHistory",
+            ]);
           } catch (e) {
             console.error(e);
           }
           break;
         case "ready":
-          try {
-            this._syncView(["wallet"]);
-          } catch (e) {
-            console.error(e);
-          }
-          break;
-        case "sync":
           try {
             this._syncView(["wallet"]);
           } catch (e) {
@@ -505,16 +589,41 @@ class ChainsAtlasGO {
       }
 
       const { currentFile, gasEstimate, nargs } = this._executor;
+      const { currentContract } = this._virtualizationUnit;
+      const { currentAccount } = this._wallet;
 
       return {
         currentFile,
-        disabled: !Boolean(
-          this._wallet.currentAccount &&
-            this._virtualizationUnit.currentContract,
-        ),
+        disabled: !Boolean(currentAccount && currentContract),
         gasEstimate,
         nargs,
         userFile: this._userFile,
+      };
+    } catch (e) {
+      if (e instanceof Error) {
+        throw e;
+      }
+
+      throw new Error(JSON.stringify(e));
+    }
+  }
+
+  private _generateTxHistoryData(): TransactionHistoryData {
+    try {
+      if (!this._transactionHistory) {
+        throw new Error("TransactionHistory not initialized.");
+      }
+
+      if (!this._wallet) {
+        throw new Error("Wallet not initialized.");
+      }
+
+      const { rows } = this._transactionHistory;
+      const { currentAccount } = this._wallet;
+
+      return {
+        disabled: !Boolean(currentAccount),
+        rows,
       };
     } catch (e) {
       if (e instanceof Error) {
@@ -537,11 +646,12 @@ class ChainsAtlasGO {
 
       const { contracts, currentContract, gasEstimate } =
         this._virtualizationUnit;
+      const { currentAccount } = this._wallet;
 
       return {
         contracts,
         currentContract,
-        disabled: !Boolean(this._wallet.currentAccount),
+        disabled: !Boolean(currentAccount),
         gasEstimate,
       };
     } catch (e) {
@@ -562,11 +672,15 @@ class ChainsAtlasGO {
       const { accounts, currentAccount, chain, isConnected, uri } =
         this._wallet;
 
+      if (!chain) {
+        throw new Error("Invalid chain.");
+      }
+
       return {
         accounts,
         balance: await this._getBalance(currentAccount, chain?.id.toString()),
         chain,
-        chains: Wallet.CHAINS,
+        chains: SUPPORTED_CHAINS,
         currentAccount,
         isConnected,
         uri,
@@ -660,7 +774,7 @@ class ChainsAtlasGO {
   private _isViewType(value: any): value is ViewType {
     return (
       value === "executor" ||
-      value === "history" ||
+      value === "transactionHistory" ||
       value === "virtualizationUnit" ||
       value === "wallet"
     );
@@ -669,7 +783,10 @@ class ChainsAtlasGO {
   private async _syncView(viewTypes: ViewType[]): Promise<void> {
     for (const type of viewTypes) {
       switch (type) {
-        case "history":
+        case "transactionHistory":
+          this._viewMap.transactionHistory?.webview.postMessage(
+            await this._generateTxHistoryData(),
+          );
           break;
         case "executor":
           this._viewMap.executor?.webview.postMessage(
