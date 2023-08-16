@@ -79,26 +79,15 @@ class Executor extends EventEmitter {
         args.map((arg) => Number(arg)),
       );
 
-      console.log("userBytecode: ", inputBytecode);
-
       const call = (
         contractInstance.methods as unknown as VirtualizationUnitMethods
       ).runBytecode(inputBytecode);
 
       this.gasEstimate = (await call.estimateGas({ from })).toString();
 
-      console.log("gas estimated", this.gasEstimate);
-
       this.emit("gasEstimated");
 
       const gas = await this._getUserGas();
-
-      console.log(
-        "vUNit:",
-        vUnitAddress,
-        "instance:",
-        contractInstance.options.address,
-      );
 
       const tx = {
         to: contractInstance.options.address,
@@ -107,11 +96,7 @@ class Executor extends EventEmitter {
         from,
       };
 
-      console.log("sending transaction");
-
       const { transactionHash, logs } = await web3.eth.sendTransaction(tx);
-
-      console.log("transaction hash: ", transactionHash);
 
       const eventAbi = contractInstance.options.jsonInterface.find(
         (jsonInterface) =>
@@ -119,8 +104,6 @@ class Executor extends EventEmitter {
           (jsonInterface as AbiFragment & { name: string; signature: string })
             .name === "ContractDeployed",
       );
-
-      console.log("found event abi:", eventAbi);
 
       const decodedLogs = logs.map((log) => {
         if (eventAbi && eventAbi.inputs && log.topics) {
@@ -135,15 +118,11 @@ class Executor extends EventEmitter {
 
       const bytecodeAddress = decodedLogs[0]?.bytecodeAddress;
 
-      console.log("bytecode address: ", bytecodeAddress);
-
       const output = await (
         contractInstance.methods as unknown as VirtualizationUnitMethods
       )
         .getRuntimeReturn(bytecodeAddress as string)
         .call();
-
-      console.log("Output: ", output);
 
       return { transactionHash, output };
     } catch (e) {

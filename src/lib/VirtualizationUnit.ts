@@ -25,13 +25,9 @@ class VirtualizationUnit extends EventEmitter {
 
       const contract = new web3.eth.Contract(V_UNIT_ABI);
 
-      console.log("Contract created");
-
       const deployment = contract.deploy({
         data: V_UNIT_BYTECODE,
       });
-
-      console.log("contract deployed");
 
       this.gasEstimate = await deployment.estimateGas(
         { from },

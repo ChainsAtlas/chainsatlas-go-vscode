@@ -96,14 +96,14 @@ const Wallet = (): JSX.Element => {
     [connect],
   );
 
-  const initMessageHandler = useCallback((): void => {
+  useEffect(() => {
     window.addEventListener("message", (event) => updateState(event.data));
     vscodeApi.postMessage({ type: "ready" });
-  }, [updateState]);
 
-  useEffect(() => {
-    initMessageHandler();
-  }, [initMessageHandler]);
+    return () => {
+      window.removeEventListener("message", (event) => updateState(event.data));
+    };
+  }, [updateState]);
 
   return _chains && _chain ? (
     <div className="container">

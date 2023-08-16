@@ -5,7 +5,7 @@ import {
   VSCodeRadioGroup,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { ExecutorData, VsCodeApi } from "../types";
 
@@ -15,8 +15,6 @@ const vscodeApi = acquireVsCodeApi();
 type GasOption = "buffer" | "custom" | "estimate";
 
 const Executor = (): JSX.Element => {
-  const firstRender = useRef(true);
-
   const [_currentFile, setCurrentFile] =
     useState<ExecutorData["currentFile"]>();
   const [_disabled, setDisabled] = useState<ExecutorData["disabled"]>(true);
@@ -88,38 +86,35 @@ const Executor = (): JSX.Element => {
     vscodeApi.postMessage({ type: "selectFile" });
   };
 
-  const updateState = useCallback(
-    (data: ExecutorData): void => {
-      const { currentFile, disabled, gasEstimate, nargs, userFile } = data;
+  const updateState = useCallback((data: ExecutorData): void => {
+    const { currentFile, disabled, gasEstimate, nargs, userFile } = data;
 
-      setCurrentFile(currentFile);
-      setDisabled(disabled);
-      setGasEstimate(gasEstimate);
-      setNargs(nargs);
-      setUserFile(userFile);
+    setCurrentFile(currentFile);
+    setDisabled(disabled);
+    setGasEstimate(gasEstimate);
+    setNargs(nargs);
+    setUserFile(userFile);
 
-      if (!gas && gasEstimate) {
-        setGas(gasEstimate);
+    if (gasEstimate) {
+      setGasEstimated(true);
+    }
+
+    setGas((prevGas) => {
+      if (!prevGas && gasEstimate) {
+        return gasEstimate;
       }
-
-      if (gasEstimate) {
-        setGasEstimated(true);
-      }
-    },
-    [gas],
-  );
-
-  const initMessageHandler = useCallback((): void => {
-    window.addEventListener("message", (event) => updateState(event.data));
-    vscodeApi.postMessage({ type: "ready" });
-  }, [updateState]);
+      return prevGas;
+    });
+  }, []);
 
   useEffect(() => {
-    if (firstRender.current) {
-      initMessageHandler();
-      firstRender.current = false;
-    }
-  }, [initMessageHandler]);
+    window.addEventListener("message", (event) => updateState(event.data));
+    vscodeApi.postMessage({ type: "ready" });
+
+    return () => {
+      window.removeEventListener("message", (event) => updateState(event.data));
+    };
+  }, [updateState]);
 
   return _disabled ? (
     <div className="container">

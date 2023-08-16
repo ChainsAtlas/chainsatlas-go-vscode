@@ -68,34 +68,37 @@ const VirtualizationUnit = (): JSX.Element => {
   );
 
   const onSend = useCallback(() => {
-    console.log("GAS SEND:", gas);
     vscodeApi.postMessage({ type: "send", value: gas });
   }, [gas]);
 
-  const updateState = useCallback(
-    (data: VirtualizationUnitData): void => {
-      const { contracts, currentContract, disabled, gasEstimate } = data;
+  const updateState = useCallback((data: VirtualizationUnitData): void => {
+    const { contracts, currentContract, disabled, gasEstimate } = data;
 
-      setContracts(contracts);
-      setCurrentContract(currentContract);
-      setDisabled(disabled);
-      setGasEstimate(gasEstimate);
+    setContracts(contracts);
+    setCurrentContract(currentContract);
+    setDisabled(disabled);
+    setGasEstimate(gasEstimate);
 
-      if (!gas && gasEstimate) {
-        setGas(gasEstimate);
+    setGas((prevGas) => {
+      if (!prevGas && gasEstimate) {
+        return gasEstimate;
       }
-    },
-    [gas],
-  );
+      return prevGas;
+    });
+  }, []);
 
-  const initMessageHandler = useCallback((): void => {
+  useEffect(() => {
     window.addEventListener("message", (event) => updateState(event.data));
     vscodeApi.postMessage({ type: "ready" });
+
+    return () => {
+      window.removeEventListener("message", (event) => updateState(event.data));
+    };
   }, [updateState]);
 
   useEffect(() => {
-    initMessageHandler();
-  }, [initMessageHandler]);
+    console.log("GAS:", gas);
+  }, [gas]);
 
   return _disabled ? (
     <div className="container">
