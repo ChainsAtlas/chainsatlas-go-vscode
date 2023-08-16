@@ -1,5 +1,4 @@
 //@ts-check
-
 "use strict";
 
 const path = require("path");
@@ -52,10 +51,10 @@ const extensionConfig = {
   },
 };
 
-const executorViewConfig = {
-  entry: "./src/views/Executor.tsx",
+const commonViewConfig = (entryPath, outputFilename) => ({
+  entry: entryPath,
   output: {
-    filename: "executor.js",
+    filename: outputFilename,
     path: path.resolve(__dirname, "dist"),
   },
   resolve: {
@@ -85,81 +84,15 @@ const executorViewConfig = {
     }),
   ],
   mode: "production",
-};
-
-const virtualizationUnitViewConfig = {
-  entry: "./src/views/VirtualizationUnit.tsx",
-  output: {
-    filename: "virtualizationUnit.js",
-    path: path.resolve(__dirname, "dist"),
-  },
-  resolve: {
-    extensions: [".tsx", ".ts", ".js", ".json"],
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(ts|js)x?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: [
-              "@babel/preset-env",
-              "@babel/preset-react",
-              "@babel/preset-typescript",
-            ],
-          },
-        },
-      },
-    ],
-  },
-  plugins: [
-    new webpack.ProvidePlugin({
-      React: "react",
-    }),
-  ],
-  mode: "production",
-};
-
-const walletViewConfig = {
-  entry: "./src/views/Wallet.tsx",
-  output: {
-    filename: "wallet.js",
-    path: path.resolve(__dirname, "dist"),
-  },
-  resolve: {
-    extensions: [".tsx", ".ts", ".js", ".json"],
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(ts|js)x?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: [
-              "@babel/preset-env",
-              "@babel/preset-react",
-              "@babel/preset-typescript",
-            ],
-          },
-        },
-      },
-    ],
-  },
-  plugins: [
-    new webpack.ProvidePlugin({
-      React: "react",
-    }),
-  ],
-  mode: "production",
-};
+});
 
 module.exports = [
-  executorViewConfig,
   extensionConfig,
-  virtualizationUnitViewConfig,
-  walletViewConfig,
+  commonViewConfig("./src/views/Executor.tsx", "executor.js"),
+  commonViewConfig("./src/views/History.tsx", "history.js"),
+  commonViewConfig(
+    "./src/views/VirtualizationUnit.tsx",
+    "virtualizationUnit.js",
+  ),
+  commonViewConfig("./src/views/Wallet.tsx", "wallet.js"),
 ];

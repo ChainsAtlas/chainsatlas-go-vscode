@@ -96,10 +96,6 @@ const VirtualizationUnit = (): JSX.Element => {
     };
   }, [updateState]);
 
-  useEffect(() => {
-    console.log("GAS:", gas);
-  }, [gas]);
-
   return _disabled ? (
     <div className="container">
       <div className="width-constraints">

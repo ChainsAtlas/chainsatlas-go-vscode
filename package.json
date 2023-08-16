@@ -27,6 +27,11 @@
           "type": "webview",
           "id": "executor",
           "name": "Executor"
+        },
+        {
+          "type": "webview",
+          "id": "history",
+          "name": "History"
         }
       ]
     },
