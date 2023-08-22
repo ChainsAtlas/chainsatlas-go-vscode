@@ -22,7 +22,7 @@ class Wallet {
 
   constructor(private readonly _provider: UniversalProvider) {}
 
-  public async connect(id: number): Promise<void> {
+  public connect = async (id: number): Promise<void> => {
     try {
       this._controller.abort();
 
@@ -76,9 +76,9 @@ class Wallet {
 
       throw new Error(JSON.stringify(e));
     }
-  }
+  };
 
-  public async disconnect(): Promise<void> {
+  public disconnect = async (): Promise<void> => {
     try {
       if (this._provider.session) {
         await this._provider.disconnect();
@@ -96,7 +96,7 @@ class Wallet {
     this.accounts = undefined;
     this.currentAccount = undefined;
     this.isConnected = false;
-  }
+  };
 }
 
 export default Wallet;

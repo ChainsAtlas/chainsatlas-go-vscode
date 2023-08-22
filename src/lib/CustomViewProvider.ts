@@ -21,19 +21,19 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
     super();
   }
 
-  public dispose(): void {
+  public dispose = (): void => {
     this._disposable?.dispose();
-  }
+  };
 
-  public register(): void {
+  public register = (): void => {
     this._disposable = window.registerWebviewViewProvider(this._viewType, this);
-  }
+  };
 
-  public resolveWebviewView(
+  public resolveWebviewView = (
     webviewView: WebviewView,
     _context: WebviewViewResolveContext,
     _token: CancellationToken,
-  ): void {
+  ): void => {
     this._view = webviewView;
 
     this._view.webview.options = {
@@ -48,11 +48,11 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
     this._view.webview.html = this._getHtmlForWebview(this._view);
 
     this.emit("viewResolved", this._view);
-  }
+  };
 
   // -------------------- Private --------------------
 
-  private _getHtmlForWebview(view: WebviewView): string {
+  private _getHtmlForWebview = (view: WebviewView): string => {
     const styleUri = view.webview.asWebviewUri(
       Uri.joinPath(
         this._extensionUri,
@@ -103,9 +103,9 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
-  }
+  };
 
-  private _getNonce(): string {
+  private _getNonce = (): string => {
     let text = "";
     const possible =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -113,7 +113,7 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
-  }
+  };
 }
 
 export default CustomViewProvider;

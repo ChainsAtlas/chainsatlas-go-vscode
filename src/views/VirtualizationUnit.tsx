@@ -9,6 +9,7 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { TRANSACTION_STATUS_LABEL } from "../constants";
 import { VirtualizationUnitData, VsCodeApi } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
@@ -20,10 +21,14 @@ const VirtualizationUnit = (): JSX.Element => {
   const [_contracts, setContracts] = useState<
     VirtualizationUnitData["contracts"]
   >([]);
+  const [_contractTransactionStatus, setContractTransactionStatus] =
+    useState<VirtualizationUnitData["contractTransactionStatus"]>(undefined);
   const [_currentContract, setCurrentContract] =
     useState<VirtualizationUnitData["currentContract"]>(undefined);
   const [_disabled, setDisabled] =
     useState<VirtualizationUnitData["disabled"]>(true);
+  const [_estimating, setEstimating] =
+    useState<VirtualizationUnitData["estimating"]>(false);
   const [_gasEstimate, setGasEstimate] =
     useState<VirtualizationUnitData["gasEstimate"]>("");
   const [gas, setGas] = useState<string>("");
@@ -72,11 +77,20 @@ const VirtualizationUnit = (): JSX.Element => {
   }, [gas]);
 
   const updateState = useCallback((data: VirtualizationUnitData): void => {
-    const { contracts, currentContract, disabled, gasEstimate } = data;
+    const {
+      contracts,
+      contractTransactionStatus,
+      currentContract,
+      disabled,
+      estimating,
+      gasEstimate,
+    } = data;
 
     setContracts(contracts);
+    setContractTransactionStatus(contractTransactionStatus);
     setCurrentContract(currentContract);
     setDisabled(disabled);
+    setEstimating(estimating);
     setGasEstimate(gasEstimate);
 
     setGas((prevGas) => {
@@ -138,11 +152,24 @@ const VirtualizationUnit = (): JSX.Element => {
             />
           ) : null}
           <div className="width-constraint action-button-container">
-            <VSCodeButton appearance="secondary" onClick={onCancel}>
+            <VSCodeButton
+              appearance="secondary"
+              disabled={
+                _contractTransactionStatus === "sending" ||
+                _contractTransactionStatus === "sent"
+              }
+              onClick={onCancel}
+            >
               Cancel
             </VSCodeButton>
-            <VSCodeButton appearance="primary" onClick={onSend}>
-              Send
+            <VSCodeButton
+              appearance="primary"
+              disabled={_contractTransactionStatus !== undefined}
+              onClick={onSend}
+            >
+              {_contractTransactionStatus
+                ? TRANSACTION_STATUS_LABEL[_contractTransactionStatus]
+                : "Send"}
             </VSCodeButton>
           </div>
         </>
@@ -151,9 +178,10 @@ const VirtualizationUnit = (): JSX.Element => {
           <VSCodeButton
             appearance="primary"
             className="block-width"
+            disabled={_estimating}
             onClick={onDeploy}
           >
-            Deploy
+            {_estimating ? "Estimating Gas" : "Deploy"}
           </VSCodeButton>
         </div>
       )}

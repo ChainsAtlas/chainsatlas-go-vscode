@@ -1,59 +1,70 @@
 import EventEmitter from "events";
 import { FMT_BYTES, FMT_NUMBER, type Web3 } from "web3";
 import { V_UNIT_ABI, V_UNIT_BYTECODE } from "../constants";
+import { ContractTransactionStatus } from "../types";
 
 class VirtualizationUnit extends EventEmitter {
   public contracts: string[] = [];
+  public contractTransactionStatus?: ContractTransactionStatus;
   public currentContract?: string;
+  public estimating = false;
   public gasEstimate?: string;
-
-  private _controller = new AbortController();
 
   constructor() {
     super();
   }
 
-  public async deploy(from: string, web3: Web3): Promise<void> {
+  public deploy = async (from: string, web3: Web3): Promise<void> => {
     try {
-      this._controller.abort();
+      this.estimating = true;
 
-      this._controller.signal.addEventListener("abort", () => {
-        this.clearDeployment();
-
-        throw new Error("Aborted!");
-      });
+      this.emit("sync");
 
       const contract = new web3.eth.Contract(V_UNIT_ABI);
 
-      const deployment = contract.deploy({
-        data: V_UNIT_BYTECODE,
-      });
+      const deployment = contract.deploy({ data: V_UNIT_BYTECODE });
 
       this.gasEstimate = await deployment.estimateGas(
         { from },
         { number: FMT_NUMBER.STR, bytes: FMT_BYTES.HEX },
       );
 
-      this.emit("contractDeployed");
+      this.estimating = false;
+
+      this.emit("gasEstimated");
 
       const gas = await this._getUserGas();
 
-      const contractInstance = await deployment.send({ from, gas });
+      deployment
+        .send({ from, gas })
+        .on("sending", () => {
+          this.contractTransactionStatus = "sending";
+          this.emit("sync");
+        })
+        .on("sent", () => {
+          this.contractTransactionStatus = "sent";
+          this.emit("sync");
+        })
+        .on("confirmation", ({ receipt }) => {
+          this.clearDeployment();
 
-      contractInstance;
+          const { contractAddress } = receipt;
 
-      const { address } = contractInstance.options;
+          if (contractAddress) {
+            this.contracts.push(contractAddress);
+            this.currentContract = contractAddress;
 
-      if (address) {
-        this.contracts.push(address);
-        this.currentContract = address;
-      } else {
-        throw new Error("Invalid contract address.");
-      }
+            this.emit("sync");
+          }
 
-      this.clearDeployment();
+          throw new Error("Invalid contract address.");
+        })
+        .on("error", (e) => {
+          this.contractTransactionStatus = "error";
+          this.emit("sync");
 
-      this.emit("contractSent");
+          throw e;
+        });
     } catch (e) {
       if (e instanceof Error) {
         throw e;
@@ -61,21 +72,22 @@ class VirtualizationUnit extends EventEmitter {
 
       throw new Error(JSON.stringify(e));
     }
-  }
+  };
 
-  public clearDeployment(): void {
+  public clearDeployment = (): void => {
     this.gasEstimate = undefined;
-  }
+    this.contractTransactionStatus = undefined;
+  };
 
   // -------------------- Private --------------------
 
-  private _getUserGas(): Promise<string> {
+  private _getUserGas = (): Promise<string> => {
     return new Promise((resolve) => {
       this.once("userGasReceived", (gas: string) => {
         resolve(gas);
       });
     });
-  }
+  };
 }
 
 export default VirtualizationUnit;

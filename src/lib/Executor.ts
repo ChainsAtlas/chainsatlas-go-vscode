@@ -3,8 +3,8 @@ import Web3, { AbiFragment, AbiParameter, Bytes } from "web3";
 import { V_UNIT_ABI } from "../constants";
 import {
   BytecodeStructure,
+  ContractTransactionStatus,
   ExecutorFile,
-  VirtualizationUnitMethods,
 } from "../types";
 
 import fetch from "cross-fetch";
@@ -12,9 +12,14 @@ import fetch from "cross-fetch";
 class Executor extends EventEmitter {
   private static readonly _API_TOKEN = "rBzCg5dLhoBdXdC15vNa2";
 
+  public compiling = false;
+  public contractTransactionStatus?: ContractTransactionStatus;
   public currentFile?: ExecutorFile;
+  public estimating = false;
   public gasEstimate?: string;
   public nargs?: number;
+  public output?: Bytes;
+  public transactionHash?: Bytes;
 
   private _bytecodeStruct?: BytecodeStructure;
 
@@ -22,11 +27,23 @@ class Executor extends EventEmitter {
     super();
   }
 
-  public async compileBytecode(
+  public cancelExecution = (): void => {
+    this.contractTransactionStatus = undefined;
+    this.gasEstimate = undefined;
+  };
+
+  public compileBytecode = async (
     file: ExecutorFile,
     nargs: number,
-  ): Promise<void> {
+  ): Promise<void> => {
     try {
+      this._bytecodeStruct = undefined;
+      this.compiling = true;
+      this.currentFile = undefined;
+      this.nargs = undefined;
+
+      this.emit("sync");
+
       const data = {
         entrypoint_nargs: nargs,
         language: file.extension,
@@ -49,9 +66,11 @@ class Executor extends EventEmitter {
       }
 
       this._bytecodeStruct = (await response.json()).data;
-
+      this.compiling = false;
       this.currentFile = file;
       this.nargs = nargs;
+
+      this.emit("sync");
     } catch (e) {
       if (e instanceof Error) {
         throw e;
@@ -59,18 +78,22 @@ class Executor extends EventEmitter {
 
       throw new Error(JSON.stringify(e));
     }
-  }
+  };
 
-  public async runBytecode(
+  public runBytecode = async (
     args: any[],
     from: string,
     vUnitAddress: string,
     web3: Web3,
-  ): Promise<{ transactionHash: Bytes; output: string }> {
+  ): Promise<void> => {
     try {
       if (!this._bytecodeStruct) {
         throw new Error("Invalid bytecode structure.");
       }
+
+      this.estimating = true;
+
+      this.emit("sync");
 
       const contractInstance = new web3.eth.Contract(V_UNIT_ABI, vUnitAddress);
 
@@ -79,11 +102,11 @@ class Executor extends EventEmitter {
         args.map((arg) => Number(arg)),
       );
 
-      const call = (
-        contractInstance.methods as unknown as VirtualizationUnitMethods
-      ).runBytecode(inputBytecode);
+      const call = contractInstance.methods.runBytecode(inputBytecode);
 
       this.gasEstimate = (await call.estimateGas({ from })).toString();
+
+      this.estimating = false;
 
       this.emit("gasEstimated");
 
@@ -96,35 +119,62 @@ class Executor extends EventEmitter {
         from,
       };
 
-      const { transactionHash, logs } = await web3.eth.sendTransaction(tx);
+      await web3.eth
+        .sendTransaction(tx)
+        .on("sending", () => {
+          this.contractTransactionStatus = "sending";
+          this.emit("sync");
+        })
+        .on("sent", () => {
+          this.contractTransactionStatus = "sent";
+          this.emit("sync");
+        })
+        .on("confirmation", async ({ receipt }) => {
+          this.cancelExecution();
 
-      const eventAbi = contractInstance.options.jsonInterface.find(
-        (jsonInterface) =>
-          jsonInterface.type === "event" &&
-          (jsonInterface as AbiFragment & { name: string; signature: string })
-            .name === "ContractDeployed",
-      );
+          const { logs, transactionHash } = receipt;
 
-      const decodedLogs = logs.map((log) => {
-        if (eventAbi && eventAbi.inputs && log.topics) {
-          const decodedLog = web3.eth.abi.decodeLog(
-            eventAbi.inputs as AbiParameter[],
-            log.data as string,
-            log.topics.slice(1) as string | string[],
+          const eventAbi = contractInstance.options.jsonInterface.find(
+            (jsonInterface) =>
+              jsonInterface.type === "event" &&
+              (
+                jsonInterface as AbiFragment & {
+                  name: string;
+                  signature: string;
+                }
+              ).name === "ContractDeployed",
           );
-          return decodedLog;
-        }
-      });
 
-      const bytecodeAddress = decodedLogs[0]?.bytecodeAddress;
+          const decodedLogs = logs.map((log) => {
+            if (eventAbi && eventAbi.inputs && log.topics) {
+              const decodedLog = web3.eth.abi.decodeLog(
+                eventAbi.inputs as AbiParameter[],
+                log.data as string,
+                log.topics.slice(1) as string | string[],
+              );
+              return decodedLog;
+            }
+          });
 
-      const output = await (
-        contractInstance.methods as unknown as VirtualizationUnitMethods
-      )
-        .getRuntimeReturn(bytecodeAddress as string)
-        .call();
+          const bytecodeAddress = decodedLogs[0]?.bytecodeAddress;
 
-      return { transactionHash, output };
+          const output = await contractInstance.methods
+            .getRuntimeReturn(bytecodeAddress as string)
+            .call();
+
+          this.output = output;
+          this.transactionHash = transactionHash;
+
+          this.emit("sync");
+
+          throw new Error("Invalid contract address.");
+        })
+        .on("error", (e) => {
+          this.contractTransactionStatus = "error";
+          this.emit("sync");
+
+          throw e;
+        });
     } catch (e) {
       if (e instanceof Error) {
         throw e;
@@ -132,14 +182,14 @@ class Executor extends EventEmitter {
 
       throw new Error(JSON.stringify(e));
     }
-  }
+  };
 
   // -------------------- Private --------------------
 
-  private _composeInput(
+  private _composeInput = (
     bytecodeStruct: BytecodeStructure,
     inputData: any[],
-  ): string {
+  ): string => {
     try {
       const key = BigInt(bytecodeStruct.key);
       const nargs = bytecodeStruct.nargs;
@@ -171,15 +221,15 @@ class Executor extends EventEmitter {
 
       throw new Error(JSON.stringify(e));
     }
-  }
+  };
 
-  private _getUserGas(): Promise<string> {
+  private _getUserGas = (): Promise<string> => {
     return new Promise((resolve) => {
       this.once("userGasReceived", (gas: string) => {
         resolve(gas);
       });
     });
-  }
+  };
 }
 
 export default Executor;

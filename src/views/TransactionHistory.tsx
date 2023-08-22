@@ -61,7 +61,7 @@ const TransactionHistory = (): JSX.Element => {
                   </VSCodeLink>
                 </VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="2">
-                  {parseInt(row.output, 16)}
+                  {parseInt(row.output.toString(), 16)}
                 </VSCodeDataGridCell>
               </VSCodeDataGridRow>
             ))}

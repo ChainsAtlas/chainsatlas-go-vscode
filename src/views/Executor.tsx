@@ -7,6 +7,7 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { TRANSACTION_STATUS_LABEL } from "../constants";
 import { ExecutorData, VsCodeApi } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
@@ -15,9 +16,14 @@ const vscodeApi = acquireVsCodeApi();
 type GasOption = "buffer" | "custom" | "estimate";
 
 const Executor = (): JSX.Element => {
+  const [_compiling, setCompiling] = useState<ExecutorData["compiling"]>(false);
+  const [_contractTransactionStatus, setContractTransactionStatus] =
+    useState<ExecutorData["contractTransactionStatus"]>(undefined);
   const [_currentFile, setCurrentFile] =
     useState<ExecutorData["currentFile"]>();
   const [_disabled, setDisabled] = useState<ExecutorData["disabled"]>(true);
+  const [_estimating, setEstimating] =
+    useState<ExecutorData["estimating"]>(false);
   const [_gasEstimate, setGasEstimate] =
     useState<ExecutorData["gasEstimate"]>();
   const [_nargs, setNargs] = useState<ExecutorData["nargs"]>();
@@ -53,6 +59,7 @@ const Executor = (): JSX.Element => {
   };
 
   const onExecuteCancel = (): void => {
+    vscodeApi.postMessage({ type: "cancelExecution" });
     setArgs(Array.from({ length: Number(_nargs) }));
     setGas("");
     setGasEstimated(false);
@@ -87,8 +94,18 @@ const Executor = (): JSX.Element => {
   };
 
   const updateState = useCallback((data: ExecutorData): void => {
-    const { currentFile, disabled, gasEstimate, nargs, userFile } = data;
+    const {
+      compiling,
+      contractTransactionStatus,
+      currentFile,
+      disabled,
+      gasEstimate,
+      nargs,
+      userFile,
+    } = data;
 
+    setCompiling(compiling);
+    setContractTransactionStatus(contractTransactionStatus);
     setCurrentFile(currentFile);
     setDisabled(disabled);
     setGasEstimate(gasEstimate);
@@ -99,10 +116,19 @@ const Executor = (): JSX.Element => {
       setGasEstimated(true);
     }
 
+    setCompileFormOpen((prevOpen) => {
+      if (compiling) {
+        return true;
+      }
+
+      return prevOpen;
+    });
+
     setGas((prevGas) => {
       if (!prevGas && gasEstimate) {
         return gasEstimate;
       }
+
       return prevGas;
     });
   }, []);
@@ -155,11 +181,19 @@ const Executor = (): JSX.Element => {
             Number of arguments
           </VSCodeTextField>
           <div className="width-constraint action-button-container">
-            <VSCodeButton appearance="secondary" onClick={onCompileCancel}>
+            <VSCodeButton
+              appearance="secondary"
+              disabled={_compiling}
+              onClick={onCompileCancel}
+            >
               Cancel
             </VSCodeButton>
-            <VSCodeButton appearance="primary" onClick={onCompile}>
-              Compile
+            <VSCodeButton
+              appearance="primary"
+              disabled={_compiling}
+              onClick={onCompile}
+            >
+              {_compiling ? "Compiling..." : "Compile"}
             </VSCodeButton>
           </div>
         </>
@@ -210,9 +244,10 @@ const Executor = (): JSX.Element => {
               <VSCodeButton
                 appearance="primary"
                 className="block-width"
+                disabled={_estimating}
                 onClick={onEstimate}
               >
-                Estimate Gas
+                {_estimating ? "Estimating Gas" : "Estimate Gas"}
               </VSCodeButton>
             </div>
           ) : (
@@ -253,16 +288,24 @@ const Executor = (): JSX.Element => {
                   <div className="width-constraint action-button-container">
                     <VSCodeButton
                       appearance="secondary"
+                      disabled={
+                        _contractTransactionStatus === "sending" ||
+                        _contractTransactionStatus === "sent"
+                      }
                       onClick={onExecuteCancel}
                     >
                       Cancel
                     </VSCodeButton>
                     <VSCodeButton
                       appearance="primary"
-                      disabled={!gas}
+                      disabled={
+                        !gas || _contractTransactionStatus !== undefined
+                      }
                       onClick={onExecute}
                     >
-                      Execute
+                      {_contractTransactionStatus
+                        ? TRANSACTION_STATUS_LABEL[_contractTransactionStatus]
+                        : "Execute"}
                     </VSCodeButton>
                   </div>
                 </>

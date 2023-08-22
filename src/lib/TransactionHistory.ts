@@ -6,13 +6,13 @@ class TransactionHistory {
 
   constructor() {}
 
-  public addRow(row: TransactionHistoryRow): void {
+  public addRow = (row: TransactionHistoryRow): void => {
     this.rows.unshift(row);
-  }
+  };
 
-  public clear() {
+  public clear = () => {
     this.rows = [];
-  }
+  };
 }
 
 export default TransactionHistory;
