@@ -28,7 +28,6 @@ class ChainsAtlasGO {
   private _gasResolver?: (value: string | PromiseLike<string>) => void;
   private _provider?: UniversalProvider;
   private _userFile?: ExecutorFile;
-  private _userGas?: string;
   private _viewMap: Partial<ViewMap> = {};
   private _virtualizationUnit?: VirtualizationUnit;
   private _wallet?: Wallet;
@@ -63,7 +62,11 @@ class ChainsAtlasGO {
               this._context.subscriptions,
             );
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "transactionHistory":
@@ -74,7 +77,11 @@ class ChainsAtlasGO {
               this._context.subscriptions,
             );
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "virtualizationUnit":
@@ -85,7 +92,11 @@ class ChainsAtlasGO {
               this._context.subscriptions,
             );
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "wallet":
@@ -105,14 +116,22 @@ class ChainsAtlasGO {
               this._context.subscriptions,
             );
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         default:
           break;
       }
     } catch (e) {
-      console.error(e);
+      if (e instanceof Error) {
+        window.showErrorMessage(e.message);
+      }
+
+      window.showErrorMessage(JSON.stringify(e));
     }
   };
 
@@ -123,7 +142,11 @@ class ChainsAtlasGO {
       this._web3?.currentProvider?.disconnect();
       await this._provider?.disconnect();
     } catch (e) {
-      console.error(e);
+      if (e instanceof Error) {
+        window.showErrorMessage(e.message);
+      }
+
+      window.showErrorMessage(JSON.stringify(e));
     }
   };
 
@@ -146,7 +169,11 @@ class ChainsAtlasGO {
       this._virtualizationUnit = new VirtualizationUnit();
       this._wallet = new Wallet(this._provider);
     } catch (e) {
-      console.error(e);
+      if (e instanceof Error) {
+        window.showErrorMessage(e.message);
+      }
+
+      window.showErrorMessage(JSON.stringify(e));
     }
   };
 
@@ -173,10 +200,6 @@ class ChainsAtlasGO {
         throw new Error("Wallet not initialized");
       }
 
-      if (!this._web3) {
-        throw new Error("Web3 not initialized.");
-      }
-
       switch (message.type) {
         case "cancelCompile":
           try {
@@ -184,7 +207,11 @@ class ChainsAtlasGO {
 
             this._syncView(["executor"]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "cancelExecution":
@@ -192,7 +219,11 @@ class ChainsAtlasGO {
             this._executor.cancelExecution();
             this._syncView(["executor"]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "clearFile":
@@ -202,7 +233,11 @@ class ChainsAtlasGO {
 
             this._syncView(["executor"]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "compile":
@@ -226,7 +261,11 @@ class ChainsAtlasGO {
 
             this._executor.off("sync", sync);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
 
@@ -240,15 +279,38 @@ class ChainsAtlasGO {
               throw new Error("Invalid account.");
             }
 
+            if (!this._web3) {
+              throw new Error("Web3 not initialized.");
+            }
+
             if (!message.value) {
               throw new Error("Invalid arguments.");
             }
 
-            const getUserGas = () => this._getUserGas("executor");
-            const sync = () => this.addTxHistoryEntry();
+            this._executor.once("gasEstimated", () =>
+              this._getUserGas("executor"),
+            );
 
-            this._executor.on("gasEstimated", getUserGas);
-            this._executor.on("sync", sync);
+            const manageSyncEvents = async (
+              executor: Executor,
+            ): Promise<void> => {
+              const expectedEvents = 4;
+
+              let eventsReceived = 0;
+
+              const sync = () => {
+                this._syncView(["executor"]);
+                eventsReceived++;
+                if (eventsReceived === expectedEvents) {
+                  this.addTxHistoryEntry();
+                  executor.off("sync", sync);
+                }
+              };
+
+              executor.on("sync", sync);
+            };
+
+            manageSyncEvents(this._executor);
 
             await this._executor.runBytecode(
               JSON.parse(message.value),
@@ -256,11 +318,12 @@ class ChainsAtlasGO {
               this._virtualizationUnit?.currentContract,
               this._web3,
             );
-
-            this._executor.off("gasEstimated", getUserGas);
-            this._executor.off("sync", sync);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "execute":
@@ -271,14 +334,35 @@ class ChainsAtlasGO {
 
             this._handleUserGas(message.value);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
+          }
+          break;
+        case "getActiveFile":
+          try {
+            await this._getActiveFile();
+
+            this._syncView(["executor"]);
+          } catch (e) {
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "ready":
           try {
             this._syncView(["executor"]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "selectFile":
@@ -287,7 +371,11 @@ class ChainsAtlasGO {
 
             this._syncView(["executor"]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         default:
@@ -312,7 +400,11 @@ class ChainsAtlasGO {
           try {
             this._syncView(["transactionHistory"]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         default:
@@ -336,24 +428,26 @@ class ChainsAtlasGO {
         throw new Error("VirtualizationUnit not initialized.");
       }
 
+      if (!this._wallet) {
+        throw new Error("Wallet not initialized.");
+      }
+
       switch (message.type) {
         case "clearDeployment":
           try {
             this._virtualizationUnit.clearDeployment();
             this._syncView(["virtualizationUnit"]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "deploy":
           try {
-            if (!this._virtualizationUnit) {
-              throw new Error("Invalid virtualization unit.");
-            }
-
-            if (!this._wallet) {
-              throw new Error("Wallet not initialized.");
-            } else if (!this._wallet.currentAccount) {
+            if (!this._wallet.currentAccount) {
               throw new Error("Invalid account.");
             }
 
@@ -361,29 +455,51 @@ class ChainsAtlasGO {
               throw new Error("Invalid web3 provider.");
             }
 
-            const getUserGas = () => this._getUserGas("virtualizationUnit");
-            const sync = () =>
-              this._syncView(["wallet", "virtualizationUnit", "executor"]);
+            this._virtualizationUnit.once("gasEstimated", () =>
+              this._getUserGas("virtualizationUnit"),
+            );
 
-            this._virtualizationUnit.on("gasEstimated", getUserGas);
-            this._virtualizationUnit.on("sync", sync);
+            const manageSyncEvents = async (
+              virtualizationUnit: VirtualizationUnit,
+            ): Promise<void> => {
+              const expectedEvents = 4;
+
+              let eventsReceived = 0;
+
+              const sync = () => {
+                this._syncView(["wallet", "virtualizationUnit", "executor"]);
+                eventsReceived++;
+                if (eventsReceived === expectedEvents) {
+                  virtualizationUnit.off("sync", sync);
+                }
+              };
+
+              virtualizationUnit.on("sync", sync);
+            };
+
+            manageSyncEvents(this._virtualizationUnit);
 
             await this._virtualizationUnit.deploy(
               this._wallet.currentAccount,
               this._web3,
             );
-
-            this._virtualizationUnit.off("gasEstimated", getUserGas);
-            this._virtualizationUnit.off("sync", sync);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "ready":
           try {
             this._syncView(["virtualizationUnit"]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "send":
@@ -394,7 +510,11 @@ class ChainsAtlasGO {
               throw new Error("Invalid user gas.");
             }
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "setContract":
@@ -410,7 +530,11 @@ class ChainsAtlasGO {
               throw new Error("Invalid contract address.");
             }
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         default:
@@ -467,7 +591,11 @@ class ChainsAtlasGO {
               throw new Error("Invalid account.");
             }
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "connect":
@@ -492,7 +620,11 @@ class ChainsAtlasGO {
               "transactionHistory",
             ]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "disconnect":
@@ -514,14 +646,22 @@ class ChainsAtlasGO {
               "transactionHistory",
             ]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         case "ready":
           try {
             this._syncView(["wallet"]);
           } catch (e) {
-            console.error(e);
+            if (e instanceof Error) {
+              window.showErrorMessage(e.message);
+            }
+
+            window.showErrorMessage(JSON.stringify(e));
           }
           break;
         default:
@@ -675,6 +815,35 @@ class ChainsAtlasGO {
   };
 
   // ------------------- User Input Handlers -------------------
+  private _getActiveFile = async (): Promise<void> => {
+    try {
+      if (!this._executor) {
+        throw new Error("Executor not initialized.");
+      }
+
+      const activeEditor = window.activeTextEditor;
+      if (activeEditor) {
+        const uri = activeEditor.document.uri;
+
+        const extension = extname(uri.fsPath).slice(1);
+
+        if (SUPPORTED_LANGUAGES.includes(extension as SupportedLanguage)) {
+          this._userFile = {
+            content: (await workspace.fs.readFile(uri)).toString(),
+            extension: extension as SupportedLanguage,
+            path: uri.fsPath,
+          };
+        }
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        throw e;
+      }
+
+      throw new Error(JSON.stringify(e));
+    }
+  };
+
   private _getUserFile = async (): Promise<void> => {
     try {
       if (!this._executor) {

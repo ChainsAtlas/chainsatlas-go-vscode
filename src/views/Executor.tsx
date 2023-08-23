@@ -38,6 +38,10 @@ const Executor = (): JSX.Element => {
   const calculateBuffer = (gas: string): string =>
     ((BigInt(gas) * BigInt(115)) / BigInt(100)).toString();
 
+  const getActiveFile = (): void => {
+    vscodeApi.postMessage({ type: "getActiveFile" });
+  };
+
   const onCompile = (): void => {
     vscodeApi.postMessage({ type: "compile", value: userNargs });
     setArgs(Array(Number(userNargs)).fill(""));
@@ -116,13 +120,24 @@ const Executor = (): JSX.Element => {
       setGasEstimated(true);
     }
 
-    setCompileFormOpen((prevOpen) => {
-      if (compiling) {
-        return true;
-      }
+    if (compiling) {
+      setCompileFormOpen((prevOpen) => {
+        if (compiling) {
+          return true;
+        }
 
-      return prevOpen;
-    });
+        return prevOpen;
+      });
+    } else {
+      setCompiling((prevCompiling) => {
+        if (prevCompiling && !compiling && userFile) {
+          setCompileFormOpen(false);
+          return false;
+        }
+
+        return compiling;
+      });
+    }
 
     setGas((prevGas) => {
       if (!prevGas && gasEstimate) {
@@ -202,9 +217,13 @@ const Executor = (): JSX.Element => {
           <VSCodeButton
             appearance="primary"
             className="block-width"
+            disabled={
+              _contractTransactionStatus === "sending" ||
+              _contractTransactionStatus === "sent"
+            }
             onClick={() => {
               setCompileFormOpen(true);
-              selectFile();
+              getActiveFile();
             }}
           >
             Compile Bytecode
@@ -225,6 +244,10 @@ const Executor = (): JSX.Element => {
           {args.map((_, i) => (
             <VSCodeTextField
               className="width-constraint"
+              disabled={
+                _contractTransactionStatus === "sending" ||
+                _contractTransactionStatus === "sent"
+              }
               key={i}
               onInput={(e) => {
                 setArgs((currentArgs) => {
@@ -255,6 +278,10 @@ const Executor = (): JSX.Element => {
               {_gasEstimate ? (
                 <>
                   <VSCodeRadioGroup
+                    disabled={
+                      _contractTransactionStatus === "sending" ||
+                      _contractTransactionStatus === "sent"
+                    }
                     onChange={(e) => {
                       onGasOptionChange(
                         (e.target as HTMLInputElement).value as GasOption,
@@ -279,6 +306,10 @@ const Executor = (): JSX.Element => {
                   {gasOption === "custom" ? (
                     <VSCodeTextField
                       className="custom-gas-field width-constraint"
+                      disabled={
+                        _contractTransactionStatus === "sending" ||
+                        _contractTransactionStatus === "sent"
+                      }
                       onInput={(e) =>
                         setGas((e.target as HTMLInputElement).value)
                       }

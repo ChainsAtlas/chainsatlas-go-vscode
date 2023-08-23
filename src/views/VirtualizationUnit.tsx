@@ -123,6 +123,10 @@ const VirtualizationUnit = (): JSX.Element => {
       {_gasEstimate ? (
         <>
           <VSCodeRadioGroup
+            disabled={
+              _contractTransactionStatus === "sending" ||
+              _contractTransactionStatus === "sent"
+            }
             onChange={(e) => {
               onGasOptionChange(
                 (e.target as HTMLInputElement).value as GasOption,
@@ -147,6 +151,10 @@ const VirtualizationUnit = (): JSX.Element => {
           {gasOption === "custom" ? (
             <VSCodeTextField
               className="custom-gas-field width-constraint"
+              disabled={
+                _contractTransactionStatus === "sending" ||
+                _contractTransactionStatus === "sent"
+              }
               onInput={(e) => setGas((e.target as HTMLInputElement).value)}
               value={gas}
             />

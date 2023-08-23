@@ -1,8 +1,46 @@
 import type { Chain } from "@wagmi/chains";
-import * as chains from "@wagmi/chains";
-import { ContractTransactionStatus, SupportedLanguage } from "../types";
+import {
+  arbitrum,
+  arbitrumGoerli,
+  aurora,
+  auroraTestnet,
+  avalanche,
+  avalancheFuji,
+  celo,
+  celoAlfajores,
+  goerli,
+  lineaTestnet,
+  mainnet,
+  optimism,
+  optimismGoerli,
+  polygon,
+  polygonMumbai,
+  sepolia,
+} from "@wagmi/chains";
+import {
+  ContractTransactionStatus,
+  SupportedLanguage,
+  ViewType,
+} from "../types";
 
-const SUPPORTED_CHAINS: Chain[] = Object.values(chains);
+const SUPPORTED_CHAINS: Chain[] = [
+  arbitrum,
+  arbitrumGoerli,
+  aurora,
+  auroraTestnet,
+  avalanche,
+  avalancheFuji,
+  celo,
+  celoAlfajores,
+  goerli,
+  lineaTestnet,
+  mainnet,
+  optimism,
+  optimismGoerli,
+  polygon,
+  polygonMumbai,
+  sepolia,
+];
 
 const SUPPORTED_LANGUAGES: SupportedLanguage[] = ["c"];
 
@@ -14,6 +52,13 @@ const TRANSACTION_STATUS_LABEL: Record<ContractTransactionStatus, string> = {
   receipt: "...",
   transactionHash: "...",
 };
+
+const VIEWS: ViewType[] = [
+  "executor",
+  "transactionHistory",
+  "virtualizationUnit",
+  "wallet",
+];
 
 const V_UNIT_ABI = [
   {
@@ -78,6 +123,7 @@ export {
   SUPPORTED_CHAINS,
   SUPPORTED_LANGUAGES,
   TRANSACTION_STATUS_LABEL,
+  VIEWS,
   V_UNIT_ABI,
   V_UNIT_BYTECODE,
   WALLETCONNECT_PROJECT_ID,

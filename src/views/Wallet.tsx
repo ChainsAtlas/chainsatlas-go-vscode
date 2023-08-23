@@ -60,8 +60,6 @@ const Wallet = (): JSX.Element => {
           setChain(chain);
           setIsConnected(false);
           connect(chain.id);
-        } else {
-          console.error("Invalid chain option.");
         }
       }
     },
