@@ -17,11 +17,20 @@ import {
   polygonMumbai,
   sepolia,
 } from "@wagmi/chains";
-import {
-  ContractTransactionStatus,
-  SupportedLanguage,
-  ViewType,
-} from "../types";
+import { ContractTransactionStatus, SupportedLanguage } from "../types";
+
+const ERROR_MESSAGE = {
+  INVALID_ACCOUNT: "Invalid account.",
+  INVALID_ARGUMENTS: "Invalid arguments.",
+  INVALID_CONTRACT_ADDRESS: "Invalid contract address.",
+  INVALID_GAS: "Invalid gas",
+  INVALID_NARGS: "Invalid number of arguments.",
+  INVALID_TRANSACTION_DATA: "Invalid transaction data.",
+  INVALID_VIEW_TYPE: "Invalid view type.",
+  INVALID_VIRTUALIZATION_UNIT_CONTRACT: "Invalid virtualization unit contract.",
+  INVALID_WEB3: "Invalid Web3 provider.",
+  NO_FILE_SELECTED: "No file selected.",
+};
 
 const SUPPORTED_CHAINS: Chain[] = [
   arbitrum,
@@ -52,13 +61,6 @@ const TRANSACTION_STATUS_LABEL: Record<ContractTransactionStatus, string> = {
   receipt: "...",
   transactionHash: "...",
 };
-
-const VIEWS: ViewType[] = [
-  "executor",
-  "transactionHistory",
-  "virtualizationUnit",
-  "wallet",
-];
 
 const V_UNIT_ABI = [
   {
@@ -120,10 +122,10 @@ const V_UNIT_BYTECODE =
 const WALLETCONNECT_PROJECT_ID = "7b1ecd906a131e3a323a225589f75287";
 
 export {
+  ERROR_MESSAGE,
   SUPPORTED_CHAINS,
   SUPPORTED_LANGUAGES,
   TRANSACTION_STATUS_LABEL,
-  VIEWS,
   V_UNIT_ABI,
   V_UNIT_BYTECODE,
   WALLETCONNECT_PROJECT_ID,

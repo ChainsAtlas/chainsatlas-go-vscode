@@ -10,43 +10,53 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { TRANSACTION_STATUS_LABEL } from "../constants";
-import { VirtualizationUnitData, VsCodeApi } from "../types";
+import {
+  GasOption,
+  VirtualizationUnitCommand,
+  VirtualizationUnitViewState,
+  VsCodeApi,
+} from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
-type GasOption = "buffer" | "custom" | "estimate";
-
-const VirtualizationUnit = (): JSX.Element => {
+const VirtualizationUnitView = (): JSX.Element => {
   const [_contracts, setContracts] = useState<
-    VirtualizationUnitData["contracts"]
+    VirtualizationUnitViewState["contracts"]
   >([]);
   const [_contractTransactionStatus, setContractTransactionStatus] =
-    useState<VirtualizationUnitData["contractTransactionStatus"]>(undefined);
+    useState<VirtualizationUnitViewState["contractTransactionStatus"]>(
+      undefined,
+    );
   const [_currentContract, setCurrentContract] =
-    useState<VirtualizationUnitData["currentContract"]>(undefined);
+    useState<VirtualizationUnitViewState["currentContract"]>(undefined);
   const [_disabled, setDisabled] =
-    useState<VirtualizationUnitData["disabled"]>(true);
+    useState<VirtualizationUnitViewState["disabled"]>(true);
   const [_estimating, setEstimating] =
-    useState<VirtualizationUnitData["estimating"]>(false);
+    useState<VirtualizationUnitViewState["estimating"]>(false);
   const [_gasEstimate, setGasEstimate] =
-    useState<VirtualizationUnitData["gasEstimate"]>("");
+    useState<VirtualizationUnitViewState["gasEstimate"]>("");
   const [gas, setGas] = useState<string>("");
-  const [gasOption, setGasOption] = useState<GasOption>("buffer");
+  const [gasOption, setGasOption] = useState<GasOption>(GasOption.BUFFER);
 
   const calculateBuffer = (gas: string): string =>
     ((BigInt(gas) * BigInt(115)) / BigInt(100)).toString();
 
   const onCancel = (): void => {
-    vscodeApi.postMessage({ type: "clearDeployment" });
+    vscodeApi.postMessage({
+      command: VirtualizationUnitCommand.CLEAR_DEPLOYMENT,
+    });
   };
 
   const onContractChange = (contract: string): void => {
-    vscodeApi.postMessage({ type: "setContract", value: contract });
+    vscodeApi.postMessage({
+      command: VirtualizationUnitCommand.SET_CONTRACT,
+      value: contract,
+    });
   };
 
   const onDeploy = (): void => {
-    vscodeApi.postMessage({ type: "deploy" });
+    vscodeApi.postMessage({ command: VirtualizationUnitCommand.DEPLOY });
   };
 
   const onGasOptionChange = useCallback(
@@ -55,13 +65,13 @@ const VirtualizationUnit = (): JSX.Element => {
 
       if (_gasEstimate) {
         switch (option) {
-          case "buffer":
+          case GasOption.BUFFER:
             setGas(calculateBuffer(_gasEstimate));
             break;
-          case "custom":
+          case GasOption.CUSTOM:
             setGas(_gasEstimate);
             break;
-          case "estimate":
+          case GasOption.ESTIMATE:
             setGas(_gasEstimate);
             break;
           default:
@@ -73,10 +83,13 @@ const VirtualizationUnit = (): JSX.Element => {
   );
 
   const onSend = useCallback(() => {
-    vscodeApi.postMessage({ type: "send", value: gas });
+    vscodeApi.postMessage({
+      command: VirtualizationUnitCommand.SEND,
+      value: gas,
+    });
   }, [gas]);
 
-  const updateState = useCallback((data: VirtualizationUnitData): void => {
+  const updateState = useCallback((data: VirtualizationUnitViewState): void => {
     const {
       contracts,
       contractTransactionStatus,
@@ -103,7 +116,7 @@ const VirtualizationUnit = (): JSX.Element => {
 
   useEffect(() => {
     window.addEventListener("message", (event) => updateState(event.data));
-    vscodeApi.postMessage({ type: "ready" });
+    vscodeApi.postMessage({ command: VirtualizationUnitCommand.READY });
 
     return () => {
       window.removeEventListener("message", (event) => updateState(event.data));
@@ -136,19 +149,19 @@ const VirtualizationUnit = (): JSX.Element => {
             value={gasOption}
           >
             <label slot="label">Gas</label>
-            <VSCodeRadio value="estimate">
+            <VSCodeRadio value={GasOption.ESTIMATE}>
               Estimated gas{" "}
               <span className="disabled-text">{_gasEstimate}</span>
             </VSCodeRadio>
-            <VSCodeRadio value="buffer">
+            <VSCodeRadio value={GasOption.BUFFER}>
               Estimated gas + 15% buffer{" "}
               <span className="disabled-text">
                 {calculateBuffer(_gasEstimate)}
               </span>
             </VSCodeRadio>
-            <VSCodeRadio value="custom">Custom</VSCodeRadio>
+            <VSCodeRadio value={GasOption.CUSTOM}>Custom</VSCodeRadio>
           </VSCodeRadioGroup>
-          {gasOption === "custom" ? (
+          {gasOption === GasOption.CUSTOM ? (
             <VSCodeTextField
               className="custom-gas-field width-constraint"
               disabled={
@@ -221,4 +234,4 @@ const VirtualizationUnit = (): JSX.Element => {
 };
 
 const root = createRoot(document.getElementById("root") as HTMLElement);
-root.render(<VirtualizationUnit />);
+root.render(<VirtualizationUnitView />);

@@ -88,14 +88,14 @@ const commonViewConfig = (entryPath, outputFilename) => ({
 
 module.exports = [
   extensionConfig,
-  commonViewConfig("./src/views/Executor.tsx", "executor.js"),
+  commonViewConfig("./src/views/ExecutorView.tsx", "executorView.js"),
   commonViewConfig(
-    "./src/views/TransactionHistory.tsx",
-    "transactionHistory.js",
+    "./src/views/TransactionHistoryView.tsx",
+    "transactionHistoryView.js",
   ),
   commonViewConfig(
-    "./src/views/VirtualizationUnit.tsx",
-    "virtualizationUnit.js",
+    "./src/views/VirtualizationUnitView.tsx",
+    "virtualizationUnitView.js",
   ),
-  commonViewConfig("./src/views/Wallet.tsx", "wallet.js"),
+  commonViewConfig("./src/views/WalletView.tsx", "walletView.js"),
 ];

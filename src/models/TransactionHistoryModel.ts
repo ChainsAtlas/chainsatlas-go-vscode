@@ -1,6 +1,6 @@
 import { TransactionHistoryRow } from "../types";
 
-class TransactionHistory {
+class TransactionHistoryModel {
   public currentAccount?: string;
   public rows: TransactionHistoryRow[] = [];
 
@@ -15,4 +15,4 @@ class TransactionHistory {
   };
 }
 
-export default TransactionHistory;
+export default TransactionHistoryModel;

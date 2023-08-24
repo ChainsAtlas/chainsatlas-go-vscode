@@ -1,1027 +1,258 @@
 import UniversalProvider from "@walletconnect/universal-provider";
-import { extname } from "path";
-import { ExtensionContext, WebviewView, window, workspace } from "vscode";
-import Web3, { FMT_BYTES, FMT_NUMBER } from "web3";
+import { ExtensionContext, Webview, WebviewView } from "vscode";
+import { ERROR_MESSAGE, WALLETCONNECT_PROJECT_ID } from "../constants";
+
 import {
-  SUPPORTED_CHAINS,
-  SUPPORTED_LANGUAGES,
-  WALLETCONNECT_PROJECT_ID,
-} from "../constants";
+  ExecutorController,
+  TransactionHistoryController,
+  VirtualizationUnitController,
+  WalletController,
+} from "../controllers";
 import {
-  ExecutorData,
-  ExecutorFile,
-  SupportedLanguage,
-  TransactionHistoryData,
+  ExecutorModel,
+  TransactionHistoryModel,
+  VirtualizationUnitModel,
+  WalletModel,
+} from "../models";
+import {
+  ExecutorControllerModelMap,
   ViewMap,
   ViewType,
-  VirtualizationUnitData,
-  WalletData,
+  VirtualizationUnitControllerModelMap,
+  WalletControllerModelMap,
 } from "../types";
-import Executor from "./Executor";
-import TransactionHistory from "./TransactionHistory";
-import VirtualizationUnit from "./VirtualizationUnit";
-import Wallet from "./Wallet";
+import { withErrorHandling } from "../utils";
+import ViewStateGenerator from "./ViewStateGenerator";
+
+enum PrivateMemberKey {
+  EXECUTOR = "_executor",
+  EXECUTOR_CONTROLLER = "_executorController",
+  PROVIDER = "_provider",
+  TRANSACTION_HISTORY = "_transactionHistory",
+  VIEW_STATE_GENERATOR = "_viewStateGenerator",
+  VIRTUALIZATION_UNIT = "_virtualizationUnit",
+  WALLET = "_wallet",
+}
+
+type MemberTypeMap = {
+  [PrivateMemberKey.EXECUTOR]: ExecutorModel;
+  [PrivateMemberKey.EXECUTOR_CONTROLLER]: ExecutorController;
+  [PrivateMemberKey.PROVIDER]: UniversalProvider;
+  [PrivateMemberKey.TRANSACTION_HISTORY]: TransactionHistoryModel;
+  [PrivateMemberKey.VIEW_STATE_GENERATOR]: ViewStateGenerator;
+  [PrivateMemberKey.VIRTUALIZATION_UNIT]: VirtualizationUnitModel;
+  [PrivateMemberKey.WALLET]: WalletModel;
+};
+
+const METADATA = {
+  DESCRIPTION: "ChainsAtlas GO VS Code",
+  ICONS: [
+    "https://chainsatlas.com/wp-content/uploads/2022/08/ChainsAtlas-logo.png",
+  ],
+  NAME: "ChainsAtlas GO",
+  URL: "https://chainsatlas.com/",
+};
 
 class ChainsAtlasGO {
-  private _executor?: Executor;
-  private _transactionHistory?: TransactionHistory;
-  private _gasResolver?: (value: string | PromiseLike<string>) => void;
-  private _provider?: UniversalProvider;
-  private _userFile?: ExecutorFile;
-  private _viewMap: Partial<ViewMap> = {};
-  private _virtualizationUnit?: VirtualizationUnit;
-  private _wallet?: Wallet;
-  private _web3?: Web3;
+  // ---------------------- Private Model Instance Variables ----------------------
+  private _executor?: ExecutorModel;
+  private _transactionHistory?: TransactionHistoryModel;
+  private _virtualizationUnit?: VirtualizationUnitModel;
+  private _wallet?: WalletModel;
 
+  // ---------------------- Private Controller Instance Variables ----------------------
+  private _executorController?: ExecutorController;
+  private _transactionHistoryController?: TransactionHistoryController;
+  private _virtualizationUnitController?: VirtualizationUnitController;
+  private _walletController?: WalletController;
+
+  // ---------------------- Private Web3/Provider Instance Variables ----------------------
+  private _provider?: UniversalProvider;
+
+  // ---------------------- Private Helper Variables ----------------------
+  private _viewMap: Partial<ViewMap> = {};
+  private _viewStateGenerator?: ViewStateGenerator;
+
+  // ---------------------- Constructor ----------------------
   constructor(private readonly _context: ExtensionContext) {}
 
-  public addView = async (view: WebviewView): Promise<void> => {
-    try {
+  // ---------------------- Public Methods ----------------------
+  public addView = withErrorHandling(
+    async (view: WebviewView): Promise<void> => {
       if (
-        !this._provider ||
-        !this._wallet ||
-        !this._virtualizationUnit ||
-        !this._executor ||
-        !this._transactionHistory
+        this._ensureInitialized(
+          PrivateMemberKey.EXECUTOR,
+          PrivateMemberKey.PROVIDER,
+          PrivateMemberKey.TRANSACTION_HISTORY,
+          PrivateMemberKey.VIEW_STATE_GENERATOR,
+          PrivateMemberKey.VIRTUALIZATION_UNIT,
+          PrivateMemberKey.WALLET,
+        )
       ) {
-        throw new Error("Call init() before adding views.");
-      }
+        if (!Object.values(ViewType).includes(view.viewType as ViewType)) {
+          throw new Error(ERROR_MESSAGE.INVALID_VIEW_TYPE);
+        }
 
-      if (!this._isViewType(view.viewType)) {
-        throw new Error("Invalid view type.");
-      }
+        this._viewMap[view.viewType as keyof ViewMap] = view;
 
-      this._viewMap[view.viewType] = view;
+        const executor = this._executor;
+        const transactionHistory = this._transactionHistory;
+        const virtualizationUnit = this._virtualizationUnit;
+        const wallet = this._wallet;
+        const { EXECUTOR, TRANSACTION_HISTORY, VIRTUALIZATION_UNIT, WALLET } =
+          ViewType;
+        const { webview } = view;
 
-      switch (view.viewType) {
-        case "executor":
-          try {
-            view.webview.onDidReceiveMessage(
-              this._executorViewMsgHandler,
-              undefined,
-              this._context.subscriptions,
-            );
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "transactionHistory":
-          try {
-            view.webview.onDidReceiveMessage(
-              this._transactionHistoryViewMsgHandler,
-              undefined,
-              this._context.subscriptions,
-            );
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "virtualizationUnit":
-          try {
-            view.webview.onDidReceiveMessage(
-              this._vUnitViewMsgHandler,
-              undefined,
-              this._context.subscriptions,
-            );
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "wallet":
-          try {
-            this._provider.on("display_uri", async (uri: string) => {
-              if (!this._wallet) {
-                throw new Error("Wallet not initialized.");
-              }
-
-              this._wallet.uri = uri;
-              this._syncView(["wallet"]);
+        switch (view.viewType) {
+          case EXECUTOR:
+            this._initExecutorController(webview, {
+              executor,
+              transactionHistory,
+              virtualizationUnit,
+              wallet,
             });
-
-            view.webview.onDidReceiveMessage(
-              this._walletViewMsgHandler,
-              undefined,
-              this._context.subscriptions,
+            break;
+          case TRANSACTION_HISTORY:
+            this._initTransactionHistoryController(webview);
+            break;
+          case VIRTUALIZATION_UNIT:
+            this._initVirtualizationUnitController(webview, {
+              virtualizationUnit,
+              wallet,
+            });
+            break;
+          case WALLET:
+            this._initWalletController(
+              webview,
+              { executor, transactionHistory, virtualizationUnit, wallet },
+              this._provider,
             );
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        default:
-          break;
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        window.showErrorMessage(e.message);
-      }
-
-      window.showErrorMessage(JSON.stringify(e));
-    }
-  };
-
-  // Called when the extension is deactivated
-  public dispose = async (): Promise<void> => {
-    try {
-      await this._wallet?.disconnect();
-      this._web3?.currentProvider?.disconnect();
-      await this._provider?.disconnect();
-    } catch (e) {
-      if (e instanceof Error) {
-        window.showErrorMessage(e.message);
-      }
-
-      window.showErrorMessage(JSON.stringify(e));
-    }
-  };
-
-  public init = async (): Promise<void> => {
-    try {
-      this._provider = await UniversalProvider.init({
-        projectId: WALLETCONNECT_PROJECT_ID,
-        metadata: {
-          name: "ChainsAtlas GO",
-          description: "ChainsAtlas GO VS Code",
-          url: "https://chainsatlas.com/",
-          icons: [
-            "https://chainsatlas.com/wp-content/uploads/2022/08/ChainsAtlas-logo.png",
-          ],
-        },
-      });
-
-      this._executor = new Executor();
-      this._transactionHistory = new TransactionHistory();
-      this._virtualizationUnit = new VirtualizationUnit();
-      this._wallet = new Wallet(this._provider);
-    } catch (e) {
-      if (e instanceof Error) {
-        window.showErrorMessage(e.message);
-      }
-
-      window.showErrorMessage(JSON.stringify(e));
-    }
-  };
-
-  // ========================= Private =========================
-  // -------------------- Messsage Handlers --------------------
-  private _executorViewMsgHandler = async (message: {
-    type: string;
-    value?: string;
-  }): Promise<void> => {
-    try {
-      if (!this._executor) {
-        throw new Error("Executor not initialized");
-      }
-
-      if (!this._transactionHistory) {
-        throw new Error("TransactionHistory not initialized.");
-      }
-
-      if (!this._virtualizationUnit) {
-        throw new Error("VirtualizationUnit not initialized.");
-      }
-
-      if (!this._wallet) {
-        throw new Error("Wallet not initialized");
-      }
-
-      switch (message.type) {
-        case "cancelCompile":
-          try {
-            this._userFile = undefined;
-
-            this._syncView(["executor"]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "cancelExecution":
-          try {
-            this._executor.cancelExecution();
-            this._syncView(["executor"]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "clearFile":
-          try {
-            this._executor.currentFile = undefined;
-            this._executor.nargs = undefined;
-
-            this._syncView(["executor"]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "compile":
-          try {
-            if (!message.value) {
-              throw new Error("Invalid number of arguments.");
-            }
-
-            if (!this._userFile) {
-              throw new Error("Invalid file.");
-            }
-
-            const sync = () => this._syncView(["executor"]);
-
-            this._executor.on("sync", sync);
-
-            await this._executor.compileBytecode(
-              this._userFile,
-              Number(message.value),
-            );
-
-            this._executor.off("sync", sync);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-
-        case "estimate":
-          try {
-            if (!this._virtualizationUnit.currentContract) {
-              throw new Error("Invalid virtualization unit.");
-            }
-
-            if (!this._wallet.currentAccount) {
-              throw new Error("Invalid account.");
-            }
-
-            if (!this._web3) {
-              throw new Error("Web3 not initialized.");
-            }
-
-            if (!message.value) {
-              throw new Error("Invalid arguments.");
-            }
-
-            this._executor.once("gasEstimated", () =>
-              this._getUserGas("executor"),
-            );
-
-            const manageSyncEvents = async (
-              executor: Executor,
-            ): Promise<void> => {
-              const expectedEvents = 4;
-
-              let eventsReceived = 0;
-
-              const sync = () => {
-                this._syncView(["executor"]);
-                eventsReceived++;
-                if (eventsReceived === expectedEvents) {
-                  this.addTxHistoryEntry();
-                  executor.off("sync", sync);
-                }
-              };
-
-              executor.on("sync", sync);
-            };
-
-            manageSyncEvents(this._executor);
-
-            await this._executor.runBytecode(
-              JSON.parse(message.value),
-              this._wallet?.currentAccount,
-              this._virtualizationUnit?.currentContract,
-              this._web3,
-            );
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "execute":
-          try {
-            if (!message.value) {
-              throw new Error("Invalid user gas.");
-            }
-
-            this._handleUserGas(message.value);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "getActiveFile":
-          try {
-            await this._getActiveFile();
-
-            this._syncView(["executor"]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "ready":
-          try {
-            this._syncView(["executor"]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "selectFile":
-          try {
-            await this._getUserFile();
-
-            this._syncView(["executor"]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        default:
-          break;
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  private _transactionHistoryViewMsgHandler = async (message: {
-    type: string;
-    value?: string;
-  }): Promise<void> => {
-    try {
-      switch (message.type) {
-        case "ready":
-          try {
-            this._syncView(["transactionHistory"]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        default:
-          break;
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  private _vUnitViewMsgHandler = async (message: {
-    type: string;
-    value?: string;
-  }): Promise<void> => {
-    try {
-      if (!this._virtualizationUnit) {
-        throw new Error("VirtualizationUnit not initialized.");
-      }
-
-      if (!this._wallet) {
-        throw new Error("Wallet not initialized.");
-      }
-
-      switch (message.type) {
-        case "clearDeployment":
-          try {
-            this._virtualizationUnit.clearDeployment();
-            this._syncView(["virtualizationUnit"]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "deploy":
-          try {
-            if (!this._wallet.currentAccount) {
-              throw new Error("Invalid account.");
-            }
-
-            if (!this._web3) {
-              throw new Error("Invalid web3 provider.");
-            }
-
-            this._virtualizationUnit.once("gasEstimated", () =>
-              this._getUserGas("virtualizationUnit"),
-            );
-
-            const manageSyncEvents = async (
-              virtualizationUnit: VirtualizationUnit,
-            ): Promise<void> => {
-              const expectedEvents = 4;
-
-              let eventsReceived = 0;
-
-              const sync = () => {
-                this._syncView(["wallet", "virtualizationUnit", "executor"]);
-                eventsReceived++;
-                if (eventsReceived === expectedEvents) {
-                  virtualizationUnit.off("sync", sync);
-                }
-              };
-
-              virtualizationUnit.on("sync", sync);
-            };
-
-            manageSyncEvents(this._virtualizationUnit);
-
-            await this._virtualizationUnit.deploy(
-              this._wallet.currentAccount,
-              this._web3,
-            );
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "ready":
-          try {
-            this._syncView(["virtualizationUnit"]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "send":
-          try {
-            if (message.value) {
-              this._handleUserGas(message.value);
-            } else {
-              throw new Error("Invalid user gas.");
-            }
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "setContract":
-          try {
-            if (
-              message.value &&
-              this._virtualizationUnit.contracts?.includes(message.value)
-            ) {
-              this._virtualizationUnit.currentContract = message.value;
-
-              this._syncView(["virtualizationUnit", "executor"]);
-            } else {
-              throw new Error("Invalid contract address.");
-            }
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        default:
-          break;
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  private _walletViewMsgHandler = async (message: {
-    type: string;
-    value?: string;
-  }): Promise<void> => {
-    try {
-      if (!this._provider) {
-        throw new Error("UniversalProvider not initialized.");
-      }
-
-      if (!this._transactionHistory) {
-        throw new Error("TransactionHistory not initialized.");
-      }
-
-      if (!this._virtualizationUnit) {
-        throw new Error("VirtualizationUnit not initialized.");
-      }
-
-      if (!this._wallet) {
-        throw new Error("Wallet not initialized.");
-      }
-
-      switch (message.type) {
-        case "changeAccount":
-          try {
-            if (
-              message.value &&
-              this._wallet.accounts?.includes(message.value)
-            ) {
-              this._wallet.currentAccount = message.value;
-              this._transactionHistory.currentAccount = message.value;
-              this._transactionHistory.clear();
-
-              this._syncView([
-                "wallet",
-                "virtualizationUnit",
-                "executor",
-                "transactionHistory",
-              ]);
-            } else {
-              throw new Error("Invalid account.");
-            }
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "connect":
-          try {
-            await this._wallet.connect(Number(message.value));
-
-            this._web3 = new Web3(this._provider);
-
-            this._virtualizationUnit.clearDeployment();
-            this._virtualizationUnit.contracts = [];
-            this._virtualizationUnit.currentContract = undefined;
-
-            this._transactionHistory.clear();
-
-            this._transactionHistory.currentAccount =
-              this._wallet.currentAccount;
-
-            this._syncView([
-              "wallet",
-              "virtualizationUnit",
-              "executor",
-              "transactionHistory",
-            ]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "disconnect":
-          try {
-            await this._wallet.disconnect();
-
-            this._virtualizationUnit.clearDeployment();
-            this._virtualizationUnit.contracts = [];
-            this._virtualizationUnit.currentContract = undefined;
-
-            this._transactionHistory.clear();
-            this._transactionHistory.currentAccount =
-              this._wallet.currentAccount;
-
-            this._syncView([
-              "wallet",
-              "virtualizationUnit",
-              "executor",
-              "transactionHistory",
-            ]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        case "ready":
-          try {
-            this._syncView(["wallet"]);
-          } catch (e) {
-            if (e instanceof Error) {
-              window.showErrorMessage(e.message);
-            }
-
-            window.showErrorMessage(JSON.stringify(e));
-          }
-          break;
-        default:
-          break;
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  // ------------------ View State Generators ------------------
-  private _generateExecutorData = (): ExecutorData => {
-    try {
-      if (!this._executor) {
-        throw new Error("Executor not initialized.");
-      }
-
-      if (!this._virtualizationUnit) {
-        throw new Error("VirtualizationUnit not initialized.");
-      }
-
-      if (!this._wallet) {
-        throw new Error("Wallet not initialized.");
-      }
-
-      const {
-        compiling,
-        contractTransactionStatus,
-        currentFile,
-        estimating,
-        gasEstimate,
-        nargs,
-      } = this._executor;
-      const { currentContract } = this._virtualizationUnit;
-      const { currentAccount } = this._wallet;
-
-      return {
-        compiling,
-        contractTransactionStatus,
-        currentFile,
-        disabled: !Boolean(currentAccount && currentContract),
-        estimating,
-        gasEstimate,
-        nargs,
-        userFile: this._userFile,
-      };
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  private _generateTxHistoryData = (): TransactionHistoryData => {
-    try {
-      if (!this._transactionHistory) {
-        throw new Error("TransactionHistory not initialized.");
-      }
-
-      if (!this._wallet) {
-        throw new Error("Wallet not initialized.");
-      }
-
-      const { rows } = this._transactionHistory;
-      const { currentAccount } = this._wallet;
-
-      return {
-        disabled: !Boolean(currentAccount),
-        rows,
-      };
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  private _generateVUnitData = (): VirtualizationUnitData => {
-    try {
-      if (!this._virtualizationUnit) {
-        throw new Error("VirtualizationUnit not initialized.");
-      }
-
-      if (!this._wallet) {
-        throw new Error("Wallet not initialized.");
-      }
-
-      const {
-        contracts,
-        contractTransactionStatus,
-        currentContract,
-        estimating,
-        gasEstimate,
-      } = this._virtualizationUnit;
-      const { currentAccount } = this._wallet;
-
-      return {
-        contracts,
-        contractTransactionStatus,
-        currentContract,
-        disabled: !Boolean(currentAccount),
-        estimating,
-        gasEstimate,
-      };
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  private _generateWalletData = async (): Promise<WalletData> => {
-    try {
-      if (!this._wallet) {
-        throw new Error("Wallet not initialized.");
-      }
-
-      const { accounts, currentAccount, chain, isConnected, uri } =
-        this._wallet;
-
-      if (!chain) {
-        throw new Error("Invalid chain.");
-      }
-
-      return {
-        accounts,
-        balance: await this._getBalance(currentAccount, chain?.id.toString()),
-        chain,
-        chains: SUPPORTED_CHAINS,
-        currentAccount,
-        isConnected,
-        uri,
-      };
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  // ------------------- User Input Handlers -------------------
-  private _getActiveFile = async (): Promise<void> => {
-    try {
-      if (!this._executor) {
-        throw new Error("Executor not initialized.");
-      }
-
-      const activeEditor = window.activeTextEditor;
-      if (activeEditor) {
-        const uri = activeEditor.document.uri;
-
-        const extension = extname(uri.fsPath).slice(1);
-
-        if (SUPPORTED_LANGUAGES.includes(extension as SupportedLanguage)) {
-          this._userFile = {
-            content: (await workspace.fs.readFile(uri)).toString(),
-            extension: extension as SupportedLanguage,
-            path: uri.fsPath,
-          };
+          default:
+            break;
         }
       }
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
+    },
+  );
 
-      throw new Error(JSON.stringify(e));
+  // Called when the extension is deactivated
+  public dispose = withErrorHandling(async (): Promise<void> => {
+    if (
+      this._ensureInitialized(
+        PrivateMemberKey.PROVIDER,
+        PrivateMemberKey.WALLET,
+      )
+    ) {
+      await this._wallet.disconnect();
+      await this._provider.disconnect();
     }
-  };
+  });
 
-  private _getUserFile = async (): Promise<void> => {
-    try {
-      if (!this._executor) {
-        throw new Error("Executor not initialized.");
-      }
-      const uris = await window.showOpenDialog({
-        canSelectMany: false,
-        openLabel: "Open",
-        filters: { "Supported files": SUPPORTED_LANGUAGES },
-      });
+  public init = withErrorHandling(async (): Promise<void> => {
+    this._provider = await UniversalProvider.init({
+      projectId: WALLETCONNECT_PROJECT_ID,
+      metadata: {
+        description: METADATA.DESCRIPTION,
+        icons: METADATA.ICONS,
+        name: METADATA.NAME,
+        url: METADATA.URL,
+      },
+    });
+    this._executor = new ExecutorModel();
+    this._transactionHistory = new TransactionHistoryModel();
+    this._virtualizationUnit = new VirtualizationUnitModel();
+    this._wallet = new WalletModel(this._provider);
 
-      if (uris && uris.length > 0) {
-        const selectedFileUri = uris[0];
-
-        this._userFile = {
-          content: (await workspace.fs.readFile(selectedFileUri)).toString(),
-          extension: extname(selectedFileUri.fsPath).slice(
-            1,
-          ) as SupportedLanguage,
-          path: selectedFileUri.fsPath,
-        };
-      } else {
-        window.showWarningMessage("No file selected.");
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  private _getUserGas = async (
-    view: "executor" | "virtualizationUnit",
-  ): Promise<void> => {
-    try {
-      if (view === "executor" && !this._executor) {
-        throw new Error("Executor not initialized.");
-      }
-
-      if (view === "virtualizationUnit" && !this._virtualizationUnit) {
-        throw new Error("VirtualizationUnit not initialized.");
-      }
-
-      // Sync gas estimate
-      this._syncView([view]);
-
-      const userGas = await new Promise(
-        (resolve) => (this._gasResolver = resolve),
-      );
-
-      if (view === "executor") {
-        this._executor?.emit("userGasReceived", userGas);
-      } else {
-        this._virtualizationUnit?.emit("userGasReceived", userGas);
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  private _handleUserGas = (gas: string): void => {
-    try {
-      if (this._gasResolver) {
-        this._gasResolver(gas);
-        this._gasResolver = undefined;
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  // -------------------------- Utils --------------------------
-  private addTxHistoryEntry = async (): Promise<void> => {
-    try {
-      if (!this._executor) {
-        throw new Error("Executor not initialized");
-      }
-
-      if (!this._transactionHistory) {
-        throw new Error("TransactionHistory not initialized");
-      }
-
-      if (!this._wallet) {
-        throw new Error("Wallet not initialized");
-      }
-
-      const { output, transactionHash } = this._executor;
-      const { chain } = this._wallet;
-
-      if (chain && output && transactionHash) {
-        this._transactionHistory.addRow({
-          output,
-          transactionHash,
-          transactionUrl: `${chain.blockExplorers?.default.url}/tx/${transactionHash}`,
-        });
-
-        this._executor.output = undefined;
-        this._executor.transactionHash = undefined;
-
-        await this._syncView(["wallet", "executor", "transactionHistory"]);
-      }
-
-      throw new Error("Invalid transaction data.");
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  private _getBalance = async (
-    account?: string,
-    chainId?: string,
-  ): Promise<string | undefined> => {
-    try {
-      if (account && chainId && this._web3) {
-        const web3ChainId = (await this._web3.eth.getChainId()).toString();
-
-        return chainId === web3ChainId
-          ? await this._web3.eth.getBalance(account, undefined, {
-              number: FMT_NUMBER.STR,
-              bytes: FMT_BYTES.HEX,
-            })
-          : undefined;
-      }
-
-      return undefined;
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
-    }
-  };
-
-  private _isViewType = (value: any): value is ViewType => {
-    return (
-      value === "executor" ||
-      value === "transactionHistory" ||
-      value === "virtualizationUnit" ||
-      value === "wallet"
+    this._viewStateGenerator = new ViewStateGenerator(
+      this._executor,
+      this._transactionHistory,
+      this._virtualizationUnit,
+      this._wallet,
     );
+  });
+
+  // ---------------------- Private Methods - Utilities ----------------------
+  private _ensureInitialized = (
+    ...keys: PrivateMemberKey[]
+  ): this is this & Pick<MemberTypeMap, (typeof keys)[number]> => {
+    for (const key of keys) {
+      if (!this[key as keyof this]) {
+        throw new Error(`Member ${key} is not initialized.`);
+      }
+    }
+    return true;
   };
 
-  private _syncView = async (viewTypes: ViewType[]): Promise<void> => {
+  private _initExecutorController = (
+    webview: Webview,
+    modelMap: ExecutorControllerModelMap,
+  ) => {
+    this._executorController = new ExecutorController(
+      webview,
+      this._context.subscriptions,
+      modelMap,
+    );
+    this._executorController.on("sync", this._syncView);
+  };
+
+  private _initTransactionHistoryController = (webview: Webview) => {
+    this._transactionHistoryController = new TransactionHistoryController(
+      webview,
+      this._context.subscriptions,
+    );
+    this._transactionHistoryController.on("sync", this._syncView);
+  };
+
+  private _initVirtualizationUnitController = (
+    webview: Webview,
+    modelMap: VirtualizationUnitControllerModelMap,
+  ) => {
+    this._virtualizationUnitController = new VirtualizationUnitController(
+      webview,
+      this._context.subscriptions,
+      modelMap,
+    );
+    this._virtualizationUnitController.on("sync", this._syncView);
+  };
+
+  private _initWalletController = (
+    webview: Webview,
+    modelMap: WalletControllerModelMap,
+    provider: UniversalProvider,
+  ) => {
+    this._walletController = new WalletController(
+      webview,
+      this._context.subscriptions,
+      modelMap,
+      provider,
+    );
+    this._walletController.on("sync", this._syncView);
+  };
+
+  private _syncView = async (...viewTypes: ViewType[]): Promise<void> => {
     for (const type of viewTypes) {
       switch (type) {
-        case "transactionHistory":
-          this._viewMap.transactionHistory?.webview.postMessage(
-            await this._generateTxHistoryData(),
-          );
-          break;
-        case "executor":
+        case ViewType.EXECUTOR:
           this._viewMap.executor?.webview.postMessage(
-            await this._generateExecutorData(),
+            this._viewStateGenerator?.generateViewState(ViewType.EXECUTOR),
           );
           break;
-        case "virtualizationUnit":
+        case ViewType.TRANSACTION_HISTORY:
+          this._viewMap.transactionHistory?.webview.postMessage(
+            this._viewStateGenerator?.generateViewState(
+              ViewType.TRANSACTION_HISTORY,
+            ),
+          );
+          break;
+        case ViewType.VIRTUALIZATION_UNIT:
           this._viewMap.virtualizationUnit?.webview.postMessage(
-            await this._generateVUnitData(),
+            this._viewStateGenerator?.generateViewState(
+              ViewType.VIRTUALIZATION_UNIT,
+            ),
           );
           break;
-        case "wallet":
+        case ViewType.WALLET:
           this._viewMap.wallet?.webview.postMessage(
-            await this._generateWalletData(),
+            await this._viewStateGenerator?.generateViewState(ViewType.WALLET),
           );
           break;
         default:

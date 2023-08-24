@@ -1,3 +1,4 @@
+import fetch from "cross-fetch";
 import EventEmitter from "events";
 import Web3, { AbiFragment, AbiParameter, Bytes } from "web3";
 import { V_UNIT_ABI } from "../constants";
@@ -7,9 +8,9 @@ import {
   ExecutorFile,
 } from "../types";
 
-import fetch from "cross-fetch";
+const ERROR_MESSAGE = { INVALID_FILE: "Invalid file." };
 
-class Executor extends EventEmitter {
+class ExecutorModel extends EventEmitter {
   private static readonly _API_TOKEN = "rBzCg5dLhoBdXdC15vNa2";
 
   public compiling = false;
@@ -20,6 +21,7 @@ class Executor extends EventEmitter {
   public nargs?: number;
   public output?: Bytes;
   public transactionHash?: Bytes;
+  public userFile?: ExecutorFile;
 
   private _bytecodeStruct?: BytecodeStructure;
 
@@ -32,11 +34,12 @@ class Executor extends EventEmitter {
     this.gasEstimate = undefined;
   };
 
-  public compileBytecode = async (
-    file: ExecutorFile,
-    nargs: number,
-  ): Promise<void> => {
+  public compileBytecode = async (nargs: number): Promise<void> => {
     try {
+      if (!this.userFile) {
+        throw new Error(ERROR_MESSAGE.INVALID_FILE);
+      }
+
       this._bytecodeStruct = undefined;
       this.compiling = true;
       this.currentFile = undefined;
@@ -46,8 +49,8 @@ class Executor extends EventEmitter {
 
       const data = {
         entrypoint_nargs: nargs,
-        language: file.extension,
-        source_code: file.content,
+        language: this.userFile.extension,
+        source_code: this.userFile.content,
       };
 
       const response = await fetch(
@@ -57,7 +60,7 @@ class Executor extends EventEmitter {
           body: JSON.stringify(data),
           headers: {
             "Content-Type": "application/json",
-            "x-access-tokens": Executor._API_TOKEN,
+            "x-access-tokens": ExecutorModel._API_TOKEN,
           },
         },
       );
@@ -67,7 +70,7 @@ class Executor extends EventEmitter {
 
       this._bytecodeStruct = (await response.json()).data;
       this.compiling = false;
-      this.currentFile = file;
+      this.currentFile = this.userFile;
       this.nargs = nargs;
 
       this.emit("sync");
@@ -81,7 +84,7 @@ class Executor extends EventEmitter {
   };
 
   public runBytecode = async (
-    args: any[],
+    args: number[],
     from: string,
     vUnitAddress: string,
     web3: Web3,
@@ -162,12 +165,14 @@ class Executor extends EventEmitter {
             .getRuntimeReturn(bytecodeAddress as string)
             .call();
 
-          this.output = output;
-          this.transactionHash = transactionHash;
+          if (output && transactionHash) {
+            this.output = output;
+            this.transactionHash = transactionHash;
 
-          this.emit("sync");
-
-          throw new Error("Invalid contract address.");
+            this.emit("sync");
+          } else {
+            throw new Error("Invalid contract address.");
+          }
         })
         .on("error", (e) => {
           this.contractTransactionStatus = "error";
@@ -225,11 +230,11 @@ class Executor extends EventEmitter {
 
   private _getUserGas = (): Promise<string> => {
     return new Promise((resolve) => {
-      this.once("userGasReceived", (gas: string) => {
+      this.once("gasReceived", (gas: string) => {
         resolve(gas);
       });
     });
   };
 }
 
-export default Executor;
+export default ExecutorModel;

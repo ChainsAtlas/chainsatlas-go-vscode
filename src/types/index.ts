@@ -2,6 +2,12 @@ import { Chain } from "@wagmi/chains";
 import { ProviderAccounts } from "@walletconnect/universal-provider";
 import { WebviewView } from "vscode";
 import { Bytes } from "web3";
+import {
+  ExecutorModel,
+  TransactionHistoryModel,
+  VirtualizationUnitModel,
+  WalletModel,
+} from "../models";
 
 type BytecodeStructure = {
   bytecode: string;
@@ -17,7 +23,30 @@ type ContractTransactionStatus =
   | "sent"
   | "transactionHash";
 
-type ExecutorData = {
+enum ControllerEvent {
+  SYNC = "sync",
+}
+
+enum ExecutorCommand {
+  CANCEL_COMPILE = "cancelCompile",
+  CANCEL_EXECUTION = "cancelExecution",
+  CLEAR_FILE = "clearFile",
+  COMPILE = "compile",
+  ESTIMATE = "estimate",
+  EXECUTE = "execute",
+  GET_ACTIVE_FILE = "getActiveFile",
+  READY = "ready",
+  SELECT_FILE = "selectFile",
+}
+
+type ExecutorControllerModelMap = {
+  executor: ExecutorModel;
+  transactionHistory: TransactionHistoryModel;
+  virtualizationUnit: VirtualizationUnitModel;
+  wallet: WalletModel;
+};
+
+type ExecutorViewState = {
   compiling: boolean;
   contractTransactionStatus?: ContractTransactionStatus;
   currentFile?: ExecutorFile;
@@ -34,7 +63,17 @@ type ExecutorFile = {
   path: string;
 };
 
-type TransactionHistoryData = {
+enum GasOption {
+  BUFFER = "buffer",
+  CUSTOM = "custom",
+  ESTIMATE = "estimate",
+}
+
+enum TransactionHistoryCommand {
+  READY = "ready",
+}
+
+type TransactionHistoryViewState = {
   disabled: boolean;
   rows: TransactionHistoryRow[];
 };
@@ -49,13 +88,29 @@ type SupportedLanguage = "c";
 
 type ViewMap = Record<ViewType, WebviewView>;
 
-type ViewType =
-  | "executor"
-  | "transactionHistory"
-  | "virtualizationUnit"
-  | "wallet";
+type ViewMessage = { command: string; value?: string };
 
-type VirtualizationUnitData = {
+enum ViewType {
+  EXECUTOR = "executor",
+  TRANSACTION_HISTORY = "transactionHistory",
+  VIRTUALIZATION_UNIT = "virtualizationUnit",
+  WALLET = "wallet",
+}
+
+enum VirtualizationUnitCommand {
+  CLEAR_DEPLOYMENT = "clearDeployment",
+  DEPLOY = "deploy",
+  READY = "ready",
+  SEND = "send",
+  SET_CONTRACT = "setContract",
+}
+
+type VirtualizationUnitControllerModelMap = {
+  virtualizationUnit: VirtualizationUnitModel;
+  wallet: WalletModel;
+};
+
+type VirtualizationUnitViewState = {
   contracts: string[];
   contractTransactionStatus?: ContractTransactionStatus;
   currentContract?: string;
@@ -65,10 +120,24 @@ type VirtualizationUnitData = {
 };
 
 type VsCodeApi = {
-  postMessage(message: { type: string; value?: any }): void;
+  postMessage(message: ViewMessage): void;
 };
 
-type WalletData = {
+enum WalletCommand {
+  CHANGE_ACCOUNT = "changeAccount",
+  CONNECT = "connect",
+  DISCONNECT = "disconnect",
+  READY = "ready",
+}
+
+type WalletControllerModelMap = {
+  executor: ExecutorModel;
+  transactionHistory: TransactionHistoryModel;
+  virtualizationUnit: VirtualizationUnitModel;
+  wallet: WalletModel;
+};
+
+type WalletViewState = {
   accounts?: ProviderAccounts;
   chain: Chain;
   balance?: string;
@@ -81,14 +150,24 @@ type WalletData = {
 export {
   BytecodeStructure,
   ContractTransactionStatus,
-  ExecutorData,
+  ControllerEvent,
+  ExecutorCommand,
+  ExecutorControllerModelMap,
   ExecutorFile,
+  ExecutorViewState,
+  GasOption,
   SupportedLanguage,
-  TransactionHistoryData,
+  TransactionHistoryCommand,
   TransactionHistoryRow,
+  TransactionHistoryViewState,
   ViewMap,
+  ViewMessage,
   ViewType,
-  VirtualizationUnitData,
+  VirtualizationUnitCommand,
+  VirtualizationUnitControllerModelMap,
+  VirtualizationUnitViewState,
   VsCodeApi,
-  WalletData,
+  WalletCommand,
+  WalletControllerModelMap,
+  WalletViewState,
 };

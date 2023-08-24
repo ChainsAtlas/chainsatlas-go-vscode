@@ -10,19 +10,20 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { VsCodeApi, WalletData } from "../types";
+import { VsCodeApi, WalletCommand, WalletViewState } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
-const Wallet = (): JSX.Element => {
-  const [_accounts, setAccounts] = useState<WalletData["accounts"]>();
-  const [_chain, setChain] = useState<WalletData["chain"]>();
-  const [_balance, setBalance] = useState<WalletData["balance"]>();
-  const [_chains, setChains] = useState<WalletData["chains"]>();
+const WalletView = (): JSX.Element => {
+  const [_accounts, setAccounts] = useState<WalletViewState["accounts"]>();
+  const [_chain, setChain] = useState<WalletViewState["chain"]>();
+  const [_balance, setBalance] = useState<WalletViewState["balance"]>();
+  const [_chains, setChains] = useState<WalletViewState["chains"]>();
   const [_currentAccount, setCurrentAccount] =
-    useState<WalletData["currentAccount"]>();
-  const [_isConnected, setIsConnected] = useState<WalletData["isConnected"]>();
+    useState<WalletViewState["currentAccount"]>();
+  const [_isConnected, setIsConnected] =
+    useState<WalletViewState["isConnected"]>();
   const [_uri, setUri] = useState<string | undefined>();
   const [loadingBalance, setLoadingBalance] = useState<boolean>(false);
 
@@ -30,13 +31,13 @@ const Wallet = (): JSX.Element => {
     setUri(undefined);
 
     vscodeApi.postMessage({
-      type: "connect",
-      value: chainId,
+      command: WalletCommand.CONNECT,
+      value: chainId.toString(),
     });
   }, []);
 
   const disconnect = (): void => {
-    vscodeApi.postMessage({ type: "disconnect" });
+    vscodeApi.postMessage({ command: WalletCommand.DISCONNECT });
   };
 
   const onAccountChange = useCallback(
@@ -45,7 +46,10 @@ const Wallet = (): JSX.Element => {
         setCurrentAccount(account);
         setLoadingBalance(true);
 
-        vscodeApi.postMessage({ type: "changeAccount", value: account });
+        vscodeApi.postMessage({
+          command: WalletCommand.CHANGE_ACCOUNT,
+          value: account,
+        });
       }
     },
     [_currentAccount],
@@ -67,7 +71,7 @@ const Wallet = (): JSX.Element => {
   );
 
   const updateState = useCallback(
-    (data: WalletData): void => {
+    (data: WalletViewState): void => {
       const {
         accounts,
         balance,
@@ -96,7 +100,7 @@ const Wallet = (): JSX.Element => {
 
   useEffect(() => {
     window.addEventListener("message", (event) => updateState(event.data));
-    vscodeApi.postMessage({ type: "ready" });
+    vscodeApi.postMessage({ command: WalletCommand.READY });
 
     return () => {
       window.removeEventListener("message", (event) => updateState(event.data));
@@ -207,4 +211,4 @@ const Wallet = (): JSX.Element => {
 };
 
 const root = createRoot(document.getElementById("root") as HTMLElement);
-root.render(<Wallet />);
+root.render(<WalletView />);

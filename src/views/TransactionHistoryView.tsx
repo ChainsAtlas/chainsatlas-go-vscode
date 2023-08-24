@@ -6,17 +6,21 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { TransactionHistoryData, VsCodeApi } from "../types";
+import {
+  TransactionHistoryCommand,
+  TransactionHistoryViewState,
+  VsCodeApi,
+} from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
-const TransactionHistory = (): JSX.Element => {
+const TransactionHistoryView = (): JSX.Element => {
   const [_disabled, setDisabled] =
-    useState<TransactionHistoryData["disabled"]>(true);
-  const [_rows, setRows] = useState<TransactionHistoryData["rows"]>([]);
+    useState<TransactionHistoryViewState["disabled"]>(true);
+  const [_rows, setRows] = useState<TransactionHistoryViewState["rows"]>([]);
 
-  const updateState = useCallback((data: TransactionHistoryData): void => {
+  const updateState = useCallback((data: TransactionHistoryViewState): void => {
     const { disabled, rows } = data;
 
     setDisabled(disabled);
@@ -25,7 +29,7 @@ const TransactionHistory = (): JSX.Element => {
 
   useEffect(() => {
     window.addEventListener("message", (event) => updateState(event.data));
-    vscodeApi.postMessage({ type: "ready" });
+    vscodeApi.postMessage({ command: TransactionHistoryCommand.READY });
 
     return () => {
       window.removeEventListener("message", (event) => updateState(event.data));
@@ -77,4 +81,4 @@ const TransactionHistory = (): JSX.Element => {
 };
 
 const root = createRoot(document.getElementById("root") as HTMLElement);
-root.render(<TransactionHistory />);
+root.render(<TransactionHistoryView />);

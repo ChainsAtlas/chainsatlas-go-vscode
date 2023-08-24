@@ -1,5 +1,4 @@
 import { ExtensionContext, Uri, window } from "vscode";
-import { VIEWS } from "./constants";
 import ChainsAtlasGO from "./lib/ChainsAtlasGO";
 import CustomViewProvider from "./lib/CustomViewProvider";
 import { ViewType } from "./types";
@@ -27,7 +26,7 @@ const setupViewProviders = (
 ): Record<ViewType, CustomViewProvider> => {
   const viewProviders: Partial<Record<ViewType, CustomViewProvider>> = {};
 
-  for (const view of VIEWS) {
+  for (const view of Object.values(ViewType)) {
     viewProviders[view] = new CustomViewProvider(extensionUri, view);
   }
 
@@ -50,14 +49,8 @@ const activate = async (context: ExtensionContext): Promise<void> => {
     });
 
     context.subscriptions.push(chainsAtlasGO);
-  } catch (e) {
-    if (e instanceof Error) {
-      window.showErrorMessage(`Extension activation failed: ${e.message}`);
-    } else {
-      window.showErrorMessage(
-        `Unexpected error during activation: ${JSON.stringify(e)}`,
-      );
-    }
+  } catch {
+    window.showErrorMessage(`Extension activation failed.`);
   }
 };
 

@@ -8,42 +8,50 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { TRANSACTION_STATUS_LABEL } from "../constants";
-import { ExecutorData, VsCodeApi } from "../types";
+import {
+  ExecutorCommand,
+  ExecutorViewState,
+  GasOption,
+  VsCodeApi,
+} from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
-type GasOption = "buffer" | "custom" | "estimate";
-
-const Executor = (): JSX.Element => {
-  const [_compiling, setCompiling] = useState<ExecutorData["compiling"]>(false);
+const ExecutorView = (): JSX.Element => {
+  const [_compiling, setCompiling] =
+    useState<ExecutorViewState["compiling"]>(false);
   const [_contractTransactionStatus, setContractTransactionStatus] =
-    useState<ExecutorData["contractTransactionStatus"]>(undefined);
+    useState<ExecutorViewState["contractTransactionStatus"]>(undefined);
   const [_currentFile, setCurrentFile] =
-    useState<ExecutorData["currentFile"]>();
-  const [_disabled, setDisabled] = useState<ExecutorData["disabled"]>(true);
+    useState<ExecutorViewState["currentFile"]>();
+  const [_disabled, setDisabled] =
+    useState<ExecutorViewState["disabled"]>(true);
   const [_estimating, setEstimating] =
-    useState<ExecutorData["estimating"]>(false);
+    useState<ExecutorViewState["estimating"]>(false);
   const [_gasEstimate, setGasEstimate] =
-    useState<ExecutorData["gasEstimate"]>();
-  const [_nargs, setNargs] = useState<ExecutorData["nargs"]>();
-  const [_userFile, setUserFile] = useState<ExecutorData["userFile"]>();
+    useState<ExecutorViewState["gasEstimate"]>();
+  const [_nargs, setNargs] = useState<ExecutorViewState["nargs"]>();
+  const [_userFile, setUserFile] = useState<ExecutorViewState["userFile"]>();
   const [args, setArgs] = useState<string[]>([]);
   const [compileFormOpen, setCompileFormOpen] = useState<boolean>(false);
   const [gas, setGas] = useState<string>("");
   const [gasEstimated, setGasEstimated] = useState<boolean>(false);
-  const [gasOption, setGasOption] = useState<GasOption>("buffer");
+  const [gasOption, setGasOption] = useState<GasOption>(GasOption.BUFFER);
   const [userNargs, setUserNargs] = useState<string>("0");
 
   const calculateBuffer = (gas: string): string =>
     ((BigInt(gas) * BigInt(115)) / BigInt(100)).toString();
 
   const getActiveFile = (): void => {
-    vscodeApi.postMessage({ type: "getActiveFile" });
+    vscodeApi.postMessage({ command: ExecutorCommand.GET_ACTIVE_FILE });
   };
 
   const onCompile = (): void => {
-    vscodeApi.postMessage({ type: "compile", value: userNargs });
+    vscodeApi.postMessage({
+      command: ExecutorCommand.COMPILE,
+      value: userNargs,
+    });
     setArgs(Array(Number(userNargs)).fill(""));
     setCompileFormOpen(false);
   };
@@ -51,23 +59,26 @@ const Executor = (): JSX.Element => {
   const onCompileCancel = (): void => {
     setCompileFormOpen(false);
     setUserNargs("0");
-    vscodeApi.postMessage({ type: "cancelCompile" });
+    vscodeApi.postMessage({ command: ExecutorCommand.CANCEL_COMPILE });
   };
 
   const onEstimate = (): void => {
-    vscodeApi.postMessage({ type: "estimate", value: JSON.stringify(args) });
+    vscodeApi.postMessage({
+      command: ExecutorCommand.ESTIMATE,
+      value: JSON.stringify(args),
+    });
   };
 
   const onExecute = (): void => {
-    vscodeApi.postMessage({ type: "execute", value: gas });
+    vscodeApi.postMessage({ command: ExecutorCommand.EXECUTE, value: gas });
   };
 
   const onExecuteCancel = (): void => {
-    vscodeApi.postMessage({ type: "cancelExecution" });
+    vscodeApi.postMessage({ command: ExecutorCommand.CANCEL_EXECUTION });
     setArgs(Array.from({ length: Number(_nargs) }));
     setGas("");
     setGasEstimated(false);
-    setGasOption("buffer");
+    setGasOption(GasOption.BUFFER);
   };
 
   const onGasOptionChange = useCallback(
@@ -76,13 +87,13 @@ const Executor = (): JSX.Element => {
 
       if (_gasEstimate) {
         switch (option) {
-          case "buffer":
+          case GasOption.BUFFER:
             setGas(calculateBuffer(_gasEstimate));
             break;
-          case "custom":
+          case GasOption.CUSTOM:
             setGas(_gasEstimate);
             break;
-          case "estimate":
+          case GasOption.ESTIMATE:
             setGas(_gasEstimate);
             break;
           default:
@@ -94,10 +105,10 @@ const Executor = (): JSX.Element => {
   );
 
   const selectFile = (): void => {
-    vscodeApi.postMessage({ type: "selectFile" });
+    vscodeApi.postMessage({ command: ExecutorCommand.SELECT_FILE });
   };
 
-  const updateState = useCallback((data: ExecutorData): void => {
+  const updateState = useCallback((data: ExecutorViewState): void => {
     const {
       compiling,
       contractTransactionStatus,
@@ -150,7 +161,7 @@ const Executor = (): JSX.Element => {
 
   useEffect(() => {
     window.addEventListener("message", (event) => updateState(event.data));
-    vscodeApi.postMessage({ type: "ready" });
+    vscodeApi.postMessage({ command: ExecutorCommand.READY });
 
     return () => {
       window.removeEventListener("message", (event) => updateState(event.data));
@@ -291,19 +302,19 @@ const Executor = (): JSX.Element => {
                     value={gasOption}
                   >
                     <label slot="label">Gas</label>
-                    <VSCodeRadio value="estimate">
+                    <VSCodeRadio value={GasOption.ESTIMATE}>
                       Estimated gas{" "}
                       <span className="disabled-text">{_gasEstimate}</span>
                     </VSCodeRadio>
-                    <VSCodeRadio value="buffer">
+                    <VSCodeRadio value={GasOption.BUFFER}>
                       Estimated gas + 15% buffer{" "}
                       <span className="disabled-text">
                         {calculateBuffer(_gasEstimate)}
                       </span>
                     </VSCodeRadio>
-                    <VSCodeRadio value="custom">Custom</VSCodeRadio>
+                    <VSCodeRadio value={GasOption.CUSTOM}>Custom</VSCodeRadio>
                   </VSCodeRadioGroup>
-                  {gasOption === "custom" ? (
+                  {gasOption === GasOption.CUSTOM ? (
                     <VSCodeTextField
                       className="custom-gas-field width-constraint"
                       disabled={
@@ -356,4 +367,4 @@ const Executor = (): JSX.Element => {
 };
 
 const root = createRoot(document.getElementById("root") as HTMLElement);
-root.render(<Executor />);
+root.render(<ExecutorView />);

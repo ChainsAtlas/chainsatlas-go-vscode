@@ -3,7 +3,7 @@ import { FMT_BYTES, FMT_NUMBER, type Web3 } from "web3";
 import { V_UNIT_ABI, V_UNIT_BYTECODE } from "../constants";
 import { ContractTransactionStatus } from "../types";
 
-class VirtualizationUnit extends EventEmitter {
+class VirtualizationUnitModel extends EventEmitter {
   public contracts: string[] = [];
   public contractTransactionStatus?: ContractTransactionStatus;
   public currentContract?: string;
@@ -83,11 +83,11 @@ class VirtualizationUnit extends EventEmitter {
 
   private _getUserGas = (): Promise<string> => {
     return new Promise((resolve) => {
-      this.once("userGasReceived", (gas: string) => {
+      this.once("gasReceived", (gas: string) => {
         resolve(gas);
       });
     });
   };
 }
 
-export default VirtualizationUnit;
+export default VirtualizationUnitModel;

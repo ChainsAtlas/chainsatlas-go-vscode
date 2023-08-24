@@ -1,8 +1,11 @@
 import { ProviderAccounts } from "@walletconnect/universal-provider";
 import UniversalProvider from "@walletconnect/universal-provider/dist/types/UniversalProvider";
+import Web3 from "web3";
 import { SUPPORTED_CHAINS } from "../constants";
 
-class Wallet {
+class WalletModel {
+  public web3?: Web3;
+
   private static readonly _EIP155_EVENTS = ["chainChanged", "accountsChanged"];
   private static readonly _EIP155_METHODS = [
     "eth_sendTransaction",
@@ -48,9 +51,9 @@ class Wallet {
       await this._provider.connect({
         namespaces: {
           eip155: {
-            methods: Wallet._EIP155_METHODS,
+            methods: WalletModel._EIP155_METHODS,
             chains: [`eip155:${chain.id}`],
-            events: Wallet._EIP155_EVENTS,
+            events: WalletModel._EIP155_EVENTS,
             rpcMap: {
               [chain.id]: chain.rpcUrls.infura
                 ? `${chain.rpcUrls.infura.http[0]}/293dd006da85467bbcb9ee8fd02cb40b`
@@ -83,6 +86,10 @@ class Wallet {
         await this._provider.disconnect();
       }
 
+      if (this.web3) {
+        this.web3.currentProvider?.disconnect();
+      }
+
       this.isConnected = false;
     } catch (e) {
       if (e instanceof Error) {
@@ -98,4 +105,4 @@ class Wallet {
   };
 }
 
-export default Wallet;
+export default WalletModel;
