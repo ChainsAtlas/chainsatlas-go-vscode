@@ -20,9 +20,14 @@ import {
 import { ContractTransactionStatus, SupportedLanguage } from "../types";
 
 const ERROR_MESSAGE = {
+  ARGS_MISMATCH:
+    "The number of argument is a constant, to update it please generate a new BytecodeStructure through the API.",
   INVALID_ACCOUNT: "Invalid account.",
   INVALID_ARGUMENTS: "Invalid arguments.",
+  INVALID_BYTECODE_STRUCTURE: "Invalid bytecode structure.",
   INVALID_CONTRACT_ADDRESS: "Invalid contract address.",
+  INVALID_CREDENTIALS: "Invalid credentials",
+  INVALID_FILE: "Invalid file.",
   INVALID_GAS: "Invalid gas",
   INVALID_NARGS: "Invalid number of arguments.",
   INVALID_TRANSACTION_DATA: "Invalid transaction data.",

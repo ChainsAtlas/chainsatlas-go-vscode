@@ -1,5 +1,5 @@
 import { ExtensionContext, Uri, window } from "vscode";
-import ChainsAtlasGO from "./lib/ChainsAtlasGO";
+import ChainsAtlasGOClient from "./lib/ChainsAtlasGOClient";
 import CustomViewProvider from "./lib/CustomViewProvider";
 import { ViewType } from "./types";
 
@@ -10,10 +10,10 @@ import { ViewType } from "./types";
  */
 const initializeChainsAtlasGO = async (
   context: ExtensionContext,
-): Promise<ChainsAtlasGO> => {
-  const chainsAtlasGO = new ChainsAtlasGO(context);
-  await chainsAtlasGO.init();
-  return chainsAtlasGO;
+): Promise<ChainsAtlasGOClient> => {
+  const client = new ChainsAtlasGOClient(context);
+  await client.init();
+  return client;
 };
 
 /**

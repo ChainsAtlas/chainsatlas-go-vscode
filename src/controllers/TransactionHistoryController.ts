@@ -1,5 +1,10 @@
 import { Disposable, Webview } from "vscode";
-import { TransactionHistoryCommand, ViewMessage, ViewType } from "../types";
+import {
+  ControllerEvent,
+  TransactionHistoryCommand,
+  ViewMessage,
+  ViewType,
+} from "../types";
 import Controller from "./Controller.abstract";
 
 class TransactionHistoryController extends Controller {
@@ -15,7 +20,7 @@ class TransactionHistoryController extends Controller {
 
     switch (command) {
       case READY:
-        this.emit("sync", ViewType.TRANSACTION_HISTORY);
+        this.emit(ControllerEvent.SYNC, ViewType.TRANSACTION_HISTORY);
         break;
       default:
         break;

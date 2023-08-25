@@ -18,7 +18,7 @@ class WalletModel {
   public accounts?: ProviderAccounts;
   public chain = SUPPORTED_CHAINS.find((chain) => chain.id === 11_155_111); // sepolia
   public currentAccount?: string;
-  public isConnected?: boolean;
+  public connected?: boolean;
   public uri?: string;
 
   private _controller = new AbortController();
@@ -65,7 +65,7 @@ class WalletModel {
 
       this.accounts = await this._provider.enable();
       this.chain = chain;
-      this.isConnected = true;
+      this.connected = true;
       this.uri = undefined;
 
       if (this.accounts.length > 0) {
@@ -90,7 +90,7 @@ class WalletModel {
         this.web3.currentProvider?.disconnect();
       }
 
-      this.isConnected = false;
+      this.connected = false;
     } catch (e) {
       if (e instanceof Error) {
         throw e;
@@ -101,7 +101,7 @@ class WalletModel {
 
     this.accounts = undefined;
     this.currentAccount = undefined;
-    this.isConnected = false;
+    this.connected = false;
   };
 }
 

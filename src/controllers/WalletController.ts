@@ -2,7 +2,9 @@ import UniversalProvider from "@walletconnect/universal-provider/dist/types/Univ
 import { Disposable, Webview } from "vscode";
 import Web3 from "web3";
 import { ERROR_MESSAGE } from "../constants";
+import { ChainsAtlasGOApi } from "../lib";
 import {
+  ControllerEvent,
   ViewMessage,
   ViewType,
   WalletCommand,
@@ -17,17 +19,19 @@ class WalletController extends Controller {
     _disposables: Disposable[],
     private _modelMap: WalletControllerModelMap,
     private _provider: UniversalProvider,
+    private _api: ChainsAtlasGOApi,
   ) {
     super(_webview, _disposables);
     this._provider.on("display_uri", async (uri: string) => {
       this._modelMap.wallet.uri = uri;
-      this.emit("sync", ViewType.WALLET);
+      this.emit(ControllerEvent.SYNC, ViewType.WALLET);
     });
   }
 
   // ---------------------- Protected Method - Message Handler ----------------------
   protected _handler = async (message: ViewMessage): Promise<void> => {
-    const { CHANGE_ACCOUNT, CONNECT, DISCONNECT, READY } = WalletCommand;
+    const { CHANGE_ACCOUNT, CONNECT, DISCONNECT, LOGIN, LOGOUT, READY } =
+      WalletCommand;
     const { command, value } = message;
 
     switch (command) {
@@ -40,8 +44,14 @@ class WalletController extends Controller {
       case DISCONNECT:
         this._disconnect();
         break;
+      case LOGIN:
+        this._login(value);
+        break;
+      case LOGOUT:
+        this._logout();
+        break;
       case READY:
-        this.emit("sync", ViewType.WALLET);
+        this.emit(ControllerEvent.SYNC, ViewType.WALLET);
         break;
       default:
         break;
@@ -55,7 +65,7 @@ class WalletController extends Controller {
       this._modelMap.transactionHistory.currentAccount = account;
       this._modelMap.transactionHistory.clear();
       this.emit(
-        "sync",
+        ControllerEvent.SYNC,
         ViewType.WALLET,
         ViewType.VIRTUALIZATION_UNIT,
         ViewType.EXECUTOR,
@@ -76,7 +86,7 @@ class WalletController extends Controller {
     this._modelMap.transactionHistory.currentAccount =
       this._modelMap.wallet.currentAccount;
     this.emit(
-      "sync",
+      ControllerEvent.SYNC,
       ViewType.WALLET,
       ViewType.VIRTUALIZATION_UNIT,
       ViewType.EXECUTOR,
@@ -93,12 +103,28 @@ class WalletController extends Controller {
     this._modelMap.transactionHistory.currentAccount =
       this._modelMap.wallet.currentAccount;
     this.emit(
-      "sync",
+      ControllerEvent.SYNC,
       ViewType.WALLET,
       ViewType.VIRTUALIZATION_UNIT,
       ViewType.EXECUTOR,
       ViewType.TRANSACTION_HISTORY,
     );
+  };
+
+  private _login = async (data?: string): Promise<void> => {
+    if (!data) {
+      throw new Error(ERROR_MESSAGE.INVALID_CREDENTIALS);
+    }
+
+    this._api.authStatus = "authenticating";
+    this.emit(ControllerEvent.SYNC, ViewType.WALLET);
+    await this._api.authenticate(data);
+    this.emit(ControllerEvent.SYNC, ViewType.WALLET);
+  };
+
+  private _logout = (): void => {
+    this._api.logout();
+    this._disconnect();
   };
 }
 

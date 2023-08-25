@@ -13,6 +13,7 @@ import {
   VirtualizationUnitViewState,
   WalletViewState,
 } from "../types";
+import ChainsAtlasGOApi from "./ChainsAtlasGOApi";
 
 const ERROR_MESSAGE = {
   INVALID_CHAIN: "Invalid chain.",
@@ -20,6 +21,7 @@ const ERROR_MESSAGE = {
 
 class ViewStateGenerator {
   constructor(
+    private readonly _api: ChainsAtlasGOApi,
     private readonly _executor: ExecutorModel,
     private readonly _transactionHistory: TransactionHistoryModel,
     private readonly _virtualizationUnit: VirtualizationUnitModel,
@@ -50,7 +52,7 @@ class ViewStateGenerator {
 
   private _executorViewState = (): ExecutorViewState | undefined => {
     const {
-      compiling,
+      compilerStatus,
       contractTransactionStatus,
       currentFile,
       estimating,
@@ -62,7 +64,7 @@ class ViewStateGenerator {
     const { currentAccount } = this._wallet;
 
     return {
-      compiling,
+      compilerStatus,
       contractTransactionStatus,
       currentFile,
       disabled: !Boolean(currentAccount && currentContract),
@@ -110,19 +112,20 @@ class ViewStateGenerator {
   private _generateWalletViewState = async (): Promise<
     WalletViewState | undefined
   > => {
-    const { accounts, currentAccount, chain, isConnected, uri } = this._wallet;
-
+    const { accounts, currentAccount, chain, connected, uri } = this._wallet;
+    const { authStatus } = this._api;
     if (!chain) {
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
     return {
       accounts,
+      authStatus,
       balance: await this._getBalance(currentAccount, chain?.id.toString()),
       chain,
       chains: SUPPORTED_CHAINS,
       currentAccount,
-      isConnected,
+      connected,
       uri,
     };
   };

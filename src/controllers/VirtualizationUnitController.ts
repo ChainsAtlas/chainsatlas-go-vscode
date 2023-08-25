@@ -2,10 +2,12 @@ import { Disposable, Webview } from "vscode";
 import { ERROR_MESSAGE } from "../constants";
 import { VirtualizationUnitModel } from "../models";
 import {
+  ControllerEvent,
   ViewMessage,
   ViewType,
   VirtualizationUnitCommand,
   VirtualizationUnitControllerModelMap,
+  VirtualizationUnitModelEvent,
 } from "../types";
 import Controller from "./Controller.abstract";
 
@@ -36,7 +38,7 @@ class VirtualizationUnitController extends Controller {
         this._deploy();
         break;
       case READY:
-        this.emit("sync", ViewType.VIRTUALIZATION_UNIT);
+        this.emit(ControllerEvent.SYNC, ViewType.VIRTUALIZATION_UNIT);
         break;
       case SEND:
         this._send(value);
@@ -52,7 +54,7 @@ class VirtualizationUnitController extends Controller {
   // ---------------------- Private Methods - Command Handlers ----------------------
   private _clearDeployment = (): void => {
     this._modelMap.virtualizationUnit.clearDeployment();
-    this.emit("sync", ViewType.VIRTUALIZATION_UNIT);
+    this.emit(ControllerEvent.SYNC, ViewType.VIRTUALIZATION_UNIT);
   };
 
   private _deploy = async (): Promise<void> => {
@@ -64,10 +66,13 @@ class VirtualizationUnitController extends Controller {
       throw new Error(ERROR_MESSAGE.INVALID_WEB3);
     }
 
-    this._modelMap.virtualizationUnit.once("gasEstimated", () => {
-      this.emit("sync", ViewType.VIRTUALIZATION_UNIT);
-      this._getGas();
-    });
+    this._modelMap.virtualizationUnit.once(
+      VirtualizationUnitModelEvent.WAITING_GAS,
+      () => {
+        this.emit(ControllerEvent.SYNC, ViewType.VIRTUALIZATION_UNIT);
+        this._getGas();
+      },
+    );
 
     const manageSyncEvents = async (
       virtualizationUnit: VirtualizationUnitModel,
@@ -78,18 +83,18 @@ class VirtualizationUnitController extends Controller {
 
       const sync = () => {
         this.emit(
-          "sync",
+          ControllerEvent.SYNC,
           ViewType.WALLET,
           ViewType.VIRTUALIZATION_UNIT,
           ViewType.EXECUTOR,
         );
         eventsReceived++;
         if (eventsReceived === expectedEvents) {
-          virtualizationUnit.off("sync", sync);
+          virtualizationUnit.off(VirtualizationUnitModelEvent.SYNC, sync);
         }
       };
 
-      virtualizationUnit.on("sync", sync);
+      virtualizationUnit.on(VirtualizationUnitModelEvent.SYNC, sync);
     };
 
     manageSyncEvents(this._modelMap.virtualizationUnit);
@@ -112,7 +117,11 @@ class VirtualizationUnitController extends Controller {
       this._modelMap.virtualizationUnit.contracts?.includes(contractAddress)
     ) {
       this._modelMap.virtualizationUnit.currentContract = contractAddress;
-      this.emit("sync", ViewType.VIRTUALIZATION_UNIT, ViewType.EXECUTOR);
+      this.emit(
+        ControllerEvent.SYNC,
+        ViewType.VIRTUALIZATION_UNIT,
+        ViewType.EXECUTOR,
+      );
     } else {
       throw new Error(ERROR_MESSAGE.INVALID_CONTRACT_ADDRESS);
     }
@@ -122,7 +131,10 @@ class VirtualizationUnitController extends Controller {
   private _getGas = async (): Promise<void> => {
     const gas = await new Promise((resolve) => (this._gasResolver = resolve));
 
-    this._modelMap.virtualizationUnit.emit("gasReceived", gas);
+    this._modelMap.virtualizationUnit.emit(
+      VirtualizationUnitModelEvent.GAS_RECEIVED,
+      gas,
+    );
   };
 
   private _handleGas = (gas: string): void => {

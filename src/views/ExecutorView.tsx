@@ -19,8 +19,8 @@ declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
 const ExecutorView = (): JSX.Element => {
-  const [_compiling, setCompiling] =
-    useState<ExecutorViewState["compiling"]>(false);
+  const [_compilerStatus, setCompilerStatus] =
+    useState<ExecutorViewState["compilerStatus"]>(undefined);
   const [_contractTransactionStatus, setContractTransactionStatus] =
     useState<ExecutorViewState["contractTransactionStatus"]>(undefined);
   const [_currentFile, setCurrentFile] =
@@ -53,7 +53,6 @@ const ExecutorView = (): JSX.Element => {
       value: userNargs,
     });
     setArgs(Array(Number(userNargs)).fill(""));
-    setCompileFormOpen(false);
   };
 
   const onCompileCancel = (): void => {
@@ -110,7 +109,7 @@ const ExecutorView = (): JSX.Element => {
 
   const updateState = useCallback((data: ExecutorViewState): void => {
     const {
-      compiling,
+      compilerStatus,
       contractTransactionStatus,
       currentFile,
       disabled,
@@ -119,7 +118,7 @@ const ExecutorView = (): JSX.Element => {
       userFile,
     } = data;
 
-    setCompiling(compiling);
+    setCompilerStatus(compilerStatus);
     setContractTransactionStatus(contractTransactionStatus);
     setCurrentFile(currentFile);
     setDisabled(disabled);
@@ -127,29 +126,14 @@ const ExecutorView = (): JSX.Element => {
     setNargs(nargs);
     setUserFile(userFile);
 
-    if (gasEstimate) {
-      setGasEstimated(true);
-    }
+    setCompileFormOpen((prevOpen) => {
+      if (compilerStatus === "done") {
+        return false;
+      }
 
-    if (compiling) {
-      setCompileFormOpen((prevOpen) => {
-        if (compiling) {
-          return true;
-        }
-
-        return prevOpen;
-      });
-    } else {
-      setCompiling((prevCompiling) => {
-        if (prevCompiling && !compiling && userFile) {
-          setCompileFormOpen(false);
-          return false;
-        }
-
-        return compiling;
-      });
-    }
-
+      return prevOpen;
+    });
+    setGasEstimated(Boolean(gasEstimate));
     setGas((prevGas) => {
       if (!prevGas && gasEstimate) {
         return gasEstimate;
@@ -209,17 +193,17 @@ const ExecutorView = (): JSX.Element => {
           <div className="width-constraint action-button-container">
             <VSCodeButton
               appearance="secondary"
-              disabled={_compiling}
+              disabled={_compilerStatus === "compiling"}
               onClick={onCompileCancel}
             >
               Cancel
             </VSCodeButton>
             <VSCodeButton
               appearance="primary"
-              disabled={_compiling}
+              disabled={_compilerStatus === "compiling"}
               onClick={onCompile}
             >
-              {_compiling ? "Compiling..." : "Compile"}
+              {_compilerStatus ? "Compiling..." : "Compile"}
             </VSCodeButton>
           </div>
         </>
@@ -266,9 +250,8 @@ const ExecutorView = (): JSX.Element => {
                   newArgs[i] = (e.target as HTMLInputElement).value;
                   return newArgs;
                 });
-                setGasEstimated(false);
               }}
-              value={args[i]}
+              value={args[i] || ""}
             >
               Argument {i + 1}
             </VSCodeTextField>

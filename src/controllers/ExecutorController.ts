@@ -1,17 +1,21 @@
 import { extname } from "path";
 import { Disposable, Webview, window, workspace } from "vscode";
 import { ERROR_MESSAGE, SUPPORTED_LANGUAGES } from "../constants";
+import { ChainsAtlasGOApi } from "../lib";
 import { ExecutorModel } from "../models";
 import {
+  ControllerEvent,
   ExecutorCommand,
   ExecutorControllerModelMap,
+  ExecutorFile,
+  ExecutorModelEvent,
   SupportedLanguage,
   ViewMessage,
   ViewType,
 } from "../types";
 import Controller from "./Controller.abstract";
 
-enum FileSource {
+export enum FileSource {
   ACTIVE = "active",
   INPUT = "input",
 }
@@ -25,6 +29,7 @@ class ExecutorController extends Controller {
     _webview: Webview,
     _disposables: Disposable[],
     private _modelMap: ExecutorControllerModelMap,
+    private _api: ChainsAtlasGOApi,
   ) {
     super(_webview, _disposables);
   }
@@ -67,7 +72,7 @@ class ExecutorController extends Controller {
         this._getFile(FileSource.ACTIVE);
         break;
       case READY:
-        this.emit("sync", ViewType.EXECUTOR);
+        this.emit(ControllerEvent.SYNC, ViewType.EXECUTOR);
         break;
       case SELECT_FILE:
         this._getFile(FileSource.INPUT);
@@ -80,18 +85,18 @@ class ExecutorController extends Controller {
   // ---------------------- Private Methods - Command Handlers ----------------------
   private _cancelCompile = (): void => {
     this._modelMap.executor.userFile = undefined;
-    this.emit("sync", ViewType.EXECUTOR);
+    this.emit(ControllerEvent.SYNC, ViewType.EXECUTOR);
   };
 
   private _cancelExecution = (): void => {
     this._modelMap.executor.cancelExecution();
-    this.emit("sync", ViewType.EXECUTOR);
+    this.emit(ControllerEvent.SYNC, ViewType.EXECUTOR);
   };
 
   private _clearFile = (): void => {
     this._modelMap.executor.currentFile = undefined;
     this._modelMap.executor.nargs = undefined;
-    this.emit("sync", ViewType.EXECUTOR);
+    this.emit(ControllerEvent.SYNC, ViewType.EXECUTOR);
   };
 
   private _compile = async (nargs?: string): Promise<void> => {
@@ -99,10 +104,13 @@ class ExecutorController extends Controller {
       throw new Error(ERROR_MESSAGE.INVALID_NARGS);
     }
 
-    const sync = () => this.emit("sync", ViewType.EXECUTOR);
-    this._modelMap.executor.on("sync", sync);
+    const sync = () => this.emit(ControllerEvent.SYNC, ViewType.EXECUTOR);
+    this._modelMap.executor.once(
+      ExecutorModelEvent.WAITING_BYTECODE_STRUCTURE,
+      this._getBytecodeStructure,
+    );
+    this._modelMap.executor.once(ExecutorModelEvent.SYNC, sync);
     await this._modelMap.executor.compileBytecode(Number(nargs));
-    this._modelMap.executor.off("sync", sync);
   };
 
   private _estimate = async (args?: string): Promise<void> => {
@@ -122,8 +130,8 @@ class ExecutorController extends Controller {
       throw new Error(ERROR_MESSAGE.INVALID_WEB3);
     }
 
-    this._modelMap.executor.once("gasEstimated", () => {
-      this.emit("sync", ViewType.EXECUTOR);
+    this._modelMap.executor.once(ExecutorModelEvent.WAITING_GAS, () => {
+      this.emit(ControllerEvent.SYNC, ViewType.EXECUTOR);
       this._getGas();
     });
 
@@ -132,16 +140,16 @@ class ExecutorController extends Controller {
       let eventsReceived = 0;
 
       const sync = () => {
-        this.emit("sync", ViewType.EXECUTOR);
+        this.emit(ControllerEvent.SYNC, ViewType.EXECUTOR);
         eventsReceived++;
 
         if (eventsReceived === expectedEvents) {
           this._addTxHistoryEntry();
-          executor.off("sync", sync);
+          executor.off(ExecutorModelEvent.SYNC, sync);
         }
       };
 
-      executor.on("sync", sync);
+      executor.on(ExecutorModelEvent.SYNC, sync);
     };
 
     manageSyncEvents(this._modelMap.executor);
@@ -161,13 +169,14 @@ class ExecutorController extends Controller {
   };
 
   private _getFile = async (src: FileSource): Promise<void> => {
+    this._modelMap.executor.compilerStatus = undefined;
     if (src === FileSource.ACTIVE) {
       await this._getActiveFile();
     } else {
       await this._getInputFile();
     }
 
-    this.emit("sync", ViewType.EXECUTOR);
+    this.emit(ControllerEvent.SYNC, ViewType.EXECUTOR);
   };
 
   // ---------------------- Private Methods - Utilities ----------------------
@@ -235,10 +244,24 @@ class ExecutorController extends Controller {
     }
   };
 
+  private _getBytecodeStructure = async (
+    file: ExecutorFile,
+    nargs: number,
+  ): Promise<void> => {
+    this.emit(ControllerEvent.SYNC, ViewType.EXECUTOR);
+    const bytecodeStructure = await this._api.generateBytecodeStructure(
+      file,
+      nargs,
+    );
+    this._modelMap.executor.emit(
+      ExecutorModelEvent.BYTECODE_STRUCTURE_RECEIVED,
+      bytecodeStructure,
+    );
+  };
+
   private _getGas = async (): Promise<void> => {
     const gas = await new Promise((resolve) => (this._gasResolver = resolve));
-
-    this._modelMap.executor?.emit("gasReceived", gas);
+    this._modelMap.executor.emit(ExecutorModelEvent.GAS_RECEIVED, gas);
   };
 
   private _handleGas = (gas: string): void => {

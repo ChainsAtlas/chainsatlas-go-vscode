@@ -73,7 +73,7 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
     );
 
     const scriptUri = view.webview.asWebviewUri(
-      Uri.joinPath(this._extensionUri, "dist", `${this._viewType}.js`),
+      Uri.joinPath(this._extensionUri, "dist", `${this._viewType}View.js`),
     );
 
     const nonce = this._getNonce();

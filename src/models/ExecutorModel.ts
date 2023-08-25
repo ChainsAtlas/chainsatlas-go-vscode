@@ -1,19 +1,17 @@
-import fetch from "cross-fetch";
 import EventEmitter from "events";
 import Web3, { AbiFragment, AbiParameter, Bytes } from "web3";
-import { V_UNIT_ABI } from "../constants";
+import { ERROR_MESSAGE, V_UNIT_ABI } from "../constants";
 import {
+  BytecodeArg,
+  BytecodeCompilerStatus,
   BytecodeStructure,
   ContractTransactionStatus,
   ExecutorFile,
+  ExecutorModelEvent,
 } from "../types";
 
-const ERROR_MESSAGE = { INVALID_FILE: "Invalid file." };
-
 class ExecutorModel extends EventEmitter {
-  private static readonly _API_TOKEN = "rBzCg5dLhoBdXdC15vNa2";
-
-  public compiling = false;
+  public compilerStatus?: BytecodeCompilerStatus;
   public contractTransactionStatus?: ContractTransactionStatus;
   public currentFile?: ExecutorFile;
   public estimating = false;
@@ -23,86 +21,62 @@ class ExecutorModel extends EventEmitter {
   public transactionHash?: Bytes;
   public userFile?: ExecutorFile;
 
-  private _bytecodeStruct?: BytecodeStructure;
+  private _bytecodeStructure?: BytecodeStructure;
 
   constructor() {
     super();
   }
 
   public cancelExecution = (): void => {
+    this.compilerStatus = undefined;
     this.contractTransactionStatus = undefined;
     this.gasEstimate = undefined;
   };
 
   public compileBytecode = async (nargs: number): Promise<void> => {
-    try {
-      if (!this.userFile) {
-        throw new Error(ERROR_MESSAGE.INVALID_FILE);
-      }
-
-      this._bytecodeStruct = undefined;
-      this.compiling = true;
-      this.currentFile = undefined;
-      this.nargs = undefined;
-
-      this.emit("sync");
-
-      const data = {
-        entrypoint_nargs: nargs,
-        language: this.userFile.extension,
-        source_code: this.userFile.content,
-      };
-
-      const response = await fetch(
-        "https://api.chainsatlas.com/build/generate",
-        {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-tokens": ExecutorModel._API_TOKEN,
-          },
-        },
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      this._bytecodeStruct = (await response.json()).data;
-      this.compiling = false;
-      this.currentFile = this.userFile;
-      this.nargs = nargs;
-
-      this.emit("sync");
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
+    if (!this.userFile) {
+      throw new Error(ERROR_MESSAGE.INVALID_FILE);
     }
+
+    this._bytecodeStructure = undefined;
+    this.compilerStatus = "compiling";
+    this.currentFile = undefined;
+    this.nargs = undefined;
+
+    this.emit(
+      ExecutorModelEvent.WAITING_BYTECODE_STRUCTURE,
+      this.userFile,
+      nargs,
+    );
+
+    this._bytecodeStructure = await this._getBytecodeStructure();
+    this.compilerStatus = "done";
+    this.currentFile = this.userFile;
+    this.nargs = nargs;
+
+    this.emit(ExecutorModelEvent.SYNC);
   };
 
   public runBytecode = async (
-    args: number[],
+    args: BytecodeArg[],
     from: string,
     vUnitAddress: string,
     web3: Web3,
   ): Promise<void> => {
     try {
-      if (!this._bytecodeStruct) {
-        throw new Error("Invalid bytecode structure.");
+      if (!this._bytecodeStructure) {
+        throw new Error(ERROR_MESSAGE.INVALID_BYTECODE_STRUCTURE);
       }
 
       this.estimating = true;
 
-      this.emit("sync");
+      this.emit(ExecutorModelEvent.SYNC);
 
       const contractInstance = new web3.eth.Contract(V_UNIT_ABI, vUnitAddress);
 
       const inputBytecode = await this._composeInput(
-        this._bytecodeStruct,
-        args.map((arg) => Number(arg)),
+        this._bytecodeStructure,
+        args,
       );
 
       const call = contractInstance.methods.runBytecode(inputBytecode);
@@ -111,9 +85,9 @@ class ExecutorModel extends EventEmitter {
 
       this.estimating = false;
 
-      this.emit("gasEstimated");
+      this.emit(ExecutorModelEvent.WAITING_GAS);
 
-      const gas = await this._getUserGas();
+      const gas = await this._getGas();
 
       const tx = {
         to: contractInstance.options.address,
@@ -126,14 +100,14 @@ class ExecutorModel extends EventEmitter {
         .sendTransaction(tx)
         .on("sending", () => {
           this.contractTransactionStatus = "sending";
-          this.emit("sync");
+          this.emit(ExecutorModelEvent.SYNC);
         })
         .on("sent", () => {
           this.contractTransactionStatus = "sent";
-          this.emit("sync");
+          this.emit(ExecutorModelEvent.SYNC);
         })
         .on("confirmation", async ({ receipt }) => {
-          this.cancelExecution();
+          this.contractTransactionStatus = undefined;
 
           const { logs, transactionHash } = receipt;
 
@@ -157,6 +131,7 @@ class ExecutorModel extends EventEmitter {
               );
               return decodedLog;
             }
+            return undefined;
           });
 
           const bytecodeAddress = decodedLogs[0]?.bytecodeAddress;
@@ -169,14 +144,14 @@ class ExecutorModel extends EventEmitter {
             this.output = output;
             this.transactionHash = transactionHash;
 
-            this.emit("sync");
+            this.emit(ExecutorModelEvent.SYNC);
           } else {
-            throw new Error("Invalid contract address.");
+            throw new Error(ERROR_MESSAGE.INVALID_TRANSACTION_DATA);
           }
         })
         .on("error", (e) => {
           this.contractTransactionStatus = "error";
-          this.emit("sync");
+          this.emit(ExecutorModelEvent.SYNC);
 
           throw e;
         });
@@ -193,44 +168,43 @@ class ExecutorModel extends EventEmitter {
 
   private _composeInput = (
     bytecodeStruct: BytecodeStructure,
-    inputData: any[],
+    inputArgs: BytecodeArg[],
   ): string => {
-    try {
-      const key = BigInt(bytecodeStruct.key);
-      const nargs = bytecodeStruct.nargs;
+    const key = BigInt(bytecodeStruct.key);
+    const nargs = bytecodeStruct.nargs;
 
-      let bytecode = bytecodeStruct.bytecode;
+    let bytecode = bytecodeStruct.bytecode;
 
-      if (nargs !== inputData.length) {
-        throw new Error(
-          `The number of argument is a constant, to update it please generate a new bytecodeStruct through the API`,
-        );
-      }
-
-      for (let i = 0; i < nargs; i++) {
-        const lookup = (key + BigInt(i)).toString(16);
-        const replacement = BigInt(inputData[i]).toString(16).padStart(32, "0");
-
-        if (bytecode.includes(lookup)) {
-          bytecode = bytecode.replace(lookup, replacement);
-        } else {
-          throw new Error(`Failed to adjust the bytecode.`);
-        }
-      }
-
-      return "0x" + bytecode;
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-
-      throw new Error(JSON.stringify(e));
+    if (nargs !== inputArgs.length) {
+      throw new Error(ERROR_MESSAGE.ARGS_MISMATCH);
     }
+
+    for (let i = 0; i < nargs; i++) {
+      const lookup = (key + BigInt(i)).toString(16);
+      const replacement = BigInt(inputArgs[i]).toString(16).padStart(32, "0");
+
+      if (bytecode.includes(lookup)) {
+        bytecode = bytecode.replace(lookup, replacement);
+      }
+    }
+
+    return `0x${bytecode}`;
   };
 
-  private _getUserGas = (): Promise<string> => {
+  private _getBytecodeStructure = (): Promise<BytecodeStructure> => {
     return new Promise((resolve) => {
-      this.once("gasReceived", (gas: string) => {
+      this.once(
+        ExecutorModelEvent.BYTECODE_STRUCTURE_RECEIVED,
+        (bytecodeStructure: BytecodeStructure) => {
+          resolve(bytecodeStructure);
+        },
+      );
+    });
+  };
+
+  private _getGas = (): Promise<string> => {
+    return new Promise((resolve) => {
+      this.once(ExecutorModelEvent.GAS_RECEIVED, (gas: string) => {
         resolve(gas);
       });
     });

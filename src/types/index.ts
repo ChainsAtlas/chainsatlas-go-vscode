@@ -9,11 +9,17 @@ import {
   WalletModel,
 } from "../models";
 
+type AuthStatus = "authenticated" | "authenticating";
+
+type BytecodeArg = number;
+
 type BytecodeStructure = {
   bytecode: string;
   key: string;
   nargs: number;
 };
+
+type BytecodeCompilerStatus = "compiling" | "done";
 
 type ContractTransactionStatus =
   | "confirmation"
@@ -47,7 +53,7 @@ type ExecutorControllerModelMap = {
 };
 
 type ExecutorViewState = {
-  compiling: boolean;
+  compilerStatus?: BytecodeCompilerStatus;
   contractTransactionStatus?: ContractTransactionStatus;
   currentFile?: ExecutorFile;
   disabled: boolean;
@@ -62,6 +68,14 @@ type ExecutorFile = {
   extension: SupportedLanguage;
   path: string;
 };
+
+enum ExecutorModelEvent {
+  BYTECODE_STRUCTURE_RECEIVED = "bytecodeStructureReceived",
+  GAS_RECEIVED = "gasReceived",
+  SYNC = "sync",
+  WAITING_BYTECODE_STRUCTURE = "waitingBytecodeStructure",
+  WAITING_GAS = "waitingGas",
+}
 
 enum GasOption {
   BUFFER = "buffer",
@@ -110,6 +124,12 @@ type VirtualizationUnitControllerModelMap = {
   wallet: WalletModel;
 };
 
+enum VirtualizationUnitModelEvent {
+  GAS_RECEIVED = "gasReceived",
+  SYNC = "sync",
+  WAITING_GAS = "waitingGas",
+}
+
 type VirtualizationUnitViewState = {
   contracts: string[];
   contractTransactionStatus?: ContractTransactionStatus;
@@ -127,6 +147,8 @@ enum WalletCommand {
   CHANGE_ACCOUNT = "changeAccount",
   CONNECT = "connect",
   DISCONNECT = "disconnect",
+  LOGIN = "login",
+  LOGOUT = "logout",
   READY = "ready",
 }
 
@@ -139,21 +161,26 @@ type WalletControllerModelMap = {
 
 type WalletViewState = {
   accounts?: ProviderAccounts;
+  authStatus?: AuthStatus;
   chain: Chain;
   balance?: string;
   chains: Chain[];
   currentAccount?: string;
-  isConnected?: boolean;
+  connected?: boolean;
   uri?: string;
 };
 
 export {
+  AuthStatus,
+  BytecodeArg,
+  BytecodeCompilerStatus,
   BytecodeStructure,
   ContractTransactionStatus,
   ControllerEvent,
   ExecutorCommand,
   ExecutorControllerModelMap,
   ExecutorFile,
+  ExecutorModelEvent,
   ExecutorViewState,
   GasOption,
   SupportedLanguage,
@@ -165,6 +192,7 @@ export {
   ViewType,
   VirtualizationUnitCommand,
   VirtualizationUnitControllerModelMap,
+  VirtualizationUnitModelEvent,
   VirtualizationUnitViewState,
   VsCodeApi,
   WalletCommand,
