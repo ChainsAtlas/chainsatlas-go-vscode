@@ -1,6 +1,19 @@
-import type { Chain } from "@wagmi/chains";
-import * as chains from "@wagmi/chains";
-import { ContractTransactionStatus, SupportedLanguage } from "../types";
+import {
+  arbitrum,
+  bsc,
+  bscTestnet,
+  celo,
+  klaytn,
+  mainnet,
+  polygon,
+  polygonMumbai,
+  sepolia,
+} from "@wagmi/chains";
+import {
+  ContractTransactionStatus,
+  SupportedChain,
+  SupportedLanguage,
+} from "../types";
 
 /**
  * Constants representing error messages.
@@ -27,7 +40,62 @@ const ERROR_MESSAGE = {
 /**
  * Supported blockchain chains.
  */
-const SUPPORTED_CHAINS: Chain[] = Object.values(chains);
+const SUPPORTED_CHAINS: SupportedChain[] = [
+  {
+    id: arbitrum.id,
+    blockExplorer: arbitrum.blockExplorers.default.url,
+    name: arbitrum.name,
+    rpc: "https://rpc.ankr.com/arbitrum/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  },
+  {
+    id: bsc.id,
+    blockExplorer: bsc.blockExplorers.default.url,
+    name: bsc.name,
+    rpc: "https://rpc.ankr.com/bsc/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  },
+  {
+    id: bscTestnet.id,
+    blockExplorer: bscTestnet.blockExplorers.default.url,
+    name: bscTestnet.name,
+    rpc: "https://rpc.ankr.com/bsc_testnet_chapel/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  },
+  {
+    id: celo.id,
+    blockExplorer: celo.blockExplorers.default.url,
+    name: celo.name,
+    rpc: "https://rpc.ankr.com/celo/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  },
+  {
+    id: klaytn.id,
+    blockExplorer: klaytn.blockExplorers.default.url,
+    name: klaytn.name,
+    rpc: "https://rpc.ankr.com/klaytn/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  },
+  {
+    id: mainnet.id,
+    blockExplorer: mainnet.blockExplorers.default.url,
+    name: mainnet.name,
+    rpc: "https://rpc.ankr.com/eth/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  },
+  {
+    id: polygon.id,
+    blockExplorer: polygon.blockExplorers.default.url,
+    name: polygon.name,
+    rpc: "https://rpc.ankr.com/polygon/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  },
+  {
+    id: polygonMumbai.id,
+    blockExplorer: polygonMumbai.blockExplorers.default.url,
+    name: polygonMumbai.name,
+    rpc: "https://rpc.ankr.com/polygon_mumbai/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  },
+  {
+    id: sepolia.id,
+    blockExplorer: sepolia.blockExplorers.default.url,
+    name: sepolia.name,
+    rpc: "https://rpc.ankr.com/eth_sepolia/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  },
+];
 
 /**
  * Supported programming languages.

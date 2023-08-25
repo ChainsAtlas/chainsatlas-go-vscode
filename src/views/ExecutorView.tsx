@@ -180,24 +180,23 @@ const ExecutorView = (): JSX.Element => {
     <div className="container">
       {compileFormOpen ? (
         <>
-          <VSCodeTextField
-            className="width-constraint"
-            placeholder={_userFile ? _userFile.path : "Upload file"}
-            readOnly
-            title={_userFile?.path || undefined}
-          >
-            File
-            <section slot="end">
-              <VSCodeButton
-                appearance="icon"
-                className="button-codicon"
-                onClick={selectFile}
-                title="Upload file"
-              >
-                <i className="codicon codicon-cloud-upload" />
-              </VSCodeButton>
-            </section>
-          </VSCodeTextField>
+          <div className="file-upload-container">
+            <VSCodeTextField
+              className="file-upload-input"
+              placeholder={_userFile ? _userFile.path : "No file selected."}
+              readOnly
+              title={_userFile?.path || undefined}
+            >
+              File
+            </VSCodeTextField>
+            <VSCodeButton
+              appearance="secondary"
+              className="file-upload-button"
+              onClick={selectFile}
+            >
+              Upload
+            </VSCodeButton>
+          </div>
           <VSCodeTextField
             className="width-constraint"
             onInput={(e) => setUserNargs((e.target as HTMLInputElement).value)}

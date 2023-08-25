@@ -53,11 +53,18 @@ vscode-button {
   margin-top: 10px;
 }
 
-.button-codicon {
-  align-items: center;
+.file-upload-container {
+  align-items: end;
   display: flex;
-  height: 20px;
-  justify-self: center;
-  padding: 0;
-  width: 20px;
+  gap: 10px;
+}
+
+.file-upload-input {
+  max-width: calc(380px - 10px - 72px);
+  min-width: calc(130px - 10px - 72px);
+  width: 100%;
+}
+
+.file-upload-button {
+  width: 70px;
 }

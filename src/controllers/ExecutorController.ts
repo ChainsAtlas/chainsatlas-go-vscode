@@ -265,7 +265,7 @@ class ExecutorController extends Controller {
       this._modelMap.transactionHistory.addRow({
         output,
         transactionHash,
-        transactionUrl: `${chain.blockExplorers?.default.url}/tx/${transactionHash}`,
+        transactionUrl: `${chain.blockExplorer}/tx/${transactionHash}`,
       });
 
       this._modelMap.executor.output = undefined;

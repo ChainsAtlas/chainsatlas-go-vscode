@@ -109,7 +109,7 @@ class WalletModel {
             methods: WalletModel._EIP155_METHODS,
             chains: [`eip155:${chain.id}`],
             events: WalletModel._EIP155_EVENTS,
-            rpcMap: { [chain.id]: chain.rpcUrls.default.http[0] },
+            rpcMap: { [chain.id]: chain.rpc },
           },
         },
       });

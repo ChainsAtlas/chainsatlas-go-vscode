@@ -100,10 +100,6 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
         localResourceRoots: [
           Uri.joinPath(this._extensionUri, "assets"),
           Uri.joinPath(this._extensionUri, "dist"),
-          Uri.joinPath(
-            this._extensionUri,
-            "node_modules/@vscode/codicons/dist",
-          ),
         ],
       };
 
@@ -133,16 +129,6 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
       ),
     );
 
-    const codiconsUri = view.webview.asWebviewUri(
-      Uri.joinPath(
-        this._extensionUri,
-        "node_modules",
-        "@vscode/codicons",
-        "dist",
-        "codicon.css",
-      ),
-    );
-
     const scriptUri = view.webview.asWebviewUri(
       Uri.joinPath(this._extensionUri, "dist", `${this._viewType}View.js`),
     );
@@ -163,9 +149,7 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
 
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-				<link href="${styleUri}" rel="stylesheet">
-        <link href="${codiconsUri}" rel="stylesheet" />
-        
+				<link href="${styleUri}" rel="stylesheet">        
 
 				<title>ChainsAtlas GO</title>
 			</head>

@@ -1,4 +1,3 @@
-import { Chain } from "@wagmi/chains";
 import { WebviewView } from "vscode";
 import { Bytes, ProviderAccounts } from "web3";
 import {
@@ -122,6 +121,13 @@ enum GasOption {
   ESTIMATE = "estimate",
 }
 
+type SupportedChain = {
+  id: number;
+  blockExplorer: string;
+  name: string;
+  rpc: string;
+};
+
 /**
  * Enum representing commands for transaction history.
  */
@@ -243,9 +249,9 @@ type WalletControllerModelMap = {
 type WalletViewState = {
   accounts?: ProviderAccounts;
   authStatus?: AuthStatus;
-  chain: Chain;
+  chain: SupportedChain;
   balance?: string;
-  chains: Chain[];
+  chains: SupportedChain[];
   currentAccount?: string;
   connected?: boolean;
   uri?: string;
@@ -264,6 +270,7 @@ export {
   ExecutorModelEvent,
   ExecutorViewState,
   GasOption,
+  SupportedChain,
   SupportedLanguage,
   TransactionHistoryCommand,
   TransactionHistoryRow,
