@@ -62,7 +62,7 @@ const TransactionHistoryView = (): JSX.Element => {
     </div>
   ) : (
     <div className="container">
-      {_rows.length > 0 ? (
+      {_rows?.length > 0 ? (
         <div className="width-constraint">
           <VSCodeDataGrid id="tx-data-grid">
             <VSCodeDataGridRow row-type="sticky-header">

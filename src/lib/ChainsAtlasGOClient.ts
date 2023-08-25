@@ -461,19 +461,21 @@ class ChainsAtlasGOClient {
       switch (type) {
         case ViewType.EXECUTOR:
           this._viewMap.executor?.webview.postMessage(
-            this._viewStateGenerator?.generateViewState(ViewType.EXECUTOR),
+            await this._viewStateGenerator?.generateViewState(
+              ViewType.EXECUTOR,
+            ),
           );
           break;
         case ViewType.TRANSACTION_HISTORY:
           this._viewMap.transactionHistory?.webview.postMessage(
-            this._viewStateGenerator?.generateViewState(
+            await this._viewStateGenerator?.generateViewState(
               ViewType.TRANSACTION_HISTORY,
             ),
           );
           break;
         case ViewType.VIRTUALIZATION_UNIT:
           this._viewMap.virtualizationUnit?.webview.postMessage(
-            this._viewStateGenerator?.generateViewState(
+            await this._viewStateGenerator?.generateViewState(
               ViewType.VIRTUALIZATION_UNIT,
             ),
           );

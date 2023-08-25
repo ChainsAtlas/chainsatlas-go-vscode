@@ -231,7 +231,7 @@ const VirtualizationUnitView = (): JSX.Element => {
           }
           value={_contracts?.length ? _currentContract : "empty"}
         >
-          {_contracts.length ? (
+          {_contracts?.length ? (
             _contracts.map((contract) => (
               <VSCodeOption key={contract} value={contract}>
                 {contract}

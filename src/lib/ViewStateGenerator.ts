@@ -70,7 +70,7 @@ class ViewStateGenerator {
     withErrorHandling(async () => {
       switch (viewType) {
         case ViewType.EXECUTOR:
-          return this._executorViewState();
+          return this._generateExecutorViewState();
         case ViewType.TRANSACTION_HISTORY:
           return this._generateTransactionHistoryViewState();
         case ViewType.VIRTUALIZATION_UNIT:
@@ -90,7 +90,7 @@ class ViewStateGenerator {
    *
    * @returns The executor view state or `undefined` if the required data is not available.
    */
-  private _executorViewState = (): ExecutorViewState | undefined => {
+  private _generateExecutorViewState = (): ExecutorViewState | undefined => {
     const {
       compilerStatus,
       contractTransactionStatus,
