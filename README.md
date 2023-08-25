@@ -1,71 +1,67 @@
-# chainsatlas-go README
+# **ChainsAtlas GO VSCode**
 
-This is the README for your extension "chainsatlas-go". After writing up a brief description, we recommend including the following sections.
+Bring your favorite programming languages to any blockchain with ChainsAtlas GO!
 
-## Features
+## **Table of Contents**
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+  - [Wallet Controller](#wallet-controller)
+  - [Virtualization Unit Controller](#virtualization-unit-controller)
+  - [Transaction History Controller](#transaction-history-controller)
+  - [Executor Controller](#executor-controller)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
 
-For example if there is an image subfolder under your extension project workspace:
+## **Features**
 
-\!\[feature X\]\(images/feature-x.png\)
+- 🌐 **Blockchain Interoperability**: ChainsAtlas Virtualization Unit is compatible with any chain.
+- 💼 **Programming Language Flexibility**: Use what you know instead of having to learn new programming languages.
+- 🛠 **Native Execution**: Compile and execute web2 code on web3 natively.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## **Getting Started**
 
-## Requirements
+1. **Prerequisites**:
+   - Install Visual Studio Code.
+2. **Installation**:
+   - Search for "ChainsAtlas GO" in the VSCode extensions marketplace.
+   - Click "Install" to add the extension to VSCode.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## **Usage**
 
-## Extension Settings
+### **Wallet View**
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+- **Login**: Pprovide the necessary credentials, and click **Login**.
+- **Logout**: Navigate to the **Logout** section and click **Logout** to disconnect your wallet and end your session.
+- **Connect**: Navigate to the Wallet section and click on the **Connect** button. Choose your desired blockchain by its `chainId` and scan the QR Code with your mobile wallet to connect.
+- **Change Account**: Pick your desired account from the connected wallet.
 
-For example:
+### **Virtualization Unit Controller**
 
-This extension contributes the following settings:
+- **Deploy**: Navigate to the Virtualization Unit section and click **Deploy** to deploy a contract.
+- **Set Gas**: Choose an option or set a custom gas value.
+- **Change Contract**: Select among your deployed virtualization units.
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+### **Executor Controller**
 
-## Known Issues
+- **File Management**: Use **Select File** to choose a system file or **Get Active File** to work with the current VSCode file. Use **Clear File** to remove a file.
+- **Compile & Execute**: After selecting a file, click **Compile**. Use **Execute** for execution. Use the **Estimate** option to check gas requirements.
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+### **Transaction History Controller**
 
-## Release Notes
+- **View History**: Navigate to the Transaction History section to see past transactions. Each entry provides details like output, transaction hash, and a link to view the transaction on a block explorer.
 
-Users appreciate release notes as you update your extension.
+## **Troubleshooting**
 
-### 1.0.0
+If you encounter issues:
 
-Initial release of ...
+- Check the error message for guidance.
+- Ensure login credentials are correct.
+- Try disconnecting your wallet and connecting again (could be a problem on your wallet)
 
-### 1.0.1
+## **Contributing**
 
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+We welcome contributions! If you have suggestions, bug reports, or feature requests, please open an issue on our GitHub repository.
 
 ---
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**

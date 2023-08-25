@@ -15,6 +15,21 @@ import { VsCodeApi, WalletCommand, WalletViewState } from "../types";
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
+/**
+ * `WalletView` component provides a user interface for managing the connected
+ * wallet. It offers functionalities like:
+ * - Logging into the wallet interface.
+ * - Displaying available chains and selecting a chain.
+ * - Connecting to and disconnecting from a wallet.
+ * - Displaying available accounts and selecting an account.
+ * - Viewing the balance of the selected account.
+ * - Displaying QR codes for WalletConnect-enabled connections.
+ *
+ * This component communicates with the extension environment using the `vscodeApi`
+ * to fetch and update the wallet view state.
+ *
+ * @returns {JSX.Element} A React element that renders the wallet view.
+ */
 const WalletView = (): JSX.Element => {
   const [_accounts, setAccounts] = useState<WalletViewState["accounts"]>();
   const [_authStatus, setAuthStatus] =

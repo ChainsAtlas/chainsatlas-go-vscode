@@ -11,11 +11,25 @@ import {
 } from "../types";
 import Controller from "./Controller.abstract";
 
+/**
+ * The VirtualizationUnitController class manages interactions and commands related to the virtualization unit view.
+ * It extends the abstract Controller class and handles specific messages for the virtualization unit.
+ */
 class VirtualizationUnitController extends Controller {
   // ---------------------- Private Helper Variables ----------------------
+  /**
+   * A helper variable to manage gas-related promises.
+   */
   private _gasResolver?: (value: string | PromiseLike<string>) => void;
 
   // ---------------------- Constructor ----------------------
+  /**
+   * Constructor initializes the webview, disposable resources, and the model map for the virtualization unit.
+   *
+   * @param _webview - The webview interface for interacting with the view.
+   * @param _disposables - Array of resources to be disposed when no longer needed.
+   * @param _modelMap - A map of models related to the virtualization unit.
+   */
   constructor(
     _webview: Webview,
     _disposables: Disposable[],
@@ -25,6 +39,12 @@ class VirtualizationUnitController extends Controller {
   }
 
   // ---------------------- Protected Method - Message Handler ----------------------
+  /**
+   * Message handler for the virtualization unit view.
+   * It processes commands like CLEAR_DEPLOYMENT, DEPLOY, READY, SEND, and SET_CONTRACT.
+   *
+   * @param message - The message received from the view.
+   */
   protected _handler = async (message: ViewMessage): Promise<void> => {
     const { CLEAR_DEPLOYMENT, DEPLOY, READY, SEND, SET_CONTRACT } =
       VirtualizationUnitCommand;
@@ -52,11 +72,19 @@ class VirtualizationUnitController extends Controller {
   };
 
   // ---------------------- Private Methods - Command Handlers ----------------------
+  /**
+   * Clears the current deployment data.
+   */
   private _clearDeployment = (): void => {
     this._modelMap.virtualizationUnit.clearDeployment();
     this.emit(ControllerEvent.SYNC, ViewType.VIRTUALIZATION_UNIT);
   };
 
+  /**
+   * Deploys the current configuration.
+   * This method validates the necessary conditions for deployment,
+   * sets up event listeners, and triggers the actual deployment.
+   */
   private _deploy = async (): Promise<void> => {
     if (!this._modelMap.wallet?.currentAccount) {
       throw new Error(ERROR_MESSAGE.INVALID_ACCOUNT);
@@ -74,6 +102,12 @@ class VirtualizationUnitController extends Controller {
       },
     );
 
+    /**
+     * Manages sync events for the virtualization unit during deployment.
+     * This ensures that the deployment process is synchronized across various stages.
+     *
+     * @param virtualizationUnit - The virtualization unit model.
+     */
     const manageSyncEvents = async (
       virtualizationUnit: VirtualizationUnitModel,
     ): Promise<void> => {
@@ -104,6 +138,11 @@ class VirtualizationUnitController extends Controller {
     );
   };
 
+  /**
+   * Sends the transaction with the specified amount of gas.
+   *
+   * @param gas - The amount of gas to send.
+   */
   private _send = (gas?: string): void => {
     if (!gas) {
       throw new Error(ERROR_MESSAGE.INVALID_GAS);
@@ -111,6 +150,11 @@ class VirtualizationUnitController extends Controller {
     this._handleGas(gas);
   };
 
+  /**
+   * Sets the contract to the specified address.
+   *
+   * @param contractAddress - The address of the contract to set.
+   */
   private _setContract = (contractAddress?: string): void => {
     if (
       contractAddress &&
@@ -128,6 +172,9 @@ class VirtualizationUnitController extends Controller {
   };
 
   // ---------------------- Private Methods - Utilities ----------------------
+  /**
+   * Fetches user gas input.
+   */
   private _getGas = async (): Promise<void> => {
     const gas = await new Promise((resolve) => (this._gasResolver = resolve));
 
@@ -137,6 +184,11 @@ class VirtualizationUnitController extends Controller {
     );
   };
 
+  /**
+   * Handles the specified amount of gas.
+   *
+   * @param gas - The amount of gas to handle.
+   */
   private _handleGas = (gas: string): void => {
     if (this._gasResolver) {
       this._gasResolver(gas);

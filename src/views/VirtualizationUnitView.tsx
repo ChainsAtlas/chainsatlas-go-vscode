@@ -20,6 +20,19 @@ import {
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
+/**
+ * `VirtualizationUnitView` component provides a user interface for managing
+ * virtualization units. It offers functionalities like:
+ * - Estimating gas for the deployment of a virtualization unit contract.
+ * - Selecting different gas options.
+ * * - Deploying new virtualization units.
+ * - Viewing and selecting available virtualization unit contracts.
+ *
+ * This component communicates with the extension environment using the `vscodeApi`
+ * to fetch and update the virtualization unit view state.
+ *
+ * @returns {JSX.Element} A React element that renders the virtualization unit view.
+ */
 const VirtualizationUnitView = (): JSX.Element => {
   const [_contracts, setContracts] = useState<
     VirtualizationUnitViewState["contracts"]

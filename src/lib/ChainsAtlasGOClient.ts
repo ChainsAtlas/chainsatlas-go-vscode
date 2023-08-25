@@ -26,7 +26,7 @@ import { withErrorHandling } from "../utils";
 
 /**
  * Defines keys for accessing private members of the ChainsAtlasGO class.
- * Each key corresponds to a private member variable within the class.
+ * These keys correlate with private member variables within the class.
  */
 export enum PrivateMemberKey {
   EXECUTOR = "_executor",
@@ -43,7 +43,7 @@ export enum PrivateMemberKey {
 
 /**
  * Type mapping to associate each `PrivateMemberKey` with its corresponding data type.
- * This ensures that the expected type for each private member can be inferred from its key.
+ * Ensures the expected type for each private member can be inferred from its key.
  */
 export type MemberTypeMap = {
   [PrivateMemberKey.EXECUTOR]: ExecutorModel;
@@ -60,14 +60,10 @@ export type MemberTypeMap = {
 
 /**
  * Contains metadata information for ChainsAtlas GO.
- *
- * - `DESCRIPTION`: A brief overview of ChainsAtlas GO.
- * - `ICONS`: Array of URLs pointing to the icons for ChainsAtlas GO.
- * - `NAME`: The official name of ChainsAtlas GO.
- * - `URL`: The official website or URL for ChainsAtlas GO.
+ * Provides branding and web-related details for the ChainsAtlas GO client.
  */
 const METADATA = {
-  DESCRIPTION: "ChainsAtlas GO VS Code",
+  DESCRIPTION: "ChainsAtlas GO VSCode",
   ICONS: [
     "https://chainsatlas.com/wp-content/uploads/2022/08/ChainsAtlas-logo.png",
   ],
@@ -200,8 +196,8 @@ class ChainsAtlasGOClient {
    * @returns {Promise<void>} A promise that resolves when the view is added and the corresponding controller is initialized.
    * @throws {Error} Throws an error if any of the required members are not initialized or if the view type is invalid.
    */
-  public addView = withErrorHandling(
-    async (view: WebviewView): Promise<void> => {
+  public addView = async (view: WebviewView): Promise<void> =>
+    withErrorHandling(() => {
       if (
         this._ensureInitialized(
           PrivateMemberKey.EXECUTOR,
@@ -255,8 +251,7 @@ class ChainsAtlasGOClient {
             break;
         }
       }
-    },
-  );
+    })();
 
   /**
    * Disposes resources and connections when the extension is deactivated.
@@ -268,37 +263,38 @@ class ChainsAtlasGOClient {
    * @returns {Promise<void>} A promise that resolves when the disconnection is complete.
    * @throws {Error} Throws an error if the provider or wallet fails to disconnect.
    */
-  public dispose = withErrorHandling(async (): Promise<void> => {
-    if (
-      this._ensureInitialized(
-        PrivateMemberKey.PROVIDER,
-        PrivateMemberKey.WALLET,
-      )
-    ) {
-      await this._wallet.disconnect();
-      await this._provider.disconnect();
-    }
+  public dispose = async (): Promise<void> =>
+    withErrorHandling(async () => {
+      if (
+        this._ensureInitialized(
+          PrivateMemberKey.PROVIDER,
+          PrivateMemberKey.WALLET,
+        )
+      ) {
+        await this._wallet.disconnect();
+        await this._provider.disconnect();
+      }
 
-    if (
-      this._ensureInitialized(
-        PrivateMemberKey.EXECUTOR_CONTROLLER,
-        PrivateMemberKey.TRANSACTION_HISTORY_CONTROLLER,
-        PrivateMemberKey.VIRTUALIZATION_UNIT_CONTROLLER,
-        PrivateMemberKey.WALLET_CONTROLLER,
-      )
-    ) {
-      this._executorController.off(ControllerEvent.SYNC, this._syncView);
-      this._transactionHistoryController.off(
-        ControllerEvent.SYNC,
-        this._syncView,
-      );
-      this._virtualizationUnitController.off(
-        ControllerEvent.SYNC,
-        this._syncView,
-      );
-      this._walletController.off(ControllerEvent.SYNC, this._syncView);
-    }
-  });
+      if (
+        this._ensureInitialized(
+          PrivateMemberKey.EXECUTOR_CONTROLLER,
+          PrivateMemberKey.TRANSACTION_HISTORY_CONTROLLER,
+          PrivateMemberKey.VIRTUALIZATION_UNIT_CONTROLLER,
+          PrivateMemberKey.WALLET_CONTROLLER,
+        )
+      ) {
+        this._executorController.off(ControllerEvent.SYNC, this._syncView);
+        this._transactionHistoryController.off(
+          ControllerEvent.SYNC,
+          this._syncView,
+        );
+        this._virtualizationUnitController.off(
+          ControllerEvent.SYNC,
+          this._syncView,
+        );
+        this._walletController.off(ControllerEvent.SYNC, this._syncView);
+      }
+    })();
 
   /**
    * Initializes the ChainsAtlasGOClient instance.
@@ -312,8 +308,8 @@ class ChainsAtlasGOClient {
    * @returns {Promise<void>} A promise that resolves when the initialization is complete.
    * @throws {Error} Throws an error if the UniversalProvider fails to initialize or any models fail to instantiate.
    */
-  public init = async (): Promise<void> => {
-    await withErrorHandling(async () => {
+  public init = async (): Promise<void> =>
+    withErrorHandling(async () => {
       this._provider = await UniversalProvider.init({
         projectId: WALLETCONNECT_PROJECT_ID,
         metadata: {
@@ -336,7 +332,6 @@ class ChainsAtlasGOClient {
         this._wallet,
       );
     })();
-  };
 
   // ---------------------- Private Methods - Utilities ----------------------
   /**

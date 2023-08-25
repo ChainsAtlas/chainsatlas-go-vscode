@@ -5,8 +5,11 @@ import { ViewType } from "./types";
 
 /**
  * Initializes the ChainsAtlasGO instance.
- * @param context - The extension context.
- * @returns The initialized ChainsAtlasGO instance.
+ *
+ * @param {ExtensionContext} context - The context in which the extension operates.
+ * This contains utilities to perform operations like storage, retrieve the extension's URI, etc.
+ *
+ * @returns {Promise<ChainsAtlasGOClient>} Returns a promise that resolves to the initialized ChainsAtlasGO instance.
  */
 const initializeChainsAtlasGO = async (
   context: ExtensionContext,
@@ -18,8 +21,12 @@ const initializeChainsAtlasGO = async (
 
 /**
  * Sets up the view providers for the extension.
- * @param extensionUri - The extension URI.
- * @returns An object containing the initialized view providers.
+ *
+ * @param {Uri} extensionUri - The unique identifier for the extension,
+ * typically used to locate resources within the extension.
+ *
+ * @returns {Record<ViewType, CustomViewProvider>} Returns an object where each key is a type of view (from `ViewType`)
+ * and its corresponding value is the initialized view provider for that type.
  */
 const setupViewProviders = (
   extensionUri: Uri,
@@ -35,7 +42,15 @@ const setupViewProviders = (
 
 /**
  * Activates the extension.
- * @param context - The extension context.
+ *
+ * This function is called when the extension is activated, i.e.,
+ * when its functionality is first accessed after the editor starts up.
+ * The function sets up necessary initializations for the extension to function properly.
+ *
+ * @param {ExtensionContext} context - The context in which the extension operates.
+ * Contains utilities to perform operations like storage, retrieve the extension's URI, etc.
+ *
+ * @returns {Promise<void>} Returns a promise that resolves when the activation process is complete.
  */
 const activate = async (context: ExtensionContext): Promise<void> => {
   try {

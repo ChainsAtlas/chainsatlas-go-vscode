@@ -15,6 +15,22 @@ import {
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
+/**
+ * `TransactionHistoryView` component provides the user interface for displaying
+ * a list of past transactions. It fetches and renders the transaction history
+ * from the extension environment using the `vscodeApi`.
+ *
+ * The component provides functionalities such as:
+ * - Displaying a list of past transactions with their hash and output
+ * - Linking to the transaction on a block explorer
+ * - Informing the user to connect their wallet to view the transaction history
+ * - Handling empty transaction history state
+ *
+ * This component communicates with the extension environment using the `vscodeApi`
+ * to fetch and update the transaction history view state.
+ *
+ * @returns {JSX.Element} A React element that renders the transaction history view.
+ */
 const TransactionHistoryView = (): JSX.Element => {
   const [_disabled, setDisabled] =
     useState<TransactionHistoryViewState["disabled"]>(true);

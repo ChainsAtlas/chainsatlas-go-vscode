@@ -1,0 +1,9 @@
+{
+  "entryPointStrategy": "expand",
+  "entryPoints": ["src/"],
+  "exclude": ["**/node_modules/**/*", "src/test/**/*"],
+  "excludeExternals": true,
+  "excludePrivate": false,
+  "out": "docs",
+  "theme": "default"
+}

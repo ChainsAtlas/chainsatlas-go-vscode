@@ -12,8 +12,20 @@ import {
 } from "../types";
 import Controller from "./Controller.abstract";
 
+/**
+ * Represents a controller for wallet functionalities.
+ */
 class WalletController extends Controller {
   // ---------------------- Constructor ----------------------
+  /**
+   * Initializes a new instance of the `WalletController` class.
+   *
+   * @param _webview The webview used to communicate with the UI.
+   * @param _disposables A collection of disposables to be disposed when the controller is disposed.
+   * @param _modelMap The model map containing all the related models for this controller.
+   * @param _provider The wallet provider.
+   * @param _api The API instance for handling authentication and other operations.
+   */
   constructor(
     _webview: Webview,
     _disposables: Disposable[],
@@ -29,6 +41,11 @@ class WalletController extends Controller {
   }
 
   // ---------------------- Protected Method - Message Handler ----------------------
+  /**
+   * Handles incoming messages from the webview and dispatches them to appropriate handler methods.
+   *
+   * @param message The incoming message from the webview.
+   */
   protected _handler = async (message: ViewMessage): Promise<void> => {
     const { CHANGE_ACCOUNT, CONNECT, DISCONNECT, LOGIN, LOGOUT, READY } =
       WalletCommand;
@@ -59,6 +76,12 @@ class WalletController extends Controller {
   };
 
   // ---------------------- Private Methods - Command Handlers ----------------------
+  /**
+   * Changes the active account to the specified account.
+   *
+   * @param account The account to be set as the active account.
+   * @throws {Error} Throws an error if the provided account is invalid.
+   */
   private _changeAccount = (account?: string): void => {
     if (account && this._modelMap.wallet.accounts?.includes(account)) {
       this._modelMap.wallet.currentAccount = account;
@@ -76,6 +99,12 @@ class WalletController extends Controller {
     }
   };
 
+  /**
+   * Connects the wallet to the specified chain.
+   *
+   * @param chainId The ID of the chain to connect to.
+   * @throws {Error} Throws an error if the provided chainId is invalid.
+   */
   private _connect = async (chainId?: string): Promise<void> => {
     await this._modelMap.wallet.connect(Number(chainId));
     this._modelMap.wallet.web3 = new Web3(this._provider);
@@ -94,6 +123,9 @@ class WalletController extends Controller {
     );
   };
 
+  /**
+   * Disconnects the wallet from the current chain and clears related data.
+   */
   private _disconnect = async (): Promise<void> => {
     await this._modelMap.wallet.disconnect();
     this._modelMap.virtualizationUnit.clearDeployment();
@@ -111,6 +143,13 @@ class WalletController extends Controller {
     );
   };
 
+  /**
+   * Logs into the API using the provided credentials.
+   *
+   * @param data The stringified credentials {username: string, password: string}
+   * to be used for logging in.
+   * @throws {Error} Throws an error if the provided credentials are invalid.
+   */
   private _login = async (data?: string): Promise<void> => {
     if (!data) {
       throw new Error(ERROR_MESSAGE.INVALID_CREDENTIALS);
@@ -122,6 +161,9 @@ class WalletController extends Controller {
     this.emit(ControllerEvent.SYNC, ViewType.WALLET);
   };
 
+  /**
+   * Logs out from the API and disconnects the wallet.
+   */
   private _logout = (): void => {
     this._api.logout();
     this._disconnect();

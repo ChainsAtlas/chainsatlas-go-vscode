@@ -1,7 +1,6 @@
 import { Chain } from "@wagmi/chains";
-import { ProviderAccounts } from "@walletconnect/universal-provider";
 import { WebviewView } from "vscode";
-import { Bytes } from "web3";
+import { Bytes, ProviderAccounts } from "web3";
 import {
   ExecutorModel,
   TransactionHistoryModel,
@@ -9,18 +8,37 @@ import {
   WalletModel,
 } from "../models";
 
+/**
+ * Types and Enums
+ */
+
+/**
+ * Represents the authentication status.
+ */
 type AuthStatus = "authenticated" | "authenticating";
 
+/**
+ * Represents the argument for bytecode.
+ */
 type BytecodeArg = number;
 
+/**
+ * Represents the structure of bytecode.
+ */
 type BytecodeStructure = {
   bytecode: string;
   key: string;
   nargs: number;
 };
 
+/**
+ * Represents the status of the bytecode compiler.
+ */
 type BytecodeCompilerStatus = "compiling" | "done";
 
+/**
+ * Represents the status of contract transactions.
+ */
 type ContractTransactionStatus =
   | "confirmation"
   | "error"
@@ -29,10 +47,16 @@ type ContractTransactionStatus =
   | "sent"
   | "transactionHash";
 
+/**
+ * Enum representing various controller events.
+ */
 enum ControllerEvent {
   SYNC = "sync",
 }
 
+/**
+ * Enum representing commands for the executor.
+ */
 enum ExecutorCommand {
   CANCEL_COMPILE = "cancelCompile",
   CANCEL_EXECUTION = "cancelExecution",
@@ -45,6 +69,9 @@ enum ExecutorCommand {
   SELECT_FILE = "selectFile",
 }
 
+/**
+ * Represents a mapping of models for the executor controller.
+ */
 type ExecutorControllerModelMap = {
   executor: ExecutorModel;
   transactionHistory: TransactionHistoryModel;
@@ -52,6 +79,9 @@ type ExecutorControllerModelMap = {
   wallet: WalletModel;
 };
 
+/**
+ * Represents the state of the executor view.
+ */
 type ExecutorViewState = {
   compilerStatus?: BytecodeCompilerStatus;
   contractTransactionStatus?: ContractTransactionStatus;
@@ -63,12 +93,18 @@ type ExecutorViewState = {
   userFile?: ExecutorFile;
 };
 
+/**
+ * Represents a file used in the executor.
+ */
 type ExecutorFile = {
   content: string;
   extension: SupportedLanguage;
   path: string;
 };
 
+/**
+ * Enum representing events for the executor model.
+ */
 enum ExecutorModelEvent {
   BYTECODE_STRUCTURE_RECEIVED = "bytecodeStructureReceived",
   GAS_RECEIVED = "gasReceived",
@@ -77,33 +113,57 @@ enum ExecutorModelEvent {
   WAITING_GAS = "waitingGas",
 }
 
+/**
+ * Enum representing options for gas.
+ */
 enum GasOption {
   BUFFER = "buffer",
   CUSTOM = "custom",
   ESTIMATE = "estimate",
 }
 
+/**
+ * Enum representing commands for transaction history.
+ */
 enum TransactionHistoryCommand {
   READY = "ready",
 }
 
+/**
+ * Represents the state of the transaction history view.
+ */
 type TransactionHistoryViewState = {
   disabled: boolean;
   rows: TransactionHistoryRow[];
 };
 
+/**
+ * Represents a row in transaction history.
+ */
 type TransactionHistoryRow = {
   output: Bytes;
   transactionHash: Bytes;
   transactionUrl: string;
 };
 
+/**
+ * Represents supported programming languages.
+ */
 type SupportedLanguage = "c";
 
+/**
+ * Represents a map of views.
+ */
 type ViewMap = Record<ViewType, WebviewView>;
 
+/**
+ * Represents a message for the view.
+ */
 type ViewMessage = { command: string; value?: string };
 
+/**
+ * Enum representing types of views.
+ */
 enum ViewType {
   EXECUTOR = "executor",
   TRANSACTION_HISTORY = "transactionHistory",
@@ -111,6 +171,9 @@ enum ViewType {
   WALLET = "wallet",
 }
 
+/**
+ * Enum representing commands for the virtualization unit.
+ */
 enum VirtualizationUnitCommand {
   CLEAR_DEPLOYMENT = "clearDeployment",
   DEPLOY = "deploy",
@@ -119,17 +182,26 @@ enum VirtualizationUnitCommand {
   SET_CONTRACT = "setContract",
 }
 
+/**
+ * Represents a mapping of models for the virtualization unit controller.
+ */
 type VirtualizationUnitControllerModelMap = {
   virtualizationUnit: VirtualizationUnitModel;
   wallet: WalletModel;
 };
 
+/**
+ * Enum representing events for the virtualization unit model.
+ */
 enum VirtualizationUnitModelEvent {
   GAS_RECEIVED = "gasReceived",
   SYNC = "sync",
   WAITING_GAS = "waitingGas",
 }
 
+/**
+ * Represents the state of the virtualization unit view.
+ */
 type VirtualizationUnitViewState = {
   contracts: string[];
   contractTransactionStatus?: ContractTransactionStatus;
@@ -139,10 +211,16 @@ type VirtualizationUnitViewState = {
   gasEstimate?: string;
 };
 
+/**
+ * Represents the VS Code API for messaging.
+ */
 type VsCodeApi = {
   postMessage(message: ViewMessage): void;
 };
 
+/**
+ * Enum representing commands for the wallet.
+ */
 enum WalletCommand {
   CHANGE_ACCOUNT = "changeAccount",
   CONNECT = "connect",
@@ -159,6 +237,9 @@ type WalletControllerModelMap = {
   wallet: WalletModel;
 };
 
+/**
+ * Represents the state of the wallet view.
+ */
 type WalletViewState = {
   accounts?: ProviderAccounts;
   authStatus?: AuthStatus;

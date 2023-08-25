@@ -9,11 +9,38 @@ import {
   window,
 } from "vscode";
 import { ViewType } from "../types";
+import { withErrorHandling } from "../utils";
 
+/**
+ * The `CustomViewProvider` class provides custom views within the VSCode environment.
+ * It leverages the VSCode WebviewViewProvider API to render custom content in the form of webviews.
+ * The class also extends the EventEmitter to provide custom event management capabilities.
+ */
 class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
+  /**
+   * `_disposable` is an optional instance of the `Disposable` type from the VSCode API.
+   * This property holds onto a reference of a disposable resource, which could be any object
+   * that needs to release resources, like event listeners or subscriptions, before the object is
+   * garbage collected. The `Disposable` pattern is commonly used in VSCode extensions to ensure
+   * that resources are freed and to prevent potential memory leaks.
+   */
   private _disposable?: Disposable;
+  /**
+   * `_view` is an instance of the `WebviewView` type from the VSCode API.
+   * This property retains the current state of the webview being managed by the `CustomViewProvider`.
+   * The `WebviewView` provides the functionality to render custom HTML content inside VSCode,
+   * and it encapsulates the properties, methods, and events required to interact with and manipulate
+   * the webview. This property is essential for the `CustomViewProvider` to control the content
+   * and behavior of the webview it's responsible for.
+   */
   private _view!: WebviewView;
 
+  /**
+   * Constructor for the `CustomViewProvider` class.
+   *
+   * @param _extensionUri - The base URI of the VSCode extension. This is used to resolve paths to assets and scripts required for the webviews.
+   * @param _viewType - A classification identifier determining the type of view to be rendered.
+   */
   constructor(
     private readonly _extensionUri: Uri,
     private readonly _viewType: ViewType,
@@ -21,37 +48,81 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
     super();
   }
 
+  /**
+   * Dispose of resources used by the `CustomViewProvider`.
+   *
+   * This method is intended to free any resources (like event listeners or disposables) that the view provider might be holding onto.
+   * Wrapped with error handling to ensure graceful disposal even in the face of unexpected issues.
+   */
   public dispose = (): void => {
-    this._disposable?.dispose();
+    withErrorHandling(() => {
+      this._disposable?.dispose();
+    })();
   };
 
+  /**
+   * Registers the custom view provider with VSCode's webview API.
+   *
+   * This method ties the `CustomViewProvider` to a specific type of view within the VSCode environment.
+   * Once registered, VSCode will delegate rendering of that view type to this provider.
+   * Errors during registration are managed by the `withErrorHandling` utility.
+   */
   public register = (): void => {
-    this._disposable = window.registerWebviewViewProvider(this._viewType, this);
+    withErrorHandling(() => {
+      this._disposable = window.registerWebviewViewProvider(
+        this._viewType,
+        this,
+      );
+    })();
   };
 
+  /**
+   * Sets up the webview view when VSCode requests its content.
+   *
+   * This method is a required implementation for the `WebviewViewProvider` interface.
+   * It establishes the properties of the webview (like its content security policy and available scripts)
+   * and provides the HTML content to be displayed.
+   *
+   * @param webviewView - The webview view instance provided by VSCode during the resolve phase.
+   * @param _context - Contextual information about the view.
+   * @param _token - A token that indicates the cancellation of the webview creation.
+   */
   public resolveWebviewView = (
     webviewView: WebviewView,
     _context: WebviewViewResolveContext,
     _token: CancellationToken,
   ): void => {
-    this._view = webviewView;
+    withErrorHandling(() => {
+      this._view = webviewView;
 
-    this._view.webview.options = {
-      enableScripts: true,
-      localResourceRoots: [
-        Uri.joinPath(this._extensionUri, "assets"),
-        Uri.joinPath(this._extensionUri, "dist"),
-        Uri.joinPath(this._extensionUri, "node_modules/@vscode/codicons/dist"),
-      ],
-    };
+      this._view.webview.options = {
+        enableScripts: true,
+        localResourceRoots: [
+          Uri.joinPath(this._extensionUri, "assets"),
+          Uri.joinPath(this._extensionUri, "dist"),
+          Uri.joinPath(
+            this._extensionUri,
+            "node_modules/@vscode/codicons/dist",
+          ),
+        ],
+      };
 
-    this._view.webview.html = this._getHtmlForWebview(this._view);
+      this._view.webview.html = this._getHtmlForWebview(this._view);
 
-    this.emit("viewResolved", this._view);
+      this.emit("viewResolved", this._view);
+    })();
   };
 
   // -------------------- Private --------------------
-
+  /**
+   * Generates the HTML content for the webview.
+   *
+   * This private method assembles the HTML structure for the webview. It ensures that scripts, styles,
+   * and other assets are correctly referenced, adhering to the webview's content security policies.
+   *
+   * @param view - The webview view for which HTML content needs to be generated.
+   * @returns A string containing the full HTML content for the webview.
+   */
   private _getHtmlForWebview = (view: WebviewView): string => {
     const styleUri = view.webview.asWebviewUri(
       Uri.joinPath(
@@ -105,6 +176,14 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
 			</html>`;
   };
 
+  /**
+   * Generates a random nonce (Number used ONCE) for securing script tags in webviews.
+   *
+   * This is a security measure, ensuring that only the scripts loaded with the nonce
+   * specified in the content security policy will be executed.
+   *
+   * @returns A random 32-character long string nonce.
+   */
   private _getNonce = (): string => {
     let text = "";
     const possible =
