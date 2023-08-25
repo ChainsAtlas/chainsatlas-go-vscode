@@ -2,7 +2,13 @@
   "name": "chainsatlas-go",
   "displayName": "ChainsAtlas GO",
   "description": "Run web2 code on web3.",
-  "version": "0.0.1",
+  "publisher": "ChainsAtlas",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChainsAtlas/chainsatlas-go-vscode.git"
+  },
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -10,6 +16,8 @@
     "Other"
   ],
   "main": "./dist/extension.js",
+  "activationEvents": [],
+  "icon": "assets/img/logo.png",
   "contributes": {
     "views": {
       "chainsatlas-go": [
