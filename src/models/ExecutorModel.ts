@@ -262,6 +262,8 @@ class ExecutorModel extends EventEmitter {
           this.emit(ExecutorModelEvent.SYNC);
         })
         .on("confirmation", async ({ receipt }) => {
+          this.emit(ExecutorModelEvent.EXECUTION_CONFIRMED);
+
           this.contractTransactionStatus = undefined;
 
           const { logs, transactionHash } = receipt;

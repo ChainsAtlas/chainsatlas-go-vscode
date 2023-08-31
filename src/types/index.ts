@@ -2,6 +2,7 @@ import { WebviewView } from "vscode";
 import { Bytes, ProviderAccounts } from "web3";
 import {
   ExecutorModel,
+  SettingsModel,
   TransactionHistoryModel,
   VirtualizationUnitModel,
   WalletModel,
@@ -73,6 +74,7 @@ enum ExecutorCommand {
  */
 type ExecutorControllerModelMap = {
   executor: ExecutorModel;
+  settings: SettingsModel;
   transactionHistory: TransactionHistoryModel;
   virtualizationUnit: VirtualizationUnitModel;
   wallet: WalletModel;
@@ -106,6 +108,7 @@ type ExecutorFile = {
  */
 enum ExecutorModelEvent {
   BYTECODE_STRUCTURE_RECEIVED = "bytecodeStructureReceived",
+  EXECUTION_CONFIRMED = "executionConfirmed",
   GAS_RECEIVED = "gasReceived",
   SYNC = "sync",
   WAITING_BYTECODE_STRUCTURE = "waitingBytecodeStructure",
@@ -120,6 +123,23 @@ enum GasOption {
   CUSTOM = "custom",
   ESTIMATE = "estimate",
 }
+
+/**
+ * Enum representing commands for transaction history.
+ */
+enum SettingsCommand {
+  READY = "ready",
+  SWITCH_TELEMETRY = "switchTelemetry",
+}
+
+type SettingsControllerModelMap = {
+  settings: SettingsModel;
+};
+
+type SettingsViewState = {
+  disabled: boolean;
+  telemetry: boolean;
+};
 
 type SupportedChain = {
   id: number;
@@ -172,6 +192,7 @@ type ViewMessage = { command: string; value?: string };
  */
 enum ViewType {
   EXECUTOR = "executor",
+  SETTINGS = "settings",
   TRANSACTION_HISTORY = "transactionHistory",
   VIRTUALIZATION_UNIT = "virtualizationUnit",
   WALLET = "wallet",
@@ -192,6 +213,7 @@ enum VirtualizationUnitCommand {
  * Represents a mapping of models for the virtualization unit controller.
  */
 type VirtualizationUnitControllerModelMap = {
+  settings: SettingsModel;
   virtualizationUnit: VirtualizationUnitModel;
   wallet: WalletModel;
 };
@@ -200,6 +222,7 @@ type VirtualizationUnitControllerModelMap = {
  * Enum representing events for the virtualization unit model.
  */
 enum VirtualizationUnitModelEvent {
+  DEPLOYMENT_CONFIRMED = "deploymentConfirmed",
   GAS_RECEIVED = "gasReceived",
   SYNC = "sync",
   WAITING_GAS = "waitingGas",
@@ -270,6 +293,9 @@ export {
   ExecutorModelEvent,
   ExecutorViewState,
   GasOption,
+  SettingsCommand,
+  SettingsControllerModelMap,
+  SettingsViewState,
   SupportedChain,
   SupportedLanguage,
   TransactionHistoryCommand,

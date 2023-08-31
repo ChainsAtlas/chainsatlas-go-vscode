@@ -1,44 +1,5 @@
-import { ExtensionContext, Uri, window } from "vscode";
-import ChainsAtlasGOClient from "./lib/ChainsAtlasGOClient";
-import CustomViewProvider from "./lib/CustomViewProvider";
-import { ViewType } from "./types";
-
-/**
- * Initializes the ChainsAtlasGO instance.
- *
- * @param {ExtensionContext} context - The context in which the extension operates.
- * This contains utilities to perform operations like storage, retrieve the extension's URI, etc.
- *
- * @returns {Promise<ChainsAtlasGOClient>} Returns a promise that resolves to the initialized ChainsAtlasGO instance.
- */
-const initializeChainsAtlasGO = async (
-  context: ExtensionContext,
-): Promise<ChainsAtlasGOClient> => {
-  const client = new ChainsAtlasGOClient(context);
-  await client.init();
-  return client;
-};
-
-/**
- * Sets up the view providers for the extension.
- *
- * @param {Uri} extensionUri - The unique identifier for the extension,
- * typically used to locate resources within the extension.
- *
- * @returns {Record<ViewType, CustomViewProvider>} Returns an object where each key is a type of view (from `ViewType`)
- * and its corresponding value is the initialized view provider for that type.
- */
-const setupViewProviders = (
-  extensionUri: Uri,
-): Record<ViewType, CustomViewProvider> => {
-  const viewProviders: Partial<Record<ViewType, CustomViewProvider>> = {};
-
-  for (const view of Object.values(ViewType)) {
-    viewProviders[view] = new CustomViewProvider(extensionUri, view);
-  }
-
-  return viewProviders as Record<ViewType, CustomViewProvider>;
-};
+import { ExtensionContext, window } from "vscode";
+import { initializeChainsAtlasGO, setupViewProviders } from "./utils";
 
 /**
  * Activates the extension.
@@ -52,7 +13,7 @@ const setupViewProviders = (
  *
  * @returns {Promise<void>} Returns a promise that resolves when the activation process is complete.
  */
-const activate = async (context: ExtensionContext): Promise<void> => {
+export const activate = async (context: ExtensionContext): Promise<void> => {
   try {
     const chainsAtlasGO = await initializeChainsAtlasGO(context);
     const viewProviders = setupViewProviders(context.extensionUri);
@@ -64,9 +25,15 @@ const activate = async (context: ExtensionContext): Promise<void> => {
     });
 
     context.subscriptions.push(chainsAtlasGO);
+
+    window.showInformationMessage(
+      `Disclaimer: By using the beta version of ChainsAtlas GO, you acknowledge and 
+  understand the potential risks and the unfinished state of the product. While we 
+  strive to offer a seamless experience, unexpected issues might occur. We highly 
+  recommend not using the beta version for critical tasks and always maintaining 
+  backups of your data.`,
+    );
   } catch {
     window.showErrorMessage(`Extension activation failed.`);
   }
 };
-
-export { activate };

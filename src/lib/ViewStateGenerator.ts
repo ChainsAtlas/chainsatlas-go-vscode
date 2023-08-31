@@ -2,12 +2,14 @@ import { FMT_BYTES, FMT_NUMBER } from "web3";
 import { ERROR_MESSAGE, SUPPORTED_CHAINS } from "../constants";
 import {
   ExecutorModel,
+  SettingsModel,
   TransactionHistoryModel,
   VirtualizationUnitModel,
   WalletModel,
 } from "../models";
 import {
   ExecutorViewState,
+  SettingsViewState,
   TransactionHistoryViewState,
   ViewType,
   VirtualizationUnitViewState,
@@ -38,6 +40,7 @@ class ViewStateGenerator {
   constructor(
     private readonly _api: ChainsAtlasGOApi,
     private readonly _executor: ExecutorModel,
+    private readonly _settings: SettingsModel,
     private readonly _transactionHistory: TransactionHistoryModel,
     private readonly _virtualizationUnit: VirtualizationUnitModel,
     private readonly _wallet: WalletModel,
@@ -60,6 +63,7 @@ class ViewStateGenerator {
   ): Promise<
     | Promise<
         | ExecutorViewState
+        | SettingsViewState
         | TransactionHistoryViewState
         | VirtualizationUnitViewState
         | WalletViewState
@@ -71,6 +75,8 @@ class ViewStateGenerator {
       switch (viewType) {
         case ViewType.EXECUTOR:
           return this._generateExecutorViewState();
+        case ViewType.SETTINGS:
+          return this._generateSettingsViewState();
         case ViewType.TRANSACTION_HISTORY:
           return this._generateTransactionHistoryViewState();
         case ViewType.VIRTUALIZATION_UNIT:
@@ -90,7 +96,7 @@ class ViewStateGenerator {
    *
    * @returns The executor view state or `undefined` if the required data is not available.
    */
-  private _generateExecutorViewState = (): ExecutorViewState | undefined => {
+  private _generateExecutorViewState = (): ExecutorViewState => {
     const {
       compilerStatus,
       contractTransactionStatus,
@@ -115,6 +121,13 @@ class ViewStateGenerator {
     };
   };
 
+  private _generateSettingsViewState = (): SettingsViewState => {
+    const { authStatus } = this._api;
+    const { telemetry } = this._settings;
+
+    return { telemetry, disabled: authStatus !== "authenticated" };
+  };
+
   /**
    * Generates the state for the transaction history view.
    *
@@ -123,17 +136,16 @@ class ViewStateGenerator {
    *
    * @returns The transaction history view state or `undefined` if the required data is not available.
    */
-  private _generateTransactionHistoryViewState = ():
-    | TransactionHistoryViewState
-    | undefined => {
-    const { rows } = this._transactionHistory;
-    const { currentAccount } = this._wallet;
+  private _generateTransactionHistoryViewState =
+    (): TransactionHistoryViewState => {
+      const { rows } = this._transactionHistory;
+      const { currentAccount } = this._wallet;
 
-    return {
-      disabled: !Boolean(currentAccount),
-      rows,
+      return {
+        disabled: !Boolean(currentAccount),
+        rows,
+      };
     };
-  };
 
   /**
    * Generates the state for the virtualization unit view.
@@ -143,27 +155,26 @@ class ViewStateGenerator {
    *
    * @returns The virtualization unit view state or `undefined` if the required data is not available.
    */
-  private _generateVirtualizationUnitViewState = ():
-    | VirtualizationUnitViewState
-    | undefined => {
-    const {
-      contracts,
-      contractTransactionStatus,
-      currentContract,
-      estimating,
-      gasEstimate,
-    } = this._virtualizationUnit;
-    const { currentAccount } = this._wallet;
+  private _generateVirtualizationUnitViewState =
+    (): VirtualizationUnitViewState => {
+      const {
+        contracts,
+        contractTransactionStatus,
+        currentContract,
+        estimating,
+        gasEstimate,
+      } = this._virtualizationUnit;
+      const { currentAccount } = this._wallet;
 
-    return {
-      contracts,
-      contractTransactionStatus,
-      currentContract,
-      disabled: !Boolean(currentAccount),
-      estimating,
-      gasEstimate,
+      return {
+        contracts,
+        contractTransactionStatus,
+        currentContract,
+        disabled: !Boolean(currentAccount),
+        estimating,
+        gasEstimate,
+      };
     };
-  };
 
   /**
    * Asynchronously generates the state for the wallet view.
@@ -173,11 +184,10 @@ class ViewStateGenerator {
    *
    * @returns A Promise that resolves to the wallet view state or `undefined` if the required data is not available.
    */
-  private _generateWalletViewState = async (): Promise<
-    WalletViewState | undefined
-  > => {
+  private _generateWalletViewState = async (): Promise<WalletViewState> => {
     const { accounts, currentAccount, chain, connected, uri } = this._wallet;
     const { authStatus } = this._api;
+
     if (!chain) {
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }

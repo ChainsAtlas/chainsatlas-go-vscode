@@ -97,6 +97,7 @@ class VirtualizationUnitModel extends EventEmitter {
           this.emit(VirtualizationUnitModelEvent.SYNC);
         })
         .on("confirmation", ({ receipt }) => {
+          this.emit(VirtualizationUnitModelEvent.DEPLOYMENT_CONFIRMED);
           this.clearDeployment();
 
           const { contractAddress } = receipt;

@@ -31,6 +31,7 @@ const ERROR_MESSAGE = {
   INVALID_GAS: "Invalid gas",
   INVALID_NARGS: "Invalid number of arguments.",
   INVALID_TRANSACTION_DATA: "Invalid transaction data.",
+  INVALID_VALUE: "Invalid value",
   INVALID_VIEW_TYPE: "Invalid view type.",
   INVALID_VIRTUALIZATION_UNIT_CONTRACT: "Invalid virtualization unit contract.",
   INVALID_WEB3: "Invalid Web3 provider.",

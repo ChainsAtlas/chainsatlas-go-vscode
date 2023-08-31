@@ -10,6 +10,7 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { version } from "../../package.json";
 import { VsCodeApi, WalletCommand, WalletViewState } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
@@ -167,6 +168,9 @@ const WalletView = (): JSX.Element => {
         >
           {_authStatus === "authenticating" ? "Authenticating..." : "Login"}
         </VSCodeButton>
+      </div>
+      <div className="width-constraint">
+        <span className="disabled-text">Version {version}</span>
       </div>
     </div>
   ) : (

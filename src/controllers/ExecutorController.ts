@@ -186,9 +186,15 @@ class ExecutorController extends Controller {
       throw new Error(ERROR_MESSAGE.INVALID_WEB3);
     }
 
+    this._modelMap.settings.logExecutionAttempt();
+
     this._modelMap.executor.once(ExecutorModelEvent.WAITING_GAS, () => {
       this.emit(ControllerEvent.SYNC, ViewType.EXECUTOR);
       this._getGas();
+    });
+
+    this._modelMap.executor.once(ExecutorModelEvent.EXECUTION_CONFIRMED, () => {
+      this._modelMap.settings.logExecutionConfirmation();
     });
 
     const manageSyncEvents = async (executor: ExecutorModel): Promise<void> => {

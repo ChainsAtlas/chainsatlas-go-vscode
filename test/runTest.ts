@@ -1,6 +1,7 @@
-import * as path from "path";
-
 import { runTests } from "@vscode/test-electron";
+import chai from "chai";
+import path from "path";
+import sinonChai from "sinon-chai";
 
 async function main() {
   try {
@@ -20,4 +21,5 @@ async function main() {
   }
 }
 
+chai.use(sinonChai);
 main();

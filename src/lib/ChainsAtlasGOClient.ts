@@ -8,8 +8,10 @@ import {
   VirtualizationUnitController,
   WalletController,
 } from "../controllers";
+import SettingsController from "../controllers/SettingsController";
 import {
   ExecutorModel,
+  SettingsModel,
   TransactionHistoryModel,
   VirtualizationUnitModel,
   WalletModel,
@@ -17,6 +19,7 @@ import {
 import {
   ControllerEvent,
   ExecutorControllerModelMap,
+  SettingsControllerModelMap,
   ViewMap,
   ViewType,
   VirtualizationUnitControllerModelMap,
@@ -32,6 +35,7 @@ export enum PrivateMemberKey {
   EXECUTOR = "_executor",
   EXECUTOR_CONTROLLER = "_executorController",
   PROVIDER = "_provider",
+  SETTINGS = "_settings",
   TRANSACTION_HISTORY = "_transactionHistory",
   TRANSACTION_HISTORY_CONTROLLER = "_transactionHistoryController",
   VIEW_STATE_GENERATOR = "_viewStateGenerator",
@@ -49,6 +53,7 @@ export type MemberTypeMap = {
   [PrivateMemberKey.EXECUTOR]: ExecutorModel;
   [PrivateMemberKey.EXECUTOR_CONTROLLER]: ExecutorController;
   [PrivateMemberKey.PROVIDER]: UniversalProvider;
+  [PrivateMemberKey.SETTINGS]: SettingsModel;
   [PrivateMemberKey.TRANSACTION_HISTORY]: TransactionHistoryModel;
   [PrivateMemberKey.TRANSACTION_HISTORY_CONTROLLER]: TransactionHistoryController;
   [PrivateMemberKey.VIEW_STATE_GENERATOR]: ViewStateGenerator;
@@ -99,6 +104,8 @@ class ChainsAtlasGOClient {
    */
   private _executor?: ExecutorModel;
 
+  private _settings?: SettingsModel;
+
   /**
    * Represents the history of transactions.
    * Used for logging and tracking transaction events.
@@ -123,6 +130,8 @@ class ChainsAtlasGOClient {
    * Provides methods and logic to interact with the executor.
    */
   private _executorController?: ExecutorController;
+
+  private _settingsController?: SettingsController;
 
   /**
    * Controller for the transaction history model.
@@ -202,6 +211,7 @@ class ChainsAtlasGOClient {
         this._ensureInitialized(
           PrivateMemberKey.EXECUTOR,
           PrivateMemberKey.PROVIDER,
+          PrivateMemberKey.SETTINGS,
           PrivateMemberKey.TRANSACTION_HISTORY,
           PrivateMemberKey.VIEW_STATE_GENERATOR,
           PrivateMemberKey.VIRTUALIZATION_UNIT,
@@ -214,28 +224,40 @@ class ChainsAtlasGOClient {
 
         this._viewMap[view.viewType as keyof ViewMap] = view;
 
+        const API = this._api;
         const executor = this._executor;
+        const settings = this._settings;
         const transactionHistory = this._transactionHistory;
         const virtualizationUnit = this._virtualizationUnit;
         const wallet = this._wallet;
-        const { EXECUTOR, TRANSACTION_HISTORY, VIRTUALIZATION_UNIT, WALLET } =
-          ViewType;
+        const {
+          EXECUTOR,
+          SETTINGS,
+          TRANSACTION_HISTORY,
+          VIRTUALIZATION_UNIT,
+          WALLET,
+        } = ViewType;
         const { webview } = view;
 
         switch (view.viewType) {
           case EXECUTOR:
             this._initExecutorController(webview, {
               executor,
+              settings,
               transactionHistory,
               virtualizationUnit,
               wallet,
             });
+            break;
+          case SETTINGS:
+            this._initSettingsController(webview, { settings });
             break;
           case TRANSACTION_HISTORY:
             this._initTransactionHistoryController(webview);
             break;
           case VIRTUALIZATION_UNIT:
             this._initVirtualizationUnitController(webview, {
+              settings,
               virtualizationUnit,
               wallet,
             });
@@ -321,12 +343,14 @@ class ChainsAtlasGOClient {
       });
       this._api = new ChainsAtlasGOApi();
       this._executor = new ExecutorModel();
+      this._settings = new SettingsModel();
       this._transactionHistory = new TransactionHistoryModel();
       this._virtualizationUnit = new VirtualizationUnitModel();
       this._wallet = new WalletModel(this._provider);
       this._viewStateGenerator = new ViewStateGenerator(
         this._api,
         this._executor,
+        this._settings,
         this._transactionHistory,
         this._virtualizationUnit,
         this._wallet,
@@ -377,6 +401,19 @@ class ChainsAtlasGOClient {
       this._api,
     );
     this._executorController.on(ControllerEvent.SYNC, this._syncView);
+  };
+
+  private _initSettingsController = (
+    webview: Webview,
+    modelMap: SettingsControllerModelMap,
+  ) => {
+    this._settingsController = new SettingsController(
+      webview,
+      this._context.subscriptions,
+      modelMap,
+      this._api,
+    );
+    this._settingsController.on(ControllerEvent.SYNC, this._syncView);
   };
 
   /**
@@ -463,6 +500,13 @@ class ChainsAtlasGOClient {
           this._viewMap.executor?.webview.postMessage(
             await this._viewStateGenerator?.generateViewState(
               ViewType.EXECUTOR,
+            ),
+          );
+          break;
+        case ViewType.SETTINGS:
+          this._viewMap.settings?.webview.postMessage(
+            await this._viewStateGenerator?.generateViewState(
+              ViewType.SETTINGS,
             ),
           );
           break;

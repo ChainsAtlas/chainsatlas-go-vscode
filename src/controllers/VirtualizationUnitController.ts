@@ -94,11 +94,20 @@ class VirtualizationUnitController extends Controller {
       throw new Error(ERROR_MESSAGE.INVALID_WEB3);
     }
 
+    this._modelMap.settings.logDeploymentAttempt();
+
     this._modelMap.virtualizationUnit.once(
       VirtualizationUnitModelEvent.WAITING_GAS,
       () => {
         this.emit(ControllerEvent.SYNC, ViewType.VIRTUALIZATION_UNIT);
         this._getGas();
+      },
+    );
+
+    this._modelMap.virtualizationUnit.once(
+      VirtualizationUnitModelEvent.DEPLOYMENT_CONFIRMED,
+      () => {
+        this._modelMap.settings.logDeploymentConfirmation();
       },
     );
 
