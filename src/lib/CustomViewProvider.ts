@@ -120,18 +120,22 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
    * @returns A string containing the full HTML content for the webview.
    */
   private _getHtmlForWebview = (view: WebviewView): string => {
-    const styleUri = view.webview.asWebviewUri(
-      Uri.joinPath(
-        this._extensionUri,
-        "assets",
-        "style",
-        `${this._viewType}.css`,
+    const uri = {
+      vendors: view.webview.asWebviewUri(
+        Uri.joinPath(this._extensionUri, "dist", "vendors.js"),
       ),
-    );
-
-    const scriptUri = view.webview.asWebviewUri(
-      Uri.joinPath(this._extensionUri, "dist", `${this._viewType}View.js`),
-    );
+      style: view.webview.asWebviewUri(
+        Uri.joinPath(
+          this._extensionUri,
+          "assets",
+          "style",
+          `${this._viewType}.css`,
+        ),
+      ),
+      view: view.webview.asWebviewUri(
+        Uri.joinPath(this._extensionUri, "dist", `${this._viewType}.js`),
+      ),
+    };
 
     const nonce = this._getNonce();
 
@@ -139,23 +143,20 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
-
 				<!--
 					Use a content security policy to only allow loading styles from our extension directory,
 					and only allow scripts that have a specific nonce.
 					(See the 'webview-sample' extension sample for img-src content security policy examples)
 				-->
         <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${view.webview.cspSource}; img-src ${view.webview.cspSource}; script-src 'nonce-${nonce}'; style-src * 'unsafe-inline'">
-
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-				<link href="${styleUri}" rel="stylesheet">        
-
+				<link href="${uri.style}" rel="stylesheet">        
 				<title>ChainsAtlas GO</title>
 			</head>
 			<body>
-				<div id="root" />
-				<script nonce="${nonce}" src="${scriptUri}"></script>
+				<div id="root"></div>
+        <script nonce="${nonce}" src="${uri.vendors}"></script>
+				<script nonce="${nonce}" src="${uri.view}" /></script>
 			</body>
 			</html>`;
   };

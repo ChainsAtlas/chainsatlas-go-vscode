@@ -4,7 +4,7 @@ import {
   VSCodeDataGridRow,
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
-import { useCallback, useEffect, useState } from "react";
+import { JSX, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   TransactionHistoryCommand,

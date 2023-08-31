@@ -8,13 +8,13 @@ import {
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { QRCodeSVG } from "qrcode.react";
-import { useCallback, useEffect, useState } from "react";
+import { JSX, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { version } from "../../package.json";
 import { VsCodeApi, WalletCommand, WalletViewState } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
+const version = require("../../package.json").version;
 
 /**
  * `WalletView` component provides a user interface for managing the connected
