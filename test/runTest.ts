@@ -3,6 +3,8 @@ import chai from "chai";
 import path from "path";
 import sinonChai from "sinon-chai";
 
+chai.use(sinonChai);
+
 async function main() {
   try {
     // The folder containing the Extension Manifest package.json
@@ -21,5 +23,4 @@ async function main() {
   }
 }
 
-chai.use(sinonChai);
 main();

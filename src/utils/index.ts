@@ -3,14 +3,14 @@ import { ChainsAtlasGOClient, CustomViewProvider } from "../lib";
 import { ViewType } from "../types";
 
 /**
- * Initializes the ChainsAtlasGO instance.
+ * Initializes the ChainsAtlasGOClient instance.
  *
  * @param {ExtensionContext} context - The context in which the extension operates.
  * This contains utilities to perform operations like storage, retrieve the extension's URI, etc.
  *
  * @returns {Promise<ChainsAtlasGOClient>} Returns a promise that resolves to the initialized ChainsAtlasGO instance.
  */
-export const initializeChainsAtlasGO = async (
+export const initializeClient = async (
   context: ExtensionContext,
 ): Promise<ChainsAtlasGOClient> => {
   const client = new ChainsAtlasGOClient(context);

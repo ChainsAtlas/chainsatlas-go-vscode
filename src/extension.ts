@@ -1,30 +1,50 @@
 import { ExtensionContext, window } from "vscode";
-import { initializeChainsAtlasGO, setupViewProviders } from "./utils";
+import { initializeClient, setupViewProviders } from "./utils";
 
 /**
- * Activates the extension.
+ * @module Extension
  *
- * This function is called when the extension is activated, i.e.,
- * when its functionality is first accessed after the editor starts up.
- * The function sets up necessary initializations for the extension to function properly.
+ * This module provides the activation logic for the ChainsAtlas GO extension.
+ */
+
+/**
+ * Activates the ChainsAtlas GO extension.
+ *
+ * This asynchronous function is triggered when the extension is activated,
+ * i.e., when its functionality is first accessed after the editor starts up.
+ * It takes care of initializing the client, setting up view providers,
+ * registering event listeners, and pushing necessary entities to the context's
+ * subscription list for proper lifecycle management.
+ *
+ * Additionally, it informs the user about the beta nature of the extension with a
+ * disclaimer message.
+ *
+ * If there's any error during activation, an error message will be displayed to the user.
  *
  * @param {ExtensionContext} context - The context in which the extension operates.
- * Contains utilities to perform operations like storage, retrieve the extension's URI, etc.
+ *                                     It contains utilities to perform operations like
+ *                                     storage, retrieve the extension's URI, etc.
  *
- * @returns {Promise<void>} Returns a promise that resolves when the activation process is complete.
+ * @returns {Promise<void>} A promise that resolves once the activation process is completed.
+ *
+ * @throws Will throw an error if the activation process fails.
+ *
+ * @example
+ *
+ * vscode.extensions.getExtension('chainsatlas.chainsatlas-go').activate();
  */
 export const activate = async (context: ExtensionContext): Promise<void> => {
   try {
-    const chainsAtlasGO = await initializeChainsAtlasGO(context);
+    const client = await initializeClient(context);
     const viewProviders = setupViewProviders(context.extensionUri);
 
     Object.values(viewProviders).forEach((vProvider) => {
       vProvider.register();
-      vProvider.on("viewResolved", (view) => chainsAtlasGO.addView(view));
+      vProvider.on("viewResolved", (view) => client.addView(view));
       context.subscriptions.push(vProvider);
     });
 
-    context.subscriptions.push(chainsAtlasGO);
+    context.subscriptions.push(client);
 
     window.showInformationMessage(
       `Disclaimer: By using the beta version of ChainsAtlas GO, you acknowledge and 
