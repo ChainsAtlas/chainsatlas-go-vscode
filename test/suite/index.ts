@@ -2,7 +2,7 @@ import glob from "glob";
 import Mocha from "mocha";
 import path from "path";
 
-export function run(): Promise<void> {
+export const run = (): Promise<void> => {
   // Create the mocha test
   const mocha = new Mocha({ color: true, ui: "tdd" });
 
@@ -32,4 +32,4 @@ export function run(): Promise<void> {
       }
     });
   });
-}
+};

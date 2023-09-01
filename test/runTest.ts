@@ -5,7 +5,7 @@ import sinonChai from "sinon-chai";
 
 chai.use(sinonChai);
 
-async function main() {
+const main = async (): Promise<void> => {
   try {
     // The folder containing the Extension Manifest package.json
     // Passed to `--extensionDevelopmentPath`
@@ -21,6 +21,6 @@ async function main() {
     console.error("Failed to run tests", err);
     process.exit(1);
   }
-}
+};
 
 main();

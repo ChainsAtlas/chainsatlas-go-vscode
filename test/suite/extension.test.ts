@@ -113,7 +113,7 @@ suite("Extension Activation", () => {
     providers.forEach((provider) => {
       expect(mockContext.subscriptions).to.include(provider);
     });
-    expect(mockContext.subscriptions.length).to.be.equal(1 + providers.length);
+    expect(mockContext.subscriptions).to.have.length(1 + providers.length);
   });
 
   test("should show the beta version disclaimer", async () => {

@@ -330,7 +330,7 @@ class ChainsAtlasGOClient {
    * @returns {Promise<void>} A promise that resolves when the initialization is complete.
    * @throws {Error} Throws an error if the UniversalProvider fails to initialize or any models fail to instantiate.
    */
-  public init = async (): Promise<void> =>
+  public async init(): Promise<void> {
     withErrorHandling(async () => {
       this._provider = await UniversalProvider.init({
         projectId: WALLETCONNECT_PROJECT_ID,
@@ -356,7 +356,7 @@ class ChainsAtlasGOClient {
         this._wallet,
       );
     })();
-
+  }
   // ---------------------- Private Methods - Utilities ----------------------
   /**
    * Ensures that the specified private members are initialized.
