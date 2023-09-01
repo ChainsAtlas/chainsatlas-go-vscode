@@ -8,7 +8,7 @@ import {
 } from "../models";
 import { WalletView } from "../views";
 import { AuthStatus } from "./auth.type";
-import { SupportedChain } from "./common.type";
+import { Chain } from "./common.type";
 
 /**
  * Enum representing possible commands sent from {@link WalletView}
@@ -40,9 +40,9 @@ export type WalletControllerModelMap = {
 export type WalletViewState = {
   accounts?: ProviderAccounts;
   authStatus?: AuthStatus;
-  chain: SupportedChain;
+  chain: Chain;
   balance?: string;
-  chains: SupportedChain[];
+  chains: Chain[];
   currentAccount?: string;
   connected?: boolean;
   uri?: string;

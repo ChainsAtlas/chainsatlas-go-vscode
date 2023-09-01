@@ -1,8 +1,19 @@
 import { WebviewView } from "vscode";
-import { Controller, ExecutorController } from "../controllers";
+import { Controller } from "../controllers";
 import { ChainsAtlasGOClient } from "../lib";
 import { ExecutorModel, VirtualizationUnitModel } from "../models";
 import { ExecutorView, VirtualizationUnitView } from "../views";
+
+/**
+ * Represents required chain data for the {@link WalletModel}
+ * to work correctly with `@walletconnect/universal-provider`
+ */
+export type Chain = {
+  id: number;
+  name: string;
+  blockExplorer: string;
+  rpc: string;
+};
 
 /**
  * Represents the status of web3.js contract transactions of the
@@ -35,26 +46,6 @@ export enum GasOption {
   CUSTOM = "custom",
   ESTIMATE = "estimate",
 }
-
-/**
- * Represents required supported chain data for the {@link WalletModel}
- * to work correctly with `@walletconnect/universal-provider`
- */
-export type SupportedChain = {
-  id: number;
-  blockExplorer: string;
-  name: string;
-  rpc: string;
-};
-
-/**
- * Represents supported programming languages by ChainsAtlas Virtualization Unit.
- *
- * The `_getFileInput` private method of {@link ExecutorController} uses it to filter
- * file inputs from the user.
- *
- */
-export type SupportedLanguage = "c";
 
 /**
  * Represents a map of webview views used by {@link ChainsAtlasGOClient}

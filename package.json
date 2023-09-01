@@ -109,7 +109,6 @@
   },
   "dependencies": {
     "@vscode/webview-ui-toolkit": "^1.2.2",
-    "@wagmi/chains": "^1.6.0",
     "@walletconnect/sign-client": "^2.9.1",
     "@walletconnect/universal-provider": "^2.9.1",
     "bufferutil": "^4.0.7",

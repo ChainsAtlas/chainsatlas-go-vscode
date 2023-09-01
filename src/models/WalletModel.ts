@@ -2,7 +2,7 @@ import { ProviderAccounts } from "@walletconnect/universal-provider";
 import UniversalProvider from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import Web3 from "web3";
 import { withErrorHandling } from "../Utils";
-import { SUPPORTED_CHAINS } from "../constants";
+import * as chains from "../chains";
 
 /**
  * Represents a model for managing the wallet connection, including chain and account management.
@@ -14,6 +14,8 @@ import { SUPPORTED_CHAINS } from "../constants";
  * walletModel.connect(11155111);
  */
 export class WalletModel {
+  public static readonly CHAINS = Object.values(chains);
+
   /**
    * An instance of the Web3 library, initialized after connecting to the provider.
    */
@@ -43,7 +45,7 @@ export class WalletModel {
   /**
    * Represents the current chain or network the wallet is connected to.
    */
-  public chain = SUPPORTED_CHAINS.find((chain) => chain.id === 11_155_111); // sepolia
+  public chain = WalletModel.CHAINS.find((chain) => chain.id === 11_155_111); // ethereum sepolia
 
   /**
    * The account address of the currently selected account in the connected wallet.
@@ -95,7 +97,7 @@ export class WalletModel {
 
       await this.disconnect();
 
-      const chain = SUPPORTED_CHAINS.find((c) => c.id === id);
+      const chain = WalletModel.CHAINS.find((c) => c.id === id);
 
       if (!chain) {
         throw new Error("invalid chain id.");

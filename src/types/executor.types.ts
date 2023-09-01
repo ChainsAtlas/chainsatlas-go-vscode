@@ -9,7 +9,7 @@ import {
 } from "../models";
 import { ExecutorView } from "../views/ExecutorView";
 import { BytecodeCompilerStatus, BytecodeStructure } from "./bytecode.type";
-import { ContractTransactionStatus, SupportedLanguage } from "./common.type";
+import { ContractTransactionStatus } from "./common.type";
 
 /**
  * Enum representing possible commands sent from {@link ExecutorView}
@@ -88,4 +88,13 @@ export type ExecutorViewState = {
 export enum FileSource {
   ACTIVE = "active",
   INPUT = "input",
+}
+
+/**
+ * Enum representing the supported programming languages of the ChainsAtlas' VirtualizationUnit.
+ *
+ * It is used by the {@link ExecutorController} to filter user's file input.
+ */
+export enum SupportedLanguage {
+  C = "c",
 }

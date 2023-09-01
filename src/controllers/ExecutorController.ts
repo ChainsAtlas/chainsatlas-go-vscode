@@ -1,6 +1,6 @@
 import { extname } from "path";
 import { Disposable, Webview, window, workspace } from "vscode";
-import { ERROR_MESSAGE, SUPPORTED_LANGUAGES } from "../constants";
+import { ERROR_MESSAGE } from "../constants";
 import { ChainsAtlasGOApi } from "../lib";
 import { ExecutorModel } from "../models";
 import {
@@ -26,6 +26,8 @@ import { Controller } from "./Controller.abstract";
  * @class
  */
 export class ExecutorController extends Controller {
+  private static readonly _SUPPORTED_LANGUAGES =
+    Object.values(SupportedLanguage);
   // ---------------------- Private Helper Variables ----------------------
   // Utility to resolve the promise when gas value is received
   private _gasResolver?: (value: string | PromiseLike<string>) => void;
@@ -291,7 +293,11 @@ export class ExecutorController extends Controller {
 
       const extension = extname(uri.fsPath).slice(1);
 
-      if (SUPPORTED_LANGUAGES.includes(extension as SupportedLanguage)) {
+      if (
+        ExecutorController._SUPPORTED_LANGUAGES.includes(
+          extension as SupportedLanguage,
+        )
+      ) {
         this._modelMap.executor.userFile = {
           content: (await workspace.fs.readFile(uri)).toString(),
           extension: extension as SupportedLanguage,
@@ -310,7 +316,7 @@ export class ExecutorController extends Controller {
     const uris = await window.showOpenDialog({
       canSelectMany: false,
       openLabel: "Open",
-      filters: { "Supported files": SUPPORTED_LANGUAGES },
+      filters: { "Supported files": ExecutorController._SUPPORTED_LANGUAGES },
     });
 
     if (uris && uris.length > 0) {

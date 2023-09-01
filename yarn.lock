@@ -1812,11 +1812,6 @@
     "@microsoft/fast-foundation" "^2.38.0"
     "@microsoft/fast-react-wrapper" "^0.1.18"
 
-"@wagmi/chains@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@wagmi/chains/-/chains-1.6.0.tgz#eb992ad28dbaaab729b5bcab3e5b461e8a035656"
-  integrity sha512-5FRlVxse5P4ZaHG3GTvxwVANSmYJas1eQrTBHhjxVtqXoorm0aLmCHbhmN8Xo1yu09PaWKlleEvfE98yH4AgIw==
-
 "@walletconnect/core@2.9.1":
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-2.9.1.tgz#1a333933750f5f933d9b7788a8dae44ce1173063"

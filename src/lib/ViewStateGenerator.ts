@@ -1,6 +1,6 @@
 import { FMT_BYTES, FMT_NUMBER } from "web3";
 import { withErrorHandling } from "../Utils";
-import { ERROR_MESSAGE, SUPPORTED_CHAINS } from "../constants";
+import { ERROR_MESSAGE } from "../constants";
 import {
   ExecutorModel,
   SettingsModel,
@@ -197,7 +197,7 @@ export class ViewStateGenerator {
       authStatus,
       balance: await this._getBalance(currentAccount, chain?.id.toString()),
       chain,
-      chains: SUPPORTED_CHAINS,
+      chains: WalletModel.CHAINS,
       currentAccount,
       connected,
       uri,
