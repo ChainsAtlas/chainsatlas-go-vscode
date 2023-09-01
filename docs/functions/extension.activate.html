@@ -20,10 +20,15 @@
 <ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="activate"><span class="tsd-kind-call-signature">activate</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">context</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#activate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Activates the extension.</p>
-<p>This function is called when the extension is activated, i.e.,
-when its functionality is first accessed after the editor starts up.
-The function sets up necessary initializations for the extension to function properly.</p>
+<div class="tsd-comment tsd-typography"><p>Activates the ChainsAtlas GO extension.</p>
+<p>This asynchronous function is triggered when the extension is activated,
+i.e., when its functionality is first accessed after the editor starts up.
+It takes care of initializing the client, setting up view providers,
+registering event listeners, and pushing necessary entities to the context&#39;s
+subscription list for proper lifecycle management.</p>
+<p>Additionally, it informs the user about the beta nature of the extension with a
+disclaimer message.</p>
+<p>If there&#39;s any error during activation, an error message will be displayed to the user.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -31,14 +36,20 @@ The function sets up necessary initializations for the extension to function pro
 <li>
 <h5><span class="tsd-kind-parameter">context</span>: <span class="tsd-signature-type ">ExtensionContext</span></h5>
 <div class="tsd-comment tsd-typography"><p>The context in which the extension operates.
-Contains utilities to perform operations like storage, retrieve the extension&#39;s URI, etc.</p>
+                                    It contains utilities to perform operations like
+                                    storage, retrieve the extension&#39;s URI, etc.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Returns a promise that resolves when the activation process is complete.</p>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves once the activation process is completed.</p>
 
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<div class="tsd-comment tsd-typography">
+<h4>Throws</h4><p>Will throw an error if the activation process fails.</p>
+
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-0">vscode</span><span class="hl-1">.</span><span class="hl-0">extensions</span><span class="hl-1">.</span><span class="hl-2">getExtension</span><span class="hl-1">(</span><span class="hl-3">&#39;chainsatlas.chainsatlas-go&#39;</span><span class="hl-1">).</span><span class="hl-2">activate</span><span class="hl-1">();</span>
+</code><button>Copy</button></pre>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/extension.ts#L55">extension.ts:55</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/extension.ts#L36">extension.ts:36</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -60,6 +71,7 @@ Contains utilities to perform operations like storage, retrieve the extension&#3
 <li><a href="../modules/controllers.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers</span></a></li>
 <li><a href="../modules/controllers_Controller_abstract.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Controller.abstract</span></a></li>
 <li><a href="../modules/controllers_ExecutorController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Executor<wbr/>Controller</span></a></li>
+<li><a href="../modules/controllers_SettingsController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Settings<wbr/>Controller</span></a></li>
 <li><a href="../modules/controllers_TransactionHistoryController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Transaction<wbr/>History<wbr/>Controller</span></a></li>
 <li><a href="../modules/controllers_VirtualizationUnitController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Virtualization<wbr/>Unit<wbr/>Controller</span></a></li>
 <li><a href="../modules/controllers_WalletController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Wallet<wbr/>Controller</span></a></li>
@@ -75,12 +87,14 @@ Contains utilities to perform operations like storage, retrieve the extension&#3
 <li><a href="../modules/lib_ViewStateGenerator.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib/<wbr/>View<wbr/>State<wbr/>Generator</span></a></li>
 <li><a href="../modules/models.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models</span></a></li>
 <li><a href="../modules/models_ExecutorModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Executor<wbr/>Model</span></a></li>
+<li><a href="../modules/models_SettingsModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Settings<wbr/>Model</span></a></li>
 <li><a href="../modules/models_TransactionHistoryModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Transaction<wbr/>History<wbr/>Model</span></a></li>
 <li><a href="../modules/models_VirtualizationUnitModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Virtualization<wbr/>Unit<wbr/>Model</span></a></li>
 <li><a href="../modules/models_WalletModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Wallet<wbr/>Model</span></a></li>
 <li><a href="../modules/types.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types</span></a></li>
 <li><a href="../modules/utils.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils</span></a></li>
 <li><a href="../modules/views_ExecutorView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Executor<wbr/>View</span></a></li>
+<li><a href="../modules/views_SettingsView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Settings<wbr/>View</span></a></li>
 <li><a href="../modules/views_TransactionHistoryView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Transaction<wbr/>History<wbr/>View</span></a></li>
 <li><a href="../modules/views_VirtualizationUnitView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Virtualization<wbr/>Unit<wbr/>View</span></a></li>
 <li><a href="../modules/views_WalletView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Wallet<wbr/>View</span></a></li></ul></nav></div></div></div>

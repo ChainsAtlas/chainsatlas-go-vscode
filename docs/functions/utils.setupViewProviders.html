@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>BytecodeArg | chainsatlas-go</title><meta name="description" content="Documentation for chainsatlas-go"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>setupViewProviders | chainsatlas-go</title><meta name="description" content="Documentation for chainsatlas-go"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
 <div class="tsd-toolbar-contents container">
 <div class="table-cell" id="tsd-search" data-base="..">
 <div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
@@ -13,15 +13,31 @@
 <div class="tsd-page-title">
 <ul class="tsd-breadcrumb">
 <li><a href="../index.html">chainsatlas-go</a></li>
-<li><a href="../modules/types.html">types</a></li>
-<li><a href="types.BytecodeArg.html">BytecodeArg</a></li></ul>
-<h1>Type alias BytecodeArg</h1></div>
-<div class="tsd-signature"><span class="tsd-kind-type-alias">Bytecode<wbr/>Arg</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>Represents the argument for bytecode.</p>
+<li><a href="../modules/utils.html">utils</a></li>
+<li><a href="utils.setupViewProviders.html">setupViewProviders</a></li></ul>
+<h1>Function setupViewProviders</h1></div>
+<section class="tsd-panel">
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="setupViewProviders"><span class="tsd-kind-call-signature">setup<wbr/>View<wbr/>Providers</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">extensionUri</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/types.ViewType.html" class="tsd-signature-type tsd-kind-enum">ViewType</a><span class="tsd-signature-symbol">, </span><a href="../classes/lib_CustomViewProvider.default.html" class="tsd-signature-type tsd-kind-class">default</a><span class="tsd-signature-symbol">&gt;</span><a href="#setupViewProviders" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Sets up the view providers for the extension.</p>
+<p>This function initializes view providers for different types of views defined in <code>ViewType</code>.</p>
 </div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">extensionUri</span>: <span class="tsd-signature-type ">Uri</span></h5>
+<div class="tsd-comment tsd-typography"><p>The unique identifier for the extension,
+used to locate resources within the extension.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><a href="../enums/types.ViewType.html" class="tsd-signature-type tsd-kind-enum">ViewType</a><span class="tsd-signature-symbol">, </span><a href="../classes/lib_CustomViewProvider.default.html" class="tsd-signature-type tsd-kind-class">default</a><span class="tsd-signature-symbol">&gt;</span></h4><p>An object where each key is a type of view (from <code>ViewType</code>)
+and its corresponding value is the initialized view provider for that type.</p>
+
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/types/index.ts#L23">types/index.ts:23</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/utils/index.ts#L49">utils/index.ts:49</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -59,42 +75,14 @@
 <li><a href="../modules/models_TransactionHistoryModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Transaction<wbr/>History<wbr/>Model</span></a></li>
 <li><a href="../modules/models_VirtualizationUnitModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Virtualization<wbr/>Unit<wbr/>Model</span></a></li>
 <li><a href="../modules/models_WalletModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Wallet<wbr/>Model</span></a></li>
+<li><a href="../modules/types.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types</span></a></li>
 <li>
-<details class="tsd-index-accordion" open data-key="types"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg><a href="../modules/types.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types</span></a></summary>
+<details class="tsd-index-accordion" open data-key="utils"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg><a href="../modules/utils.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils</span></a></summary>
 <div class="tsd-accordion-details">
 <ul class="tsd-nested-navigation">
-<li><a href="../enums/types.ControllerEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-8"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-enum)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.45 16V7.24H14.49V8.224H10.518V10.936H14.07V11.908H10.518V15.016H14.49V16H9.45Z" fill="var(--color-text)"></path></g></svg><span>Controller<wbr/>Event</span></a></li>
-<li><a href="../enums/types.ExecutorCommand.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Executor<wbr/>Command</span></a></li>
-<li><a href="../enums/types.ExecutorModelEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Executor<wbr/>Model<wbr/>Event</span></a></li>
-<li><a href="../enums/types.GasOption.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Gas<wbr/>Option</span></a></li>
-<li><a href="../enums/types.SettingsCommand.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Settings<wbr/>Command</span></a></li>
-<li><a href="../enums/types.TransactionHistoryCommand.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Transaction<wbr/>History<wbr/>Command</span></a></li>
-<li><a href="../enums/types.ViewType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>View<wbr/>Type</span></a></li>
-<li><a href="../enums/types.VirtualizationUnitCommand.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Virtualization<wbr/>Unit<wbr/>Command</span></a></li>
-<li><a href="../enums/types.VirtualizationUnitModelEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Virtualization<wbr/>Unit<wbr/>Model<wbr/>Event</span></a></li>
-<li><a href="../enums/types.WalletCommand.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Wallet<wbr/>Command</span></a></li>
-<li><a href="types.AuthStatus.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4194304"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-type-alias)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)"></path></g></svg><span>Auth<wbr/>Status</span></a></li>
-<li><a href="types.BytecodeArg.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Bytecode<wbr/>Arg</span></a></li>
-<li><a href="types.BytecodeCompilerStatus.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Bytecode<wbr/>Compiler<wbr/>Status</span></a></li>
-<li><a href="types.BytecodeStructure.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Bytecode<wbr/>Structure</span></a></li>
-<li><a href="types.ContractTransactionStatus.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Contract<wbr/>Transaction<wbr/>Status</span></a></li>
-<li><a href="types.ExecutorControllerModelMap.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Executor<wbr/>Controller<wbr/>Model<wbr/>Map</span></a></li>
-<li><a href="types.ExecutorFile.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Executor<wbr/>File</span></a></li>
-<li><a href="types.ExecutorViewState.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Executor<wbr/>View<wbr/>State</span></a></li>
-<li><a href="types.SettingsControllerModelMap.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Settings<wbr/>Controller<wbr/>Model<wbr/>Map</span></a></li>
-<li><a href="types.SettingsViewState.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Settings<wbr/>View<wbr/>State</span></a></li>
-<li><a href="types.SupportedChain.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Supported<wbr/>Chain</span></a></li>
-<li><a href="types.SupportedLanguage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Supported<wbr/>Language</span></a></li>
-<li><a href="types.TransactionHistoryRow.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Transaction<wbr/>History<wbr/>Row</span></a></li>
-<li><a href="types.TransactionHistoryViewState.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Transaction<wbr/>History<wbr/>View<wbr/>State</span></a></li>
-<li><a href="types.ViewMap.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>View<wbr/>Map</span></a></li>
-<li><a href="types.ViewMessage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>View<wbr/>Message</span></a></li>
-<li><a href="types.VirtualizationUnitControllerModelMap.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Virtualization<wbr/>Unit<wbr/>Controller<wbr/>Model<wbr/>Map</span></a></li>
-<li><a href="types.VirtualizationUnitViewState.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Virtualization<wbr/>Unit<wbr/>View<wbr/>State</span></a></li>
-<li><a href="types.VsCodeApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Vs<wbr/>Code<wbr/>Api</span></a></li>
-<li><a href="types.WalletControllerModelMap.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Wallet<wbr/>Controller<wbr/>Model<wbr/>Map</span></a></li>
-<li><a href="types.WalletViewState.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Wallet<wbr/>View<wbr/>State</span></a></li></ul></div></details></li>
-<li><a href="../modules/utils.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils</span></a></li>
+<li><a href="utils.initializeClient.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-64"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)"></path></g></svg><span>initialize<wbr/>Client</span></a></li>
+<li><a href="utils.setupViewProviders.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>setup<wbr/>View<wbr/>Providers</span></a></li>
+<li><a href="utils.withErrorHandling.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>with<wbr/>Error<wbr/>Handling</span></a></li></ul></div></details></li>
 <li><a href="../modules/views_ExecutorView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Executor<wbr/>View</span></a></li>
 <li><a href="../modules/views_SettingsView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Settings<wbr/>View</span></a></li>
 <li><a href="../modules/views_TransactionHistoryView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Transaction<wbr/>History<wbr/>View</span></a></li>

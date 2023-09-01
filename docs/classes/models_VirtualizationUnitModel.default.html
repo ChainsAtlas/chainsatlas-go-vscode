@@ -23,7 +23,7 @@ Ethereum smart contracts, specifically the virtualization unit.</p>
 its transaction status, and tracking the deployed contracts&#39; addresses.</p>
 </div>
 <div class="tsd-comment tsd-typography">
-<h4>Example</h4><pre><code class="language-ts"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">virtualizationUnit</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-3">VirtualizationUnitModel</span><span class="hl-1">();</span><br/><span class="hl-4">virtualizationUnit</span><span class="hl-1">.</span><span class="hl-3">deploy</span><span class="hl-1">(</span><span class="hl-7">&#39;0xYourAddress&#39;</span><span class="hl-1">, </span><span class="hl-4">web3Instance</span><span class="hl-1">);</span>
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">virtualizationUnit</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-2">VirtualizationUnitModel</span><span class="hl-1">();</span><br/><span class="hl-0">virtualizationUnit</span><span class="hl-1">.</span><span class="hl-2">deploy</span><span class="hl-1">(</span><span class="hl-3">&#39;0xYourAddress&#39;</span><span class="hl-1">, </span><span class="hl-0">web3Instance</span><span class="hl-1">);</span>
 </code><button>Copy</button></pre>
 </div></section>
 <section class="tsd-panel tsd-hierarchy">
@@ -33,7 +33,7 @@ its transaction status, and tracking the deployed contracts&#39; addresses.</p>
 <ul class="tsd-hierarchy">
 <li><span class="target">default</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/models/VirtualizationUnitModel.ts#L21">models/VirtualizationUnitModel.ts:21</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/models/VirtualizationUnitModel.ts#L21">models/VirtualizationUnitModel.ts:21</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -71,7 +71,7 @@ its transaction status, and tracking the deployed contracts&#39; addresses.</p>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides EventEmitter.constructor</p>
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/models/VirtualizationUnitModel.ts#L55">models/VirtualizationUnitModel.ts:55</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/models/VirtualizationUnitModel.ts#L55">models/VirtualizationUnitModel.ts:55</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member"><a id="contractTransactionStatus" class="tsd-anchor"></a>
@@ -82,7 +82,7 @@ any of the states like &#39;sending&#39;, &#39;sent&#39;, &#39;error&#39;, etc.<
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/models/VirtualizationUnitModel.ts#L32">models/VirtualizationUnitModel.ts:32</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/models/VirtualizationUnitModel.ts#L32">models/VirtualizationUnitModel.ts:32</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="contracts" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>contracts</span><a href="#contracts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">contracts</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
@@ -91,7 +91,7 @@ Each address is expected to be a valid Ethereum address string.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/models/VirtualizationUnitModel.ts#L26">models/VirtualizationUnitModel.ts:26</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/models/VirtualizationUnitModel.ts#L26">models/VirtualizationUnitModel.ts:26</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="currentContract" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>current<wbr/>Contract</span><a href="#currentContract" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">current<wbr/>Contract</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -99,7 +99,7 @@ Each address is expected to be a valid Ethereum address string.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/models/VirtualizationUnitModel.ts#L37">models/VirtualizationUnitModel.ts:37</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/models/VirtualizationUnitModel.ts#L37">models/VirtualizationUnitModel.ts:37</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="estimating" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>estimating</span><a href="#estimating" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">estimating</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
@@ -107,7 +107,7 @@ Each address is expected to be a valid Ethereum address string.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/models/VirtualizationUnitModel.ts#L42">models/VirtualizationUnitModel.ts:42</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/models/VirtualizationUnitModel.ts#L42">models/VirtualizationUnitModel.ts:42</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="gasEstimate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>gas<wbr/>Estimate</span><a href="#gasEstimate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">gas<wbr/>Estimate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -116,7 +116,7 @@ is set after estimating the gas and before the deployment transaction is sent.</
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/models/VirtualizationUnitModel.ts#L48">models/VirtualizationUnitModel.ts:48</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/models/VirtualizationUnitModel.ts#L48">models/VirtualizationUnitModel.ts:48</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_getGas" class="tsd-anchor"></a>
@@ -131,7 +131,7 @@ then resolves the promise with the received gas value.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/models/VirtualizationUnitModel.ts#L139">models/VirtualizationUnitModel.ts:139</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/models/VirtualizationUnitModel.ts#L140">models/VirtualizationUnitModel.ts:140</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="clearDeployment" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>clear<wbr/>Deployment</span><a href="#clearDeployment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -144,7 +144,7 @@ process needs to be reset.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/models/VirtualizationUnitModel.ts#L127">models/VirtualizationUnitModel.ts:127</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/models/VirtualizationUnitModel.ts#L128">models/VirtualizationUnitModel.ts:128</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="deploy" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>deploy</span><a href="#deploy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -170,7 +170,7 @@ the transaction. It emits various events during the process to provide real-time
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/6e03e52/src/models/VirtualizationUnitModel.ts#L68">models/VirtualizationUnitModel.ts:68</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/9477e11/src/models/VirtualizationUnitModel.ts#L68">models/VirtualizationUnitModel.ts:68</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -205,6 +205,7 @@ the transaction. It emits various events during the process to provide real-time
 <li><a href="../modules/controllers.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers</span></a></li>
 <li><a href="../modules/controllers_Controller_abstract.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Controller.abstract</span></a></li>
 <li><a href="../modules/controllers_ExecutorController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Executor<wbr/>Controller</span></a></li>
+<li><a href="../modules/controllers_SettingsController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Settings<wbr/>Controller</span></a></li>
 <li><a href="../modules/controllers_TransactionHistoryController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Transaction<wbr/>History<wbr/>Controller</span></a></li>
 <li><a href="../modules/controllers_VirtualizationUnitController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Virtualization<wbr/>Unit<wbr/>Controller</span></a></li>
 <li><a href="../modules/controllers_WalletController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Wallet<wbr/>Controller</span></a></li>
@@ -216,6 +217,7 @@ the transaction. It emits various events during the process to provide real-time
 <li><a href="../modules/lib_ViewStateGenerator.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib/<wbr/>View<wbr/>State<wbr/>Generator</span></a></li>
 <li><a href="../modules/models.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models</span></a></li>
 <li><a href="../modules/models_ExecutorModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Executor<wbr/>Model</span></a></li>
+<li><a href="../modules/models_SettingsModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Settings<wbr/>Model</span></a></li>
 <li><a href="../modules/models_TransactionHistoryModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Transaction<wbr/>History<wbr/>Model</span></a></li>
 <li>
 <details class="tsd-index-accordion" open data-key="models/VirtualizationUnitModel"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg><a href="../modules/models_VirtualizationUnitModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Virtualization<wbr/>Unit<wbr/>Model</span></a></summary>
@@ -226,6 +228,7 @@ the transaction. It emits various events during the process to provide real-time
 <li><a href="../modules/types.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types</span></a></li>
 <li><a href="../modules/utils.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils</span></a></li>
 <li><a href="../modules/views_ExecutorView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Executor<wbr/>View</span></a></li>
+<li><a href="../modules/views_SettingsView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Settings<wbr/>View</span></a></li>
 <li><a href="../modules/views_TransactionHistoryView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Transaction<wbr/>History<wbr/>View</span></a></li>
 <li><a href="../modules/views_VirtualizationUnitView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Virtualization<wbr/>Unit<wbr/>View</span></a></li>
 <li><a href="../modules/views_WalletView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Wallet<wbr/>View</span></a></li></ul></nav></div></div></div>
