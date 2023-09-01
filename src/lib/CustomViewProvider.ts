@@ -8,15 +8,18 @@ import {
   WebviewViewResolveContext,
   window,
 } from "vscode";
+import { withErrorHandling } from "../Utils";
 import { ViewType } from "../types";
-import { withErrorHandling } from "../utils";
 
 /**
  * The `CustomViewProvider` class provides custom views within the VSCode environment.
  * It leverages the VSCode WebviewViewProvider API to render custom content in the form of webviews.
  * The class also extends the EventEmitter to provide custom event management capabilities.
  */
-class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
+export class CustomViewProvider
+  extends EventEmitter
+  implements WebviewViewProvider
+{
   /**
    * `_disposable` is an optional instance of the `Disposable` type from the VSCode API.
    * This property holds onto a reference of a disposable resource, which could be any object
@@ -179,5 +182,3 @@ class CustomViewProvider extends EventEmitter implements WebviewViewProvider {
     return text;
   };
 }
-
-export default CustomViewProvider;

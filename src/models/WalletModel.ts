@@ -1,8 +1,8 @@
 import { ProviderAccounts } from "@walletconnect/universal-provider";
 import UniversalProvider from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import Web3 from "web3";
+import { withErrorHandling } from "../Utils";
 import { SUPPORTED_CHAINS } from "../constants";
-import { withErrorHandling } from "../utils";
 
 /**
  * Represents a model for managing the wallet connection, including chain and account management.
@@ -13,7 +13,7 @@ import { withErrorHandling } from "../utils";
  * const walletModel = new WalletModel(universalProviderInstance);
  * walletModel.connect(11155111);
  */
-class WalletModel {
+export class WalletModel {
   /**
    * An instance of the Web3 library, initialized after connecting to the provider.
    */
@@ -146,5 +146,3 @@ class WalletModel {
       this.connected = false;
     })();
 }
-
-export default WalletModel;

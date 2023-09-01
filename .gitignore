@@ -2,5 +2,7 @@ dist
 node_modules
 out
 .vscode-test
+.vscode-vsix
 .env
 *.vsix
+.yarn-error.log

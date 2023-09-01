@@ -10,12 +10,12 @@ import {
   WalletCommand,
   WalletControllerModelMap,
 } from "../types";
-import Controller from "./Controller.abstract";
+import { Controller } from "./Controller.abstract";
 
 /**
  * Represents a controller for wallet functionalities.
  */
-class WalletController extends Controller {
+export class WalletController extends Controller {
   // ---------------------- Constructor ----------------------
   /**
    * Initializes a new instance of the `WalletController` class.
@@ -169,5 +169,3 @@ class WalletController extends Controller {
     this._disconnect();
   };
 }
-
-export default WalletController;

@@ -31,7 +31,7 @@ const version = require("../../package.json").version;
  *
  * @returns {JSX.Element} A React element that renders the wallet view.
  */
-const WalletView = (): JSX.Element => {
+export const WalletView = (): JSX.Element => {
   const [_accounts, setAccounts] = useState<WalletViewState["accounts"]>();
   const [_authStatus, setAuthStatus] =
     useState<WalletViewState["authStatus"]>(undefined);

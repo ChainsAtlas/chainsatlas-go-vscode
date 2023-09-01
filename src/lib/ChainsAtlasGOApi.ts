@@ -1,12 +1,12 @@
 import fetch from "cross-fetch";
+import { withErrorHandling } from "../Utils";
 import { AuthStatus, BytecodeStructure, ExecutorFile } from "../types";
-import { withErrorHandling } from "../utils";
 
 /**
  * `ChainsAtlasGOApi` provides methods to interact with the ChainsAtlas GO API.
  * It handles authentication, bytecode structure generation, and other possible interactions.
  */
-class ChainsAtlasGOApi {
+export class ChainsAtlasGOApi {
   /**
    * Static property `_URL` holds the base URL for the ChainsAtlas GO API.
    */
@@ -111,5 +111,3 @@ class ChainsAtlasGOApi {
     this.authStatus = undefined;
   };
 }
-
-export default ChainsAtlasGOApi;

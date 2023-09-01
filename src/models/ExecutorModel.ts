@@ -1,5 +1,6 @@
 import EventEmitter from "events";
 import Web3, { AbiFragment, AbiParameter, Bytes } from "web3";
+import { withErrorHandling } from "../Utils";
 import { ERROR_MESSAGE, V_UNIT_ABI } from "../constants";
 import {
   BytecodeArg,
@@ -9,7 +10,6 @@ import {
   ExecutorFile,
   ExecutorModelEvent,
 } from "../types";
-import { withErrorHandling } from "../utils";
 
 /**
  * The `ExecutorModel` class provides a comprehensive model to manage and execute bytecode contracts.
@@ -40,7 +40,7 @@ import { withErrorHandling } from "../utils";
  *     // state synchronization logic
  * });
  */
-class ExecutorModel extends EventEmitter {
+export class ExecutorModel extends EventEmitter {
   /**
    * Represents the current status of the bytecode compiler.
    *
@@ -391,5 +391,3 @@ class ExecutorModel extends EventEmitter {
     });
   };
 }
-
-export default ExecutorModel;

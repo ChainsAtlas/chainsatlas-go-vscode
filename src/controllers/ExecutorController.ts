@@ -9,21 +9,12 @@ import {
   ExecutorControllerModelMap,
   ExecutorFile,
   ExecutorModelEvent,
+  FileSource,
   SupportedLanguage,
   ViewMessage,
   ViewType,
 } from "../types";
-import Controller from "./Controller.abstract";
-
-/**
- * Enum representing the possible sources of a file.
- * - ACTIVE: Indicates the file is currently active in the editor.
- * - INPUT: Indicates the file is fetched through user input or selection.
- */
-export enum FileSource {
-  ACTIVE = "active",
-  INPUT = "input",
-}
+import { Controller } from "./Controller.abstract";
 
 /**
  * `ExecutorController` manages interactions related to the execution of the code.
@@ -34,7 +25,7 @@ export enum FileSource {
  *
  * @class
  */
-class ExecutorController extends Controller {
+export class ExecutorController extends Controller {
   // ---------------------- Private Helper Variables ----------------------
   // Utility to resolve the promise when gas value is received
   private _gasResolver?: (value: string | PromiseLike<string>) => void;
@@ -382,5 +373,3 @@ class ExecutorController extends Controller {
     }
   };
 }
-
-export default ExecutorController;

@@ -1,4 +1,4 @@
-class SettingsModel {
+export class SettingsModel {
   public telemetry = true;
 
   constructor() {}
@@ -19,5 +19,3 @@ class SettingsModel {
     console.log("Not implemented");
   };
 }
-
-export default SettingsModel;

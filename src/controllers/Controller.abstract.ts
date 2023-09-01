@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import { Disposable, Webview } from "vscode";
+import { withErrorHandling } from "../Utils";
 import { ViewMessage } from "../types";
-import { withErrorHandling } from "../utils";
 
 /**
  * Represents the abstract base class for controllers in the application.
@@ -15,7 +15,7 @@ import { withErrorHandling } from "../utils";
  * @abstract
  * @class
  */
-abstract class Controller extends EventEmitter {
+export abstract class Controller extends EventEmitter {
   /**
    * Constructs a new Controller instance.
    *
@@ -55,5 +55,3 @@ abstract class Controller extends EventEmitter {
    */
   protected abstract _handler: (message: ViewMessage) => void | Promise<void>;
 }
-
-export default Controller;

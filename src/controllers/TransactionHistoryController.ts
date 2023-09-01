@@ -5,13 +5,13 @@ import {
   ViewMessage,
   ViewType,
 } from "../types";
-import Controller from "./Controller.abstract";
+import { Controller } from "./Controller.abstract";
 
 /**
  * The TransactionHistoryController class is responsible for managing the transaction history view.
  * It extends the abstract Controller class and handles specific messages related to transaction history.
  */
-class TransactionHistoryController extends Controller {
+export class TransactionHistoryController extends Controller {
   /**
    * Constructor initializes the webview and disposable resources.
    *
@@ -41,5 +41,3 @@ class TransactionHistoryController extends Controller {
     }
   };
 }
-
-export default TransactionHistoryController;

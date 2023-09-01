@@ -10,7 +10,7 @@ import { TransactionHistoryRow } from "../types";
  * const historyModel = new TransactionHistoryModel();
  * historyModel.addRow({ transactionHash: '0x123...', transactionUrl: 'http://example.com/tx/0x123...' });
  */
-class TransactionHistoryModel {
+export class TransactionHistoryModel {
   /**
    * The Ethereum address of the current account associated with the transaction history.
    * This address is expected to be a valid Ethereum address string.
@@ -50,5 +50,3 @@ class TransactionHistoryModel {
     this.rows = [];
   };
 }
-
-export default TransactionHistoryModel;

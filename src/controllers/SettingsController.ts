@@ -8,13 +8,13 @@ import {
   ViewMessage,
   ViewType,
 } from "../types";
-import Controller from "./Controller.abstract";
+import { Controller } from "./Controller.abstract";
 
 /**
  * The SettingsController class is responsible for managing the settings view.
  * It extends the abstract Controller class and handles specific messages related to user settings.
  */
-class SettingsController extends Controller {
+export class SettingsController extends Controller {
   /**
    * Constructor initializes the webview and disposable resources.
    *
@@ -61,5 +61,3 @@ class SettingsController extends Controller {
     this.emit(ControllerEvent.SYNC, ViewType.SETTINGS);
   };
 }
-
-export default SettingsController;

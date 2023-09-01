@@ -1,14 +1,15 @@
 import UniversalProvider from "@walletconnect/universal-provider";
 import { ExtensionContext, Webview, WebviewView } from "vscode";
 import { ChainsAtlasGOApi, ViewStateGenerator } from ".";
+import { withErrorHandling } from "../Utils";
 import { ERROR_MESSAGE, WALLETCONNECT_PROJECT_ID } from "../constants";
 import {
   ExecutorController,
+  SettingsController,
   TransactionHistoryController,
   VirtualizationUnitController,
   WalletController,
 } from "../controllers";
-import SettingsController from "../controllers/SettingsController";
 import {
   ExecutorModel,
   SettingsModel,
@@ -25,7 +26,6 @@ import {
   VirtualizationUnitControllerModelMap,
   WalletControllerModelMap,
 } from "../types";
-import { withErrorHandling } from "../utils";
 
 /**
  * Defines keys for accessing private members of the ChainsAtlasGO class.
@@ -67,7 +67,7 @@ export type MemberTypeMap = {
  * Contains metadata information for ChainsAtlas GO.
  * Provides branding and web-related details for the ChainsAtlas GO client.
  */
-const METADATA = {
+export const METADATA = {
   DESCRIPTION: "ChainsAtlas GO VSCode",
   ICONS: [
     "https://chainsatlas.com/wp-content/uploads/2022/08/ChainsAtlas-logo.png",
@@ -96,7 +96,7 @@ const METADATA = {
  * await client.init();
  * client.addView(someView);
  */
-class ChainsAtlasGOClient {
+export class ChainsAtlasGOClient {
   // ---------------------- Private Model Instance Variables ----------------------
   /**
    * Represents the executor's state and logic.
@@ -535,5 +535,3 @@ class ChainsAtlasGOClient {
     }
   };
 }
-
-export default ChainsAtlasGOClient;

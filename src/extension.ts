@@ -1,5 +1,5 @@
 import { ExtensionContext, window } from "vscode";
-import { initializeClient, setupViewProviders } from "./utils";
+import { initClient, initViewProviders } from "./Utils";
 
 /**
  * @module Extension
@@ -27,16 +27,15 @@ import { initializeClient, setupViewProviders } from "./utils";
  *
  * @returns {Promise<void>} A promise that resolves once the activation process is completed.
  *
- * @throws Will throw an error if the activation process fails.
+ * @throws Will show an error message if the activation process fails.
  *
  * @example
- *
  * vscode.extensions.getExtension('chainsatlas.chainsatlas-go').activate();
  */
 export const activate = async (context: ExtensionContext): Promise<void> => {
   try {
-    const client = await initializeClient(context);
-    const viewProviders = setupViewProviders(context.extensionUri);
+    const client = await initClient(context);
+    const viewProviders = initViewProviders(context.extensionUri);
 
     Object.values(viewProviders).forEach((vProvider) => {
       vProvider.register();

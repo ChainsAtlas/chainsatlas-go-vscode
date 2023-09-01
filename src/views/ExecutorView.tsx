@@ -33,7 +33,7 @@ const vscodeApi = acquireVsCodeApi();
  * to fetch and update the executor view state.
  * @returns {JSX.Element} A React element that renders the executor view.
  */
-const ExecutorView = (): JSX.Element => {
+export const ExecutorView = (): JSX.Element => {
   const [_compilerStatus, setCompilerStatus] =
     useState<ExecutorViewState["compilerStatus"]>(undefined);
   const [_contractTransactionStatus, setContractTransactionStatus] =

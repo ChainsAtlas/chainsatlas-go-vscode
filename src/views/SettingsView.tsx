@@ -6,7 +6,7 @@ import { SettingsCommand, SettingsViewState, VsCodeApi } from "../types";
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
-const SettingsView = (): JSX.Element => {
+export const SettingsView = (): JSX.Element => {
   const [_disabled, setDisabled] =
     useState<SettingsViewState["disabled"]>(true);
   const [_telemetry, setTelemetry] =

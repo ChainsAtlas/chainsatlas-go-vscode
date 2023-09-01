@@ -1,11 +1,11 @@
 import EventEmitter from "events";
 import { FMT_BYTES, FMT_NUMBER, type Web3 } from "web3";
+import { withErrorHandling } from "../Utils";
 import { ERROR_MESSAGE, V_UNIT_ABI, V_UNIT_BYTECODE } from "../constants";
 import {
   ContractTransactionStatus,
   VirtualizationUnitModelEvent,
 } from "../types";
-import { withErrorHandling } from "../utils";
 
 /**
  * Represents the model for managing the deployment and interaction with
@@ -18,7 +18,7 @@ import { withErrorHandling } from "../utils";
  * const virtualizationUnit = new VirtualizationUnitModel();
  * virtualizationUnit.deploy('0xYourAddress', web3Instance);
  */
-class VirtualizationUnitModel extends EventEmitter {
+export class VirtualizationUnitModel extends EventEmitter {
   /**
    * An array containing the Ethereum addresses of the deployed contracts.
    * Each address is expected to be a valid Ethereum address string.
@@ -145,5 +145,3 @@ class VirtualizationUnitModel extends EventEmitter {
     });
   };
 }
-
-export default VirtualizationUnitModel;

@@ -33,7 +33,7 @@ const vscodeApi = acquireVsCodeApi();
  *
  * @returns {JSX.Element} A React element that renders the virtualization unit view.
  */
-const VirtualizationUnitView = (): JSX.Element => {
+export const VirtualizationUnitView = (): JSX.Element => {
   const [_contracts, setContracts] = useState<
     VirtualizationUnitViewState["contracts"]
   >([]);

@@ -1,4 +1,5 @@
 import { FMT_BYTES, FMT_NUMBER } from "web3";
+import { withErrorHandling } from "../Utils";
 import { ERROR_MESSAGE, SUPPORTED_CHAINS } from "../constants";
 import {
   ExecutorModel,
@@ -15,8 +16,7 @@ import {
   VirtualizationUnitViewState,
   WalletViewState,
 } from "../types";
-import { withErrorHandling } from "../utils";
-import ChainsAtlasGOApi from "./ChainsAtlasGOApi";
+import { ChainsAtlasGOApi } from "./ChainsAtlasGOApi";
 
 /**
  * Represents a generator that produces different types of view states based on the given ViewType.
@@ -27,7 +27,7 @@ import ChainsAtlasGOApi from "./ChainsAtlasGOApi";
  * const viewStateGenerator = new ViewStateGenerator(api, executor, transactionHistory, virtualizationUnit, wallet);
  * const walletViewState = viewStateGenerator.generateViewState(ViewType.WALLET);
  */
-class ViewStateGenerator {
+export class ViewStateGenerator {
   /**
    * Initializes a new instance of the `ViewStateGenerator` class.
    *
@@ -232,5 +232,3 @@ class ViewStateGenerator {
     return undefined;
   };
 }
-
-export default ViewStateGenerator;

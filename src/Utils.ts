@@ -1,33 +1,33 @@
-import { ExtensionContext, Uri, window } from "vscode";
-import { ChainsAtlasGOClient, CustomViewProvider } from "../lib";
-import { ViewType } from "../types";
-
 /**
- * @module Utilities
+ * @module Utils
  *
  * This module provides utility functions for the VS Code extension:
  *
- * - `initializeClient`: Initializes the `ChainsAtlasGOClient` instance for the extension.
- * - `setupViewProviders`: Sets up view providers for different types of views.
- * - `withErrorHandling`: A higher-order function that wraps another function with error handling capabilities.
- *
- * @see {@link ChainsAtlasGOClient} for details on the client initialization.
- * @see {@link CustomViewProvider} for details on the view provider.
- * @see {@link ViewType} for the different types of views that can be set up.
+ * @see {@link initClient} for details on the `ChainsAtlasGOClient` initialization.
+ * @see {@link initViewProviders} for details on the view providers initialization.
+ * @see {@link withErrorHandling} for details on error handling.
  */
+
+import { ExtensionContext, Uri, window } from "vscode";
+import { ChainsAtlasGOClient, CustomViewProvider } from "./lib";
+import { ViewType } from "./types";
 
 /**
  * Initializes the `ChainsAtlasGOClient` instance.
  *
- * @remarks
  * This function creates an instance of the `ChainsAtlasGOClient` using the provided context and initializes it.
  *
- * @param context - The context in which the extension operates.
- * Provides utilities to perform operations like storage, retrieve the extension's URI, etc.
+ * @param context - The context in which the extension operates. Provides utilities
+ * to perform operations like storage, retrieve the extension's URI, etc.
  *
  * @returns A promise that resolves to the initialized `ChainsAtlasGO` instance.
+ *
+ * @example
+ * const client = await initClient(context);
+ *
+ * @see {@link ChainsAtlasGOClient} for details on the client class.
  */
-export const initializeClient = async (
+export const initClient = async (
   context: ExtensionContext,
 ): Promise<ChainsAtlasGOClient> => {
   const client = new ChainsAtlasGOClient(context);
@@ -36,7 +36,7 @@ export const initializeClient = async (
 };
 
 /**
- * Sets up the view providers for the extension.
+ * Initializes the view providers for the extension.
  *
  * This function initializes view providers for different types of views defined in `ViewType`.
  *
@@ -44,9 +44,15 @@ export const initializeClient = async (
  * used to locate resources within the extension.
  *
  * @returns An object where each key is a type of view (from `ViewType`)
- * and its corresponding value is the initialized view provider for that type.
+ * and its corresponding value is the initialized `CustomViewProvider` for that type.
+ *
+ * @example
+ * const viewProviders = initViewProviders(context.extensionUri);
+ *
+ * @see {@link CustomViewProvider} for details on the view provider .
+ * @see {@link ViewType} for details on the supported views.
  */
-export const setupViewProviders = (
+export const initViewProviders = (
   extensionUri: Uri,
 ): Record<ViewType, CustomViewProvider> => {
   const viewProviders: Partial<Record<ViewType, CustomViewProvider>> = {};
@@ -69,8 +75,17 @@ export const setupViewProviders = (
  *
  * @param func - The function to be wrapped with error handling.
  *
- * @returns A new async function that wraps the original function. When this new function
- * encounters an error during execution, it displays an error message and returns `undefined`.
+ * @returns A new async function that wraps the original function.
+ *
+ * @throws When the wrapper function encounters an error during execution,
+ * it displays an error message and returns `undefined`.
+ *
+ * @example
+ * public async init(): Promise<void> {
+ *     withErrorHandling(async () => {
+ *         // ...method logic
+ *     })();
+ * }
  */
 export const withErrorHandling = <T extends (...args: any[]) => any>(
   func: T,

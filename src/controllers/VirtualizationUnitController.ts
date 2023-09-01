@@ -9,13 +9,13 @@ import {
   VirtualizationUnitControllerModelMap,
   VirtualizationUnitModelEvent,
 } from "../types";
-import Controller from "./Controller.abstract";
+import { Controller } from "./Controller.abstract";
 
 /**
  * The VirtualizationUnitController class manages interactions and commands related to the virtualization unit view.
  * It extends the abstract Controller class and handles specific messages for the virtualization unit.
  */
-class VirtualizationUnitController extends Controller {
+export class VirtualizationUnitController extends Controller {
   // ---------------------- Private Helper Variables ----------------------
   /**
    * A helper variable to manage gas-related promises.
@@ -205,5 +205,3 @@ class VirtualizationUnitController extends Controller {
     }
   };
 }
-
-export default VirtualizationUnitController;

@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import { SinonSandbox, SinonStub, createSandbox } from "sinon";
 import { ExtensionContext, Uri, window } from "vscode";
+import * as Utils from "../../src/Utils";
 import { activate } from "../../src/extension";
 import { ChainsAtlasGOClient, CustomViewProvider } from "../../src/lib";
 import { ViewType } from "../../src/types";
-import * as utils from "../../src/utils";
 import "../testSetup";
 
 type ClientStub = { addView: SinonStub<any[], any> };
@@ -48,10 +48,10 @@ suite("Extension Activation", () => {
     }, {} as ViewProvidersStub);
 
     sandbox
-      .stub(utils, "initializeClient")
+      .stub(Utils, "initClient")
       .resolves(clientStub as unknown as ChainsAtlasGOClient);
     sandbox
-      .stub(utils, "setupViewProviders")
+      .stub(Utils, "initViewProviders")
       .returns(
         viewProvidersStub as unknown as Record<ViewType, CustomViewProvider>,
       );
@@ -66,8 +66,8 @@ suite("Extension Activation", () => {
   test("should initialize ChainsAtlasGO and set up view providers", async () => {
     await activate(mockContext);
 
-    expect(utils.initializeClient).to.have.been.calledOnceWith(mockContext);
-    expect(utils.setupViewProviders).to.have.been.calledOnceWith(
+    expect(Utils.initClient).to.have.been.calledOnceWith(mockContext);
+    expect(Utils.initViewProviders).to.have.been.calledOnceWith(
       mockContext.extensionUri,
     );
   });
@@ -131,7 +131,7 @@ suite("Extension Activation", () => {
   });
 
   test("should handle errors and display an error message", async () => {
-    (utils.initializeClient as SinonStub).rejects(new Error("Mocked Error"));
+    (Utils.initClient as SinonStub).rejects(new Error("Mocked Error"));
 
     await activate(mockContext);
     expect(window.showErrorMessage).to.have.been.calledOnceWith(

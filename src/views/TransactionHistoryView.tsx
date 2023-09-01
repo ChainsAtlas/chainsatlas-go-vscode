@@ -31,7 +31,7 @@ const vscodeApi = acquireVsCodeApi();
  *
  * @returns {JSX.Element} A React element that renders the transaction history view.
  */
-const TransactionHistoryView = (): JSX.Element => {
+export const TransactionHistoryView = (): JSX.Element => {
   const [_disabled, setDisabled] =
     useState<TransactionHistoryViewState["disabled"]>(true);
   const [_rows, setRows] = useState<TransactionHistoryViewState["rows"]>([]);
