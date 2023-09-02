@@ -89,7 +89,6 @@ export const METADATA = {
  * The class also provides methods to initialize the components, add views, dispose of resources, and synchronize views. The constructor takes an extension context as its only argument, ensuring that the instance has the necessary context to operate within the VS Code environment.
  *
  * @class
- * @public
  *
  * @example
  * const client = new ChainsAtlasGOClient(extensionContext);

@@ -10,10 +10,10 @@ import "../testSetup";
 type ClientStub = { addView: SinonStub<any[], any> };
 type ViewProvidersStub = Record<
   ViewType,
-  { register: SinonStub<any[], any>; on: SinonStub<any[], any> }
+  { register: SinonStub<any[], any>; once: SinonStub<any[], any> }
 >;
 
-suite("Extension Activation", () => {
+suite("Extension", () => {
   let sandbox: SinonSandbox;
   let mockContext: ExtensionContext;
   let clientStub: ClientStub;
@@ -43,7 +43,7 @@ suite("Extension Activation", () => {
 
     clientStub = { addView: sandbox.stub() };
     viewProvidersStub = Object.values(ViewType).reduce((map, type) => {
-      map[type] = { register: sandbox.stub(), on: sandbox.stub() };
+      map[type] = { register: sandbox.stub(), once: sandbox.stub() };
       return map;
     }, {} as ViewProvidersStub);
 
@@ -75,15 +75,13 @@ suite("Extension Activation", () => {
   test("should register view providers and set event listeners", async () => {
     await activate(mockContext);
 
-    Object.values(viewProvidersStub).forEach(
-      (provider: ViewProvidersStub[ViewType]) => {
-        expect(provider.register).to.have.been.calledOnce;
-        expect(provider.on).to.have.been.calledOnceWith(
-          "viewResolved",
-          sandbox.match.func,
-        );
-      },
-    );
+    for (const provider of Object.values(viewProvidersStub)) {
+      expect(provider.register).to.have.been.calledOnce;
+      expect(provider.once).to.have.been.calledOnceWith(
+        "viewResolved",
+        sandbox.match.func,
+      );
+    }
   });
 
   test("should add views when 'viewResolved' event is fired", async () => {
@@ -91,16 +89,14 @@ suite("Extension Activation", () => {
 
     const views = Object.keys(viewProvidersStub) as ViewType[];
 
-    views.forEach((view) => {
-      const eventCallback = viewProvidersStub[view].on.getCall(0).args[1];
-      eventCallback(view);
-    });
-
-    views.forEach((viewType, index) => {
+    for (const [index, viewType] of views.entries()) {
+      const eventCallback = viewProvidersStub[viewType].once.getCall(0).args[1];
+      eventCallback(viewType);
       expect(clientStub.addView.getCall(index)).to.have.been.calledWith(
         viewType,
       );
-    });
+    }
+
     expect(clientStub.addView).to.have.callCount(views.length);
   });
 
@@ -110,9 +106,9 @@ suite("Extension Activation", () => {
     const providers = Object.values(viewProvidersStub);
 
     expect(mockContext.subscriptions).to.include(clientStub);
-    providers.forEach((provider) => {
+    for (const provider of providers) {
       expect(mockContext.subscriptions).to.include(provider);
-    });
+    }
     expect(mockContext.subscriptions).to.have.length(1 + providers.length);
   });
 

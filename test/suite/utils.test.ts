@@ -54,10 +54,10 @@ suite("Utils", () => {
       const viewProviders = Utils.initViewProviders(uri);
       const entries = Object.entries(viewProviders);
 
-      entries.forEach(([view, provider]) => {
+      for (const [view, provider] of entries) {
         expect(provider).to.be.an.instanceOf(CustomViewProvider);
         expect(Object.values(ViewType)).to.include(view);
-      });
+      }
       expect(entries).to.have.length(Object.keys(ViewType).length);
     });
   });

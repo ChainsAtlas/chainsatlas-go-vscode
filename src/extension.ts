@@ -37,11 +37,11 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
     const client = await initClient(context);
     const viewProviders = initViewProviders(context.extensionUri);
 
-    Object.values(viewProviders).forEach((vProvider) => {
+    for (const vProvider of Object.values(viewProviders)) {
       vProvider.register();
-      vProvider.on("viewResolved", (view) => client.addView(view));
+      vProvider.once("viewResolved", (view) => client.addView(view));
       context.subscriptions.push(vProvider);
-    });
+    }
 
     context.subscriptions.push(client);
 

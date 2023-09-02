@@ -12,31 +12,38 @@ import { withErrorHandling } from "../Utils";
 import { ViewType } from "../types";
 
 /**
- * The `CustomViewProvider` class provides custom views within the VSCode environment.
- * It leverages the VSCode WebviewViewProvider API to render custom content in the form of webviews.
- * The class also extends the EventEmitter to provide custom event management capabilities.
+ * It is a custom view provider within the VSCode environment.
+ *
+ * It provides capabilities to render custom webviews in the editor and handle events associated with them.
+ *
+ * @extends EventEmitter
+ *
+ * @implements WebviewViewProvider
  */
 export class CustomViewProvider
   extends EventEmitter
   implements WebviewViewProvider
 {
   /**
-   * `_disposable` is an optional instance of the `Disposable` type from the VSCode API.
+   * `_disposable` is an optional instance of the {@link Disposable} type from the VSCode API.
+   *
    * This property holds onto a reference of a disposable resource, which could be any object
-   * that needs to release resources, like event listeners or subscriptions, before the object is
-   * garbage collected. The `Disposable` pattern is commonly used in VSCode extensions to ensure
-   * that resources are freed and to prevent potential memory leaks.
+   * that needs to release resources, like event listeners or subscriptions, before the object
+   * is garbage collected.
+   *
+   * This pattern is commonly used in VSCode extensions to ensure that resources are freed and
+   * to prevent potential memory leaks.
    */
   private _disposable?: Disposable;
   /**
-   * `_view` is an instance of the `WebviewView` type from the VSCode API.
-   * This property retains the current state of the webview being managed by the `CustomViewProvider`.
-   * The `WebviewView` provides the functionality to render custom HTML content inside VSCode,
-   * and it encapsulates the properties, methods, and events required to interact with and manipulate
-   * the webview. This property is essential for the `CustomViewProvider` to control the content
-   * and behavior of the webview it's responsible for.
+   * `_view` is an instance of the {@link WebviewView} type from the VSCode API.
+   *
+   * This property retains the current state of the webview being managed by the {@link CustomViewProvider}.
+   *
+   * It provides the functionality to render custom HTML content inside VSCode, and it encapsulates
+   * the properties, methods, and events required to interact with and manipulate the webview.
    */
-  private _view!: WebviewView;
+  private _view?: WebviewView;
 
   /**
    * Constructor for the `CustomViewProvider` class.
@@ -52,49 +59,50 @@ export class CustomViewProvider
   }
 
   /**
-   * Dispose of resources used by the `CustomViewProvider`.
+   * Dispose of resources used by the {@link CustomViewProvider}.
    *
    * This method is intended to free any resources (like event listeners or disposables) that the view provider might be holding onto.
+   *
    * Wrapped with error handling to ensure graceful disposal even in the face of unexpected issues.
    */
-  public dispose = (): void => {
+  public dispose(): void {
     withErrorHandling(() => {
       this._disposable?.dispose();
     })();
-  };
+  }
 
   /**
-   * Registers the custom view provider with VSCode's webview API.
-   *
-   * This method ties the `CustomViewProvider` to a specific type of view within the VSCode environment.
+   * This method ties the {@link CustomViewProvider} to a specific type of view within the VSCode environment.
    * Once registered, VSCode will delegate rendering of that view type to this provider.
-   * Errors during registration are managed by the `withErrorHandling` utility.
+   *
+   * Wrapped with error handling to ensure graceful disposal even in the face of unexpected issues.
    */
-  public register = (): void => {
+  public register(): void {
     withErrorHandling(() => {
       this._disposable = window.registerWebviewViewProvider(
         this._viewType,
         this,
       );
     })();
-  };
+  }
 
   /**
    * Sets up the webview view when VSCode requests its content.
    *
-   * This method is a required implementation for the `WebviewViewProvider` interface.
+   * This method is a required implementation for the {@link WebviewViewProvider} interface.
+   *
    * It establishes the properties of the webview (like its content security policy and available scripts)
    * and provides the HTML content to be displayed.
-   *
+   *s
    * @param webviewView - The webview view instance provided by VSCode during the resolve phase.
    * @param _context - Contextual information about the view.
    * @param _token - A token that indicates the cancellation of the webview creation.
    */
-  public resolveWebviewView = (
+  public resolveWebviewView(
     webviewView: WebviewView,
     _context: WebviewViewResolveContext,
     _token: CancellationToken,
-  ): void => {
+  ): void {
     withErrorHandling(() => {
       this._view = webviewView;
 
@@ -110,9 +118,8 @@ export class CustomViewProvider
 
       this.emit("viewResolved", this._view);
     })();
-  };
+  }
 
-  // -------------------- Private --------------------
   /**
    * Generates the HTML content for the webview.
    *
@@ -122,7 +129,7 @@ export class CustomViewProvider
    * @param view - The webview view for which HTML content needs to be generated.
    * @returns A string containing the full HTML content for the webview.
    */
-  private _getHtmlForWebview = (view: WebviewView): string => {
+  private _getHtmlForWebview(view: WebviewView): string {
     const uri = {
       vendors: view.webview.asWebviewUri(
         Uri.joinPath(this._extensionUri, "dist", "vendors.js"),
@@ -144,25 +151,25 @@ export class CustomViewProvider
 
     return `<!DOCTYPE html>
 			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-				<!--
-					Use a content security policy to only allow loading styles from our extension directory,
-					and only allow scripts that have a specific nonce.
-					(See the 'webview-sample' extension sample for img-src content security policy examples)
-				-->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${view.webview.cspSource}; img-src ${view.webview.cspSource}; script-src 'nonce-${nonce}'; style-src * 'unsafe-inline'">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<link href="${uri.style}" rel="stylesheet">        
-				<title>ChainsAtlas GO</title>
-			</head>
-			<body>
-				<div id="root"></div>
-        <script nonce="${nonce}" src="${uri.vendors}"></script>
-				<script nonce="${nonce}" src="${uri.view}" /></script>
-			</body>
+        <head>
+          <meta charset="UTF-8">
+          <!--
+            Use a content security policy to only allow loading styles from our extension directory,
+            and only allow scripts that have a specific nonce.
+            (See the 'webview-sample' extension sample for img-src content security policy examples)
+          -->
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${view.webview.cspSource}; img-src ${view.webview.cspSource}; script-src 'nonce-${nonce}'; style-src * 'unsafe-inline'">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <link href="${uri.style}" rel="stylesheet">        
+          <title>ChainsAtlas GO</title>
+        </head>
+        <body>
+          <div id="root"></div>
+          <script nonce="${nonce}" src="${uri.vendors}"></script>
+          <script nonce="${nonce}" src="${uri.view}" /></script>
+        </body>
 			</html>`;
-  };
+  }
 
   /**
    * Generates a random nonce (Number used ONCE) for securing script tags in webviews.
@@ -172,7 +179,7 @@ export class CustomViewProvider
    *
    * @returns A random 32-character long string nonce.
    */
-  private _getNonce = (): string => {
+  private _getNonce(): string {
     let text = "";
     const possible =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -180,5 +187,5 @@ export class CustomViewProvider
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
-  };
+  }
 }
