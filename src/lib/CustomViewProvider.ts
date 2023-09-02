@@ -168,7 +168,9 @@ export class CustomViewProvider
           <script nonce="${nonce}" src="${uri.vendors}"></script>
           <script nonce="${nonce}" src="${uri.view}" /></script>
         </body>
-			</html>`;
+			</html>`
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   /**
