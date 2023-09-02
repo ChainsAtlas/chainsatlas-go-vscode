@@ -1,6 +1,6 @@
 import UniversalProvider from "@walletconnect/universal-provider";
 import { ExtensionContext, Webview, WebviewView } from "vscode";
-import { ChainsAtlasGOApi, ViewStateGenerator } from ".";
+import { Api, ViewStateGenerator } from ".";
 import { withErrorHandling } from "../Utils";
 import { ERROR_MESSAGE, WALLETCONNECT_PROJECT_ID } from "../constants";
 import {
@@ -158,16 +158,16 @@ export class ChainsAtlasGOClient {
   private _provider?: UniversalProvider;
   // ---------------------- Private Utility Variables ----------------------
   /**
-   * An instance of the ChainsAtlasGOApi class.
+   * An instance of the Api class.
    *
    * This private member is responsible for interfacing with the ChainsAtlas GO API.
    * It provides methods to authenticate the client and generate bytecode structure
    * compatible with ChainsAtlas Virtualization Unit.
    *
    * @private
-   * @type {ChainsAtlasGOApi}
+   * @type {Api}
    */
-  private _api = new ChainsAtlasGOApi();
+  private _api = new Api();
 
   /**
    * Represents a map of views available for the extension.
@@ -340,7 +340,7 @@ export class ChainsAtlasGOClient {
           url: METADATA.URL,
         },
       });
-      this._api = new ChainsAtlasGOApi();
+      this._api = new Api();
       this._executor = new ExecutorModel();
       this._settings = new SettingsModel();
       this._transactionHistory = new TransactionHistoryModel();

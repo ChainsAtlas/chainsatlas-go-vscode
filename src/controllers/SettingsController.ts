@@ -1,6 +1,6 @@
 import { Disposable, Webview } from "vscode";
 import { ERROR_MESSAGE } from "../constants";
-import { ChainsAtlasGOApi } from "../lib";
+import { Api } from "../lib";
 import {
   ControllerEvent,
   SettingsCommand,
@@ -25,7 +25,7 @@ export class SettingsController extends Controller {
     _webview: Webview,
     _disposables: Disposable[],
     private _modelMap: SettingsControllerModelMap,
-    private _api: ChainsAtlasGOApi,
+    private _api: Api,
   ) {
     super(_webview, _disposables);
   }

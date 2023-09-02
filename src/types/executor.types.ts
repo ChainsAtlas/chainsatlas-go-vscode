@@ -1,5 +1,5 @@
 import { ExecutorController } from "../controllers";
-import { ChainsAtlasGOApi } from "../lib";
+import { Api } from "../lib";
 import {
   ExecutorModel,
   SettingsModel,
@@ -42,7 +42,7 @@ export type ExecutorControllerModelMap = {
 /**
  * Represents the processed user input file stored by the
  * {@link ExecutorModel} to update the {@link ExecutorViewState}
- * and generate a {@link BytecodeStructure} through the {@link ChainsAtlasGOApi}.
+ * and generate a {@link BytecodeStructure} through the {@link Api}.
  */
 export type ExecutorFile = {
   content: string;

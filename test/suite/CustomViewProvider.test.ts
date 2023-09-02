@@ -58,10 +58,6 @@ suite("CustomViewProvider", () => {
         .returns((() => {}) as unknown as (...args: any[]) => Promise<any>);
     });
 
-    teardown(() => {
-      sandbox.restore();
-    });
-
     test("dispose", () => {
       instance.dispose();
 
@@ -112,10 +108,6 @@ suite("CustomViewProvider", () => {
       instance = new CustomViewProvider(mockUri, mockViewType);
     });
 
-    teardown(() => {
-      sandbox.restore();
-    });
-
     test("should call window.registerWebviewViewProvider with appropriate arguments", () => {
       instance.register();
 
@@ -137,10 +129,6 @@ suite("CustomViewProvider", () => {
         .stub(instance as any, "_getHtmlForWebview")
         .returns(mockHtml);
       emitSpy = sandbox.spy(instance, "emit");
-    });
-
-    teardown(() => {
-      sandbox.restore();
     });
 
     test("should set _view and emit 'viewResolved'", () => {
@@ -183,10 +171,6 @@ suite("CustomViewProvider", () => {
       _getNonceStub = sandbox
         .stub(instance as any, "_getNonce")
         .returns(mockNonce);
-    });
-
-    teardown(() => {
-      sandbox.restore();
     });
 
     test("should generate the correct HTML for the webview", () => {

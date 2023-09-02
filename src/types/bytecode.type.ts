@@ -1,4 +1,4 @@
-import { ChainsAtlasGOApi } from "../lib";
+import { Api } from "../lib";
 import { ExecutorModel } from "../models";
 import { ExecutorView } from "../views";
 
@@ -9,7 +9,7 @@ import { ExecutorView } from "../views";
 export type BytecodeArg = number;
 
 /**
- * Represents the bytecode structure returned by the `generateBytecodeStructure` method of {@link ChainsAtlasGOApi}.
+ * Represents the bytecode structure returned by the `generateBytecodeStructure` method of {@link Api}.
  *
  * The bytecode structure is used by the `runBytecode` method of the {@link ExecutorModel} to compose the bytecode
  * input with the user's {@link BytecodeArg} through the private method `_composeInput`.

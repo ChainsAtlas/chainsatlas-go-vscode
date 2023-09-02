@@ -2,7 +2,7 @@ import UniversalProvider from "@walletconnect/universal-provider/dist/types/Univ
 import { Disposable, Webview } from "vscode";
 import Web3 from "web3";
 import { ERROR_MESSAGE } from "../constants";
-import { ChainsAtlasGOApi } from "../lib";
+import { Api } from "../lib";
 import {
   ControllerEvent,
   ViewMessage,
@@ -31,7 +31,7 @@ export class WalletController extends Controller {
     _disposables: Disposable[],
     private _modelMap: WalletControllerModelMap,
     private _provider: UniversalProvider,
-    private _api: ChainsAtlasGOApi,
+    private _api: Api,
   ) {
     super(_webview, _disposables);
     this._provider.on("display_uri", async (uri: string) => {

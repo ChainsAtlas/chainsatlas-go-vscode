@@ -16,7 +16,7 @@ import {
   VirtualizationUnitViewState,
   WalletViewState,
 } from "../types";
-import { ChainsAtlasGOApi } from "./ChainsAtlasGOApi";
+import { Api } from "./Api";
 
 /**
  * Represents a generator that produces different types of view states based on the given ViewType.
@@ -31,14 +31,14 @@ export class ViewStateGenerator {
   /**
    * Initializes a new instance of the `ViewStateGenerator` class.
    *
-   * @param _api - An instance of the ChainsAtlasGOApi to fetch authentication status.
+   * @param _api - An instance of the Api to fetch authentication status.
    * @param _executor - An instance of the ExecutorModel to fetch compiler and execution data.
    * @param _transactionHistory - An instance of the TransactionHistoryModel to fetch transaction history.
    * @param _virtualizationUnit - An instance of the VirtualizationUnitModel to fetch virtualization unit data.
    * @param _wallet - An instance of the WalletModel to fetch wallet data.
    */
   constructor(
-    private readonly _api: ChainsAtlasGOApi,
+    private readonly _api: Api,
     private readonly _executor: ExecutorModel,
     private readonly _settings: SettingsModel,
     private readonly _transactionHistory: TransactionHistoryModel,

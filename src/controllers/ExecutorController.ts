@@ -1,7 +1,7 @@
 import { extname } from "path";
 import { Disposable, Webview, window, workspace } from "vscode";
 import { ERROR_MESSAGE } from "../constants";
-import { ChainsAtlasGOApi } from "../lib";
+import { Api } from "../lib";
 import { ExecutorModel } from "../models";
 import {
   ControllerEvent,
@@ -39,13 +39,13 @@ export class ExecutorController extends Controller {
    * @param _webview - The webview associated with this controller.
    * @param _disposables - An array of disposables for cleanup.
    * @param _modelMap - Mapping of all models required by this controller.
-   * @param _api - Instance of the ChainsAtlasGOApi to interact with the backend.
+   * @param _api - Instance of the Api to interact with the backend.
    */
   constructor(
     _webview: Webview,
     _disposables: Disposable[],
     private _modelMap: ExecutorControllerModelMap,
-    private _api: ChainsAtlasGOApi,
+    private _api: Api,
   ) {
     super(_webview, _disposables);
   }

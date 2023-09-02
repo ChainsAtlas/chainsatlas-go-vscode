@@ -3,41 +3,46 @@ import { withErrorHandling } from "../Utils";
 import { AuthStatus, BytecodeStructure, ExecutorFile } from "../types";
 
 /**
- * `ChainsAtlasGOApi` provides methods to interact with the ChainsAtlas GO API.
- * It handles authentication, bytecode structure generation, and other possible interactions.
+ * Represents the API client.
+ * It handles authentication and bytecode structure generation.
  */
-export class ChainsAtlasGOApi {
+export class Api {
   /**
-   * Static property `_URL` holds the base URL for the ChainsAtlas GO API.
+   * The base URL for the API.
    */
   private static _URL = "https://api.chainsatlas.com";
 
   /**
-   * `authStatus` is an optional property that represents the current authentication status of the user.
-   * The status could be "authenticated" or undefined.
+   * Represents the current authentication status of the user.
+   * The status can be "authenticated", "authenticating" or undefined.
    */
   public authStatus?: AuthStatus;
 
   /**
-   * `_authToken` is a private property to store the authentication token received after a successful login.
+   * Stores the authentication token received after a successful login.
    */
   private _authToken = "";
 
   /**
-   * Constructor for the `ChainsAtlasGOApi` class.
-   * Initializes the ChainsAtlasGOApi instance.
+   * Constructs a new instance of the `Api` class.
+   *
+   * @param _fetch A fetch function, primarily used for test stubbing. Defaults to the global fetch function.
    */
-  constructor() {}
+  constructor(private readonly _fetch = fetch) {}
 
   /**
    * The `authenticate` method attempts to authenticate a user with the ChainsAtlas GO API.
-   * @param body - The request payload for authentication.
+   *
+   * @param body - The request payload for authentication. Should be a `{username: string, password: string}`
+   * stringified object
+   *
    * @returns A promise that resolves when authentication is successful.
+   *
    * @throws An error if the authentication fails.
    */
   public authenticate = async (body: string): Promise<void> =>
     withErrorHandling(async () => {
-      const response = await fetch(`${ChainsAtlasGOApi._URL}/login`, {
+      const response = await this._fetch(`${Api._URL}/login`, {
         method: "POST",
         body,
         headers: { "Content-Type": "application/json" },
@@ -60,10 +65,13 @@ export class ChainsAtlasGOApi {
     })();
 
   /**
-   * The `generateBytecodeStructure` method sends a request to generate bytecode structure for a given file.
-   * @param file - The executor file containing details like extension and content.
-   * @param nargs - Number of arguments.
-   * @returns A promise that resolves to a `BytecodeStructure` object or is undefined if the generation fails.
+   * Sends a request to generate a {@link BytecodeStructure} for a given {@link ExecutorFile}.
+   *
+   * @param file The executor file containing details like extension and content.
+   * @param nargs Number of arguments for the bytecode.
+   *
+   * @returns A promise that resolves to a bytecode structure object or is undefined if the generation fails.
+   *
    * @throws An error if the request fails.
    */
   public generateBytecodeStructure = async (
@@ -77,7 +85,7 @@ export class ChainsAtlasGOApi {
         source_code: file.content,
       };
 
-      const response = await fetch(`${ChainsAtlasGOApi._URL}/build/generate`, {
+      const response = await this._fetch(`${Api._URL}/build/generate`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -103,8 +111,8 @@ export class ChainsAtlasGOApi {
     })();
 
   /**
-   * The `logout` method clears the stored authentication token and sets the `authStatus` to undefined.
-   * It essentially represents a "logout" action.
+   * The `logout` method clears the stored authentication token
+   * and sets the `authStatus` to undefined.
    */
   public logout = (): void => {
     this._authToken = "";
