@@ -1,23 +1,14 @@
-import { SettingsController } from "../controllers";
-import { SettingsModel } from "../models";
+import { Controller } from "../lib";
 import { SettingsView } from "../views";
 
 /**
  * Enum representing possible commands sent from {@link SettingsView}
- * to the {@link SettingsController}
+ * to the {@link Controller}
  */
 export enum SettingsCommand {
-  READY = "ready",
+  READY = "settingsReady",
   SWITCH_TELEMETRY = "switchTelemetry",
 }
-
-/**
- * Represents a mapping of models required
- * for the {@link SettingsController} constructor.
- */
-export type SettingsControllerModelMap = {
-  settings: SettingsModel;
-};
 
 /**
  * Represents the state of the {@link SettingsView}

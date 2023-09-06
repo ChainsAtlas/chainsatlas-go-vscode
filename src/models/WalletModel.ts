@@ -1,7 +1,5 @@
 import { ProviderAccounts } from "@walletconnect/universal-provider";
 import UniversalProvider from "@walletconnect/universal-provider/dist/types/UniversalProvider";
-import Web3 from "web3";
-import { withErrorHandling } from "../Utils";
 import * as chains from "../chains";
 
 /**
@@ -15,11 +13,6 @@ import * as chains from "../chains";
  */
 export class WalletModel {
   public static readonly CHAINS = Object.values(chains);
-
-  /**
-   * An instance of the Web3 library, initialized after connecting to the provider.
-   */
-  public web3?: Web3;
 
   /**
    * A static list of events related to the EIP155 standard.
@@ -82,49 +75,48 @@ export class WalletModel {
    * @param id - The ID of the chain or network to connect to.
    * @throws Will throw an error if the chain ID is invalid or the connection fails.
    */
-  public connect = async (id: number): Promise<void> =>
-    withErrorHandling(async () => {
-      this._controller.abort();
+  public async connect(id: number): Promise<void> {
+    this._controller.abort();
 
-      this._controller.signal.addEventListener("abort", () => {
-        this._provider.abortPairingAttempt();
-        this._provider.cleanupPendingPairings({ deletePairings: true });
+    this._controller.signal.addEventListener("abort", () => {
+      this._provider.abortPairingAttempt();
+      this._provider.cleanupPendingPairings({ deletePairings: true });
 
-        this.uri = undefined;
-
-        throw new Error("Aborted!");
-      });
-
-      await this.disconnect();
-
-      const chain = WalletModel.CHAINS.find((c) => c.id === id);
-
-      if (!chain) {
-        throw new Error("invalid chain id.");
-      }
-
-      this.chain = chain; // important to sync correct state when provider emits uri
-
-      await this._provider.connect({
-        namespaces: {
-          eip155: {
-            methods: WalletModel._EIP155_METHODS,
-            chains: [`eip155:${chain.id}`],
-            events: WalletModel._EIP155_EVENTS,
-            rpcMap: { [chain.id]: chain.rpc },
-          },
-        },
-      });
-
-      this.accounts = await this._provider.enable();
-      this.chain = chain;
-      this.connected = true;
       this.uri = undefined;
 
-      if (this.accounts.length > 0) {
-        this.currentAccount = this.accounts[0];
-      }
-    })();
+      throw new Error("Aborted!");
+    });
+
+    await this.disconnect();
+
+    const chain = WalletModel.CHAINS.find((c) => c.id === id);
+
+    if (!chain) {
+      throw new Error("invalid chain id.");
+    }
+
+    this.chain = chain; // important to sync correct state when provider emits uri
+
+    await this._provider.connect({
+      namespaces: {
+        eip155: {
+          methods: WalletModel._EIP155_METHODS,
+          chains: [`eip155:${chain.id}`],
+          events: WalletModel._EIP155_EVENTS,
+          rpcMap: { [chain.id]: chain.rpc },
+        },
+      },
+    });
+
+    this.accounts = await this._provider.enable();
+    this.chain = chain;
+    this.connected = true;
+    this.uri = undefined;
+
+    if (this.accounts.length > 0) {
+      this.currentAccount = this.accounts[0];
+    }
+  }
 
   /**
    * Disconnects the wallet from the current provider and resets the state.
@@ -133,18 +125,13 @@ export class WalletModel {
    *
    * @throws Will throw an error if the disconnection process encounters any issues.
    */
-  public disconnect = async (): Promise<void> =>
-    withErrorHandling(async () => {
-      if (this._provider.session) {
-        await this._provider.disconnect();
-      }
+  public async disconnect(): Promise<void> {
+    if (this._provider.session) {
+      await this._provider.disconnect();
+    }
 
-      if (this.web3) {
-        this.web3.currentProvider?.disconnect();
-      }
-
-      this.accounts = undefined;
-      this.currentAccount = undefined;
-      this.connected = false;
-    })();
+    this.accounts = undefined;
+    this.currentAccount = undefined;
+    this.connected = false;
+  }
 }

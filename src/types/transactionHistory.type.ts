@@ -1,14 +1,14 @@
 import { Bytes } from "web3";
-import { TransactionHistoryController } from "../controllers";
+import { Controller } from "../lib";
 import { TransactionHistoryModel } from "../models";
 import { TransactionHistoryView } from "../views";
 
 /**
  * Enum representing possible commands sent from {@link TransactionHistoryView}
- * to the {@link TransactionHistoryController}
+ * to the {@link Controller}
  */
 export enum TransactionHistoryCommand {
-  READY = "ready",
+  READY = "transactionHistoryReady",
 }
 
 /**

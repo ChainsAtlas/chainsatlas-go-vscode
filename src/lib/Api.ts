@@ -1,5 +1,4 @@
 import fetch from "cross-fetch";
-import { withErrorHandling } from "../Utils";
 import { AuthStatus, BytecodeStructure, ExecutorFile } from "../types";
 
 /**
@@ -40,29 +39,30 @@ export class Api {
    *
    * @throws An error if the authentication fails.
    */
-  public authenticate = async (body: string): Promise<void> =>
-    withErrorHandling(async () => {
-      const response = await this._fetch(`${Api._URL}/login`, {
-        method: "POST",
-        body,
-        headers: { "Content-Type": "application/json" },
-      });
+  public async authenticate(body: string): Promise<void> {
+    const response = await this._fetch(`${Api._URL}/login`, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          this._authToken = "";
-        }
-
-        this.authStatus = undefined;
-
-        throw new Error(
-          `HTTP error! [${response.status}]: ${response.statusText}`,
-        );
+    if (!response.ok) {
+      if (response.status === 401) {
+        this._authToken = "";
       }
 
-      this._authToken = (await response.json()).token as string;
-      this.authStatus = "authenticated";
-    })();
+      this.authStatus = undefined;
+
+      throw new Error(
+        `HTTP error! [${response.status}]: ${response.statusText}`,
+      );
+    }
+
+    const json = await response.json();
+
+    this._authToken = json.token as string;
+    this.authStatus = "authenticated";
+  }
 
   /**
    * Sends a request to generate a {@link BytecodeStructure} for a given {@link ExecutorFile}.
@@ -74,48 +74,46 @@ export class Api {
    *
    * @throws An error if the request fails.
    */
-  public generateBytecodeStructure = async (
+  public async generateBytecodeStructure(
     file: ExecutorFile,
     nargs: number,
-  ): Promise<BytecodeStructure | undefined> =>
-    withErrorHandling(async () => {
-      const data = {
-        entrypoint_nargs: nargs,
-        language: file.extension,
-        source_code: file.content,
-      };
+  ): Promise<BytecodeStructure | undefined> {
+    const data = {
+      entrypoint_nargs: nargs,
+      language: file.extension,
+      source_code: file.content,
+    };
 
-      const response = await this._fetch(`${Api._URL}/build/generate`, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-tokens": this._authToken,
-        },
-      });
+    const response = await this._fetch(`${Api._URL}/build/generate`, {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-tokens": this._authToken,
+      },
+    });
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          this._authToken = "";
-        }
-
-        throw new Error(
-          `HTTP error! [${response.status}]: ${response.statusText}`,
-        );
+    if (!response.ok) {
+      if (response.status === 401) {
+        this._authToken = "";
       }
 
-      const bytecodeStructure = (await response.json())
-        .data as BytecodeStructure;
+      throw new Error(
+        `HTTP error! [${response.status}]: ${response.statusText}`,
+      );
+    }
 
-      return bytecodeStructure;
-    })();
+    const bytecodeStructure = (await response.json()).data as BytecodeStructure;
+
+    return bytecodeStructure;
+  }
 
   /**
    * The `logout` method clears the stored authentication token
    * and sets the `authStatus` to undefined.
    */
-  public logout = (): void => {
+  public logout(): void {
     this._authToken = "";
     this.authStatus = undefined;
-  };
+  }
 }

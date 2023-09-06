@@ -1,43 +1,24 @@
-import { ExecutorController } from "../controllers";
-import { Api } from "../lib";
-import {
-  ExecutorModel,
-  SettingsModel,
-  TransactionHistoryModel,
-  VirtualizationUnitModel,
-  WalletModel,
-} from "../models";
+import { Api, Controller } from "../lib";
+import { ExecutorModel } from "../models";
 import { ExecutorView } from "../views/ExecutorView";
 import { BytecodeCompilerStatus, BytecodeStructure } from "./bytecode.type";
 import { ContractTransactionStatus } from "./common.type";
 
 /**
  * Enum representing possible commands sent from {@link ExecutorView}
- * to the {@link ExecutorController}
+ * to the {@link Controller}
  */
 export enum ExecutorCommand {
   CANCEL_COMPILE = "cancelCompile",
   CANCEL_EXECUTION = "cancelExecution",
   CLEAR_FILE = "clearFile",
-  COMPILE = "compile",
-  ESTIMATE = "estimate",
-  EXECUTE = "execute",
+  COMPILE_BYTECODE = "compileBytecode",
+  ESTIMATE_GAS = "estimateGas",
+  EXECUTE_BYTECODE = "executeBytecode",
   GET_ACTIVE_FILE = "getActiveFile",
-  READY = "ready",
+  READY = "executorReady",
   SELECT_FILE = "selectFile",
 }
-
-/**
- * Represents a mapping of models required
- * for the {@link ExecutorController} constructor.
- */
-export type ExecutorControllerModelMap = {
-  executor: ExecutorModel;
-  settings: SettingsModel;
-  transactionHistory: TransactionHistoryModel;
-  virtualizationUnit: VirtualizationUnitModel;
-  wallet: WalletModel;
-};
 
 /**
  * Represents the processed user input file stored by the
@@ -52,16 +33,13 @@ export type ExecutorFile = {
 
 /**
  * Enum representing events emitted from the {@link ExecutorModel}
- * to the {@link ExecutorController} to manage state synchronization
+ * to the {@link Controller} to manage state synchronization
  * with the {@link ExecutorView}.
  */
 export enum ExecutorModelEvent {
-  BYTECODE_STRUCTURE_RECEIVED = "bytecodeStructureReceived",
-  EXECUTION_CONFIRMED = "executionConfirmed",
-  GAS_RECEIVED = "gasReceived",
-  SYNC = "sync",
-  WAITING_BYTECODE_STRUCTURE = "waitingBytecodeStructure",
-  WAITING_GAS = "waitingGas",
+  TRANSACTION_ERROR = "transactionError",
+  TRANSACTION_OUTPUT = "transactionOutput",
+  UPDATE = "update",
 }
 
 /**

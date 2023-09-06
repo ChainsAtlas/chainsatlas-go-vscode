@@ -50,7 +50,7 @@ export const VirtualizationUnitView = (): JSX.Element => {
   const [_gasEstimate, setGasEstimate] =
     useState<VirtualizationUnitViewState["gasEstimate"]>("");
   const [gas, setGas] = useState<string>("");
-  const [gasOption, setGasOption] = useState<GasOption>(GasOption.BUFFER);
+  const [gasOption, setGasOption] = useState<GasOption>(GasOption.ESTIMATE);
 
   const calculateBuffer = (gas: string): string =>
     ((BigInt(gas) * BigInt(115)) / BigInt(100)).toString();
@@ -63,13 +63,13 @@ export const VirtualizationUnitView = (): JSX.Element => {
 
   const onContractChange = (contract: string): void => {
     vscodeApi.postMessage({
-      command: VirtualizationUnitCommand.SET_CONTRACT,
-      value: contract,
+      command: VirtualizationUnitCommand.CHANGE_CONTRACT,
+      data: contract,
     });
   };
 
   const onDeploy = (): void => {
-    vscodeApi.postMessage({ command: VirtualizationUnitCommand.DEPLOY });
+    vscodeApi.postMessage({ command: VirtualizationUnitCommand.ESTIMATE_GAS });
   };
 
   const onGasOptionChange = useCallback(
@@ -97,8 +97,8 @@ export const VirtualizationUnitView = (): JSX.Element => {
 
   const onSend = useCallback(() => {
     vscodeApi.postMessage({
-      command: VirtualizationUnitCommand.SEND,
-      value: gas,
+      command: VirtualizationUnitCommand.DEPLOY,
+      data: gas,
     });
   }, [gas]);
 

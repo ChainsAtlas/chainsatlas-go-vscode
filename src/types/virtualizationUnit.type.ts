@@ -1,40 +1,29 @@
-import { VirtualizationUnitController } from "../controllers";
-import { SettingsModel, VirtualizationUnitModel, WalletModel } from "../models";
+import { Controller } from "../lib";
+import { VirtualizationUnitModel } from "../models";
 import { VirtualizationUnitView } from "../views";
 import { ContractTransactionStatus } from "./common.type";
 
 /**
  * Enum representing possible commands sent from {@link VirtualizationUnitView}
- * to the {@link VirtualizationUnitController}
+ * to the {@link Controller}
  */
 export enum VirtualizationUnitCommand {
+  CHANGE_CONTRACT = "changeContract",
   CLEAR_DEPLOYMENT = "clearDeployment",
   DEPLOY = "deploy",
-  READY = "ready",
-  SEND = "send",
-  SET_CONTRACT = "setContract",
+  ESTIMATE_GAS = "estimateGas",
+  READY = "virtualizationUnitReady",
 }
 
 /**
- * Represents a mapping of models required
- * for the {@link VirtualizationUnitController} constructor.
- */
-export type VirtualizationUnitControllerModelMap = {
-  settings: SettingsModel;
-  virtualizationUnit: VirtualizationUnitModel;
-  wallet: WalletModel;
-};
-
-/**
  * Enum representing events emitted from the {@link VirtualizationUnitModel}
- * to the {@link VirtualizationUnitController} to manage state synchronization
+ * to the {@linkController} to manage state synchronization
  * with the {@link VirtualizationUnitView}.
  */
 export enum VirtualizationUnitModelEvent {
-  DEPLOYMENT_CONFIRMED = "deploymentConfirmed",
-  GAS_RECEIVED = "gasReceived",
-  SYNC = "sync",
-  WAITING_GAS = "waitingGas",
+  TRANSACTION_CONFIRMED = "transactionConfirmed",
+  TRANSACTION_ERROR = "transactionError",
+  UPDATE = "update",
 }
 
 /**

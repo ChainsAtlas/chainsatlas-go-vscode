@@ -1,8 +1,18 @@
 import { WebviewView } from "vscode";
-import { Controller } from "../controllers";
-import { ChainsAtlasGOClient } from "../lib";
+import { Api, Client, Controller } from "../lib";
 import { ExecutorModel, VirtualizationUnitModel } from "../models";
 import { ExecutorView, VirtualizationUnitView } from "../views";
+import { ExecutorCommand, ExecutorViewState } from "./executor.types";
+import { SettingsCommand, SettingsViewState } from "./settings.type";
+import {
+  TransactionHistoryCommand,
+  TransactionHistoryViewState,
+} from "./transactionHistory.type";
+import {
+  VirtualizationUnitCommand,
+  VirtualizationUnitViewState,
+} from "./virtualizationUnit.type";
+import { WalletCommand, WalletViewState } from "./wallet.type";
 
 /**
  * Represents required chain data for the {@link WalletModel}
@@ -48,8 +58,19 @@ export enum GasOption {
 }
 
 /**
- * Represents a map of webview views used by {@link ChainsAtlasGOClient}
- * to manage each view's Controller initialization and state sync.
+ * Represents all command enums to facilitate
+ * the @{link Controller} management of handlers.
+ */
+export type ViewCommand =
+  | ExecutorCommand
+  | SettingsCommand
+  | TransactionHistoryCommand
+  | VirtualizationUnitCommand
+  | WalletCommand;
+
+/**
+ * Represents a map of webview views used to manage each
+ * view's Controller initialization and state sync.
  */
 export type ViewMap = Record<ViewType, WebviewView>;
 
@@ -59,7 +80,34 @@ export type ViewMap = Record<ViewType, WebviewView>;
  * Stringify `value` for values of types other than `string`
  * and parse them in the respective Controller for consistency.
  */
-export type ViewMessage = { command: string; value?: string };
+export type ViewMessage = {
+  command: ViewCommand;
+  data?: string;
+};
+
+/**
+ * Represents a handler function required to manage commmunications
+ * and operations between models and their respective views.`
+ */
+export type ViewMessageHandler = (
+  data: string | undefined,
+  update: (...viewTypes: ViewType[]) => Promise<void>,
+  client: Client,
+  api: Api,
+) => void | Promise<void>;
+
+/**
+ * Represents the union type of all view state generators.
+ */
+export type ViewStateGenerator = (
+  client: Client,
+  api: Api,
+) =>
+  | ExecutorViewState
+  | SettingsViewState
+  | TransactionHistoryViewState
+  | VirtualizationUnitViewState
+  | Promise<WalletViewState>;
 
 /**
  * Enum representing types of views to avoid hardcoded string values

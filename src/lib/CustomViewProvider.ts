@@ -8,7 +8,6 @@ import {
   WebviewViewResolveContext,
   window,
 } from "vscode";
-import { withErrorHandling } from "../Utils";
 import { ViewType } from "../types";
 
 /**
@@ -66,9 +65,7 @@ export class CustomViewProvider
    * Wrapped with error handling to ensure graceful disposal even in the face of unexpected issues.
    */
   public dispose(): void {
-    withErrorHandling(() => {
-      this._disposable?.dispose();
-    })();
+    this._disposable?.dispose();
   }
 
   /**
@@ -78,12 +75,7 @@ export class CustomViewProvider
    * Wrapped with error handling to ensure graceful disposal even in the face of unexpected issues.
    */
   public register(): void {
-    withErrorHandling(() => {
-      this._disposable = window.registerWebviewViewProvider(
-        this._viewType,
-        this,
-      );
-    })();
+    this._disposable = window.registerWebviewViewProvider(this._viewType, this);
   }
 
   /**
@@ -103,21 +95,18 @@ export class CustomViewProvider
     _context: WebviewViewResolveContext,
     _token: CancellationToken,
   ): void {
-    withErrorHandling(() => {
-      this._view = webviewView;
+    this._view = webviewView;
 
-      this._view.webview.options = {
-        enableScripts: true,
-        localResourceRoots: [
-          Uri.joinPath(this._extensionUri, "assets"),
-          Uri.joinPath(this._extensionUri, "dist"),
-        ],
-      };
+    this._view.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [
+        Uri.joinPath(this._extensionUri, "assets"),
+        Uri.joinPath(this._extensionUri, "dist"),
+      ],
+    };
+    this._view.webview.html = this._getHtmlForWebview(this._view);
 
-      this._view.webview.html = this._getHtmlForWebview(this._view);
-
-      this.emit("viewResolved", this._view);
-    })();
+    this.emit("viewResolved", this._view);
   }
 
   /**
@@ -169,7 +158,7 @@ export class CustomViewProvider
           <script nonce="${nonce}" src="${uri.view}" /></script>
         </body>
 			</html>`
-      .replace(/\s+/g, " ")
+      .replace(/\s+/g, " ") // Remove spaces to match test value
       .trim();
   }
 

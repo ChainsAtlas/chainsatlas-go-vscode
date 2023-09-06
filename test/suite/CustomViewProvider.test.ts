@@ -8,7 +8,6 @@ import {
   WebviewViewResolveContext,
   window,
 } from "vscode";
-import * as Utils from "../../src/Utils";
 import { CustomViewProvider } from "../../src/lib";
 import { ViewType } from "../../src/types";
 
@@ -34,38 +33,6 @@ suite("CustomViewProvider", () => {
     test("should instantiate without errors", () => {
       expect(instance).to.be.an.instanceOf(CustomViewProvider);
       expect(instance).to.be.an.instanceOf(EventEmitter);
-    });
-  });
-
-  suite("withErrorHandling in public methods", () => {
-    let withErrorHandlingStub: SinonStub;
-
-    setup(() => {
-      withErrorHandlingStub = sandbox
-        .stub(Utils, "withErrorHandling")
-        .returns((() => {}) as unknown as (...args: any[]) => Promise<any>);
-    });
-
-    test("dispose", () => {
-      instance.dispose();
-
-      expect(withErrorHandlingStub).to.have.been.calledOnce;
-    });
-
-    test("register", () => {
-      instance.register();
-
-      expect(withErrorHandlingStub).to.have.been.calledOnce;
-    });
-
-    test("ressolveWebviewView", () => {
-      instance.resolveWebviewView(
-        { webview: { options: {}, html: "" } } as WebviewView,
-        {} as any,
-        {} as any,
-      );
-
-      expect(withErrorHandlingStub).to.have.been.calledOnce;
     });
   });
 
@@ -154,7 +121,7 @@ suite("CustomViewProvider", () => {
         <script nonce="${mockNonce}" src="${mockUriMap.view}" /></script>
       </body>
     </html>`
-        .replace(/\s+/g, " ")
+        .replace(/\s+/g, " ") // To match test mock
         .trim();
     });
 

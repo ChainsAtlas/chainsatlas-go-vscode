@@ -52,7 +52,7 @@ export const ExecutorView = (): JSX.Element => {
   const [compileFormOpen, setCompileFormOpen] = useState<boolean>(false);
   const [gas, setGas] = useState<string>("");
   const [gasEstimated, setGasEstimated] = useState<boolean>(false);
-  const [gasOption, setGasOption] = useState<GasOption>(GasOption.BUFFER);
+  const [gasOption, setGasOption] = useState<GasOption>(GasOption.ESTIMATE);
   const [userNargs, setUserNargs] = useState<string>("0");
 
   const calculateBuffer = (gas: string): string =>
@@ -64,8 +64,8 @@ export const ExecutorView = (): JSX.Element => {
 
   const onCompile = (): void => {
     vscodeApi.postMessage({
-      command: ExecutorCommand.COMPILE,
-      value: userNargs,
+      command: ExecutorCommand.COMPILE_BYTECODE,
+      data: userNargs,
     });
     setArgs(Array(Number(userNargs)).fill(""));
   };
@@ -78,13 +78,16 @@ export const ExecutorView = (): JSX.Element => {
 
   const onEstimate = (): void => {
     vscodeApi.postMessage({
-      command: ExecutorCommand.ESTIMATE,
-      value: JSON.stringify(args),
+      command: ExecutorCommand.ESTIMATE_GAS,
+      data: JSON.stringify(args),
     });
   };
 
   const onExecute = (): void => {
-    vscodeApi.postMessage({ command: ExecutorCommand.EXECUTE, value: gas });
+    vscodeApi.postMessage({
+      command: ExecutorCommand.EXECUTE_BYTECODE,
+      data: gas,
+    });
   };
 
   const onExecuteCancel = (): void => {
@@ -244,6 +247,7 @@ export const ExecutorView = (): JSX.Element => {
         <>
           <VSCodeTextField
             className="width-constraint"
+            disabled
             readOnly
             title={_currentFile.path}
             value={_currentFile.path}
@@ -255,7 +259,9 @@ export const ExecutorView = (): JSX.Element => {
               className="width-constraint"
               disabled={
                 _contractTransactionStatus === "sending" ||
-                _contractTransactionStatus === "sent"
+                _contractTransactionStatus === "sent" ||
+                gasEstimated ||
+                _estimating
               }
               key={i}
               onInput={(e) => {

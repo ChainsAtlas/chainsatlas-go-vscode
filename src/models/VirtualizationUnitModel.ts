@@ -1,6 +1,5 @@
 import EventEmitter from "events";
 import { FMT_BYTES, FMT_NUMBER, type Web3 } from "web3";
-import { withErrorHandling } from "../Utils";
 import { ERROR_MESSAGE, V_UNIT_ABI, V_UNIT_BYTECODE } from "../constants";
 import {
   ContractTransactionStatus,
@@ -56,6 +55,17 @@ export class VirtualizationUnitModel extends EventEmitter {
     super();
   }
 
+  public async estimateGas(from: string, web3: Web3): Promise<void> {
+    const contract = new web3.eth.Contract(V_UNIT_ABI);
+
+    const deployment = contract.deploy({ data: V_UNIT_BYTECODE });
+
+    this.gasEstimate = await deployment.estimateGas(
+      { from },
+      { number: FMT_NUMBER.STR, bytes: FMT_BYTES.HEX },
+    );
+  }
+
   /**
    * Deploys the virtualization unit smart contract to the active chain.
    *
@@ -65,83 +75,46 @@ export class VirtualizationUnitModel extends EventEmitter {
    * @param from - The account address from which the deployment transaction will be sent.
    * @param web3 - An instance of web3.js library to interact with the active chain.
    */
-  public deploy = async (from: string, web3: Web3): Promise<void> =>
-    withErrorHandling(async () => {
-      this.estimating = true;
+  public async deploy(from: string, gas: string, web3: Web3): Promise<void> {
+    const contract = new web3.eth.Contract(V_UNIT_ABI);
 
-      this.emit(VirtualizationUnitModelEvent.SYNC);
+    const deployment = contract.deploy({ data: V_UNIT_BYTECODE });
 
-      const contract = new web3.eth.Contract(V_UNIT_ABI);
+    deployment
+      .send({ from, gas })
+      .on("sending", () => {
+        this.contractTransactionStatus = "sending";
 
-      const deployment = contract.deploy({ data: V_UNIT_BYTECODE });
+        this.emit(VirtualizationUnitModelEvent.UPDATE);
+      })
+      .on("sent", () => {
+        this.contractTransactionStatus = "sent";
 
-      this.gasEstimate = await deployment.estimateGas(
-        { from },
-        { number: FMT_NUMBER.STR, bytes: FMT_BYTES.HEX },
-      );
+        this.emit(VirtualizationUnitModelEvent.UPDATE);
+      })
+      .on("confirmation", ({ receipt }) => {
+        const { contractAddress } = receipt;
 
-      this.estimating = false;
-
-      this.emit(VirtualizationUnitModelEvent.WAITING_GAS);
-
-      const gas = await this._getGas();
-
-      deployment
-        .send({ from, gas })
-        .on("sending", () => {
-          this.contractTransactionStatus = "sending";
-          this.emit(VirtualizationUnitModelEvent.SYNC);
-        })
-        .on("sent", () => {
-          this.contractTransactionStatus = "sent";
-          this.emit(VirtualizationUnitModelEvent.SYNC);
-        })
-        .on("confirmation", ({ receipt }) => {
-          this.emit(VirtualizationUnitModelEvent.DEPLOYMENT_CONFIRMED);
-          this.clearDeployment();
-
-          const { contractAddress } = receipt;
-
-          if (contractAddress) {
-            this.contracts.push(contractAddress);
-            this.currentContract = contractAddress;
-
-            this.emit(VirtualizationUnitModelEvent.SYNC);
-          }
-
-          throw new Error(ERROR_MESSAGE.INVALID_CONTRACT_ADDRESS);
-        })
-        .on("error", (e) => {
+        if (!contractAddress) {
           this.contractTransactionStatus = "error";
-          this.emit(VirtualizationUnitModelEvent.SYNC);
 
-          throw e;
-        });
-    })();
+          this.emit(
+            VirtualizationUnitModelEvent.TRANSACTION_ERROR,
+            new Error(ERROR_MESSAGE.INVALID_CONTRACT_ADDRESS),
+          );
+        } else {
+          this.contractTransactionStatus = undefined;
+          this.gasEstimate = undefined;
+          this.contracts.push(contractAddress);
+          this.currentContract = contractAddress;
 
-  /**
-   * Clears the deployment-related properties, resetting them to their initial states.
-   *
-   * This method is useful after a successful deployment or in scenarios where the deployment
-   * process needs to be reset.
-   */
-  public clearDeployment = (): void => {
-    this.gasEstimate = undefined;
-    this.contractTransactionStatus = undefined;
-  };
+          this.emit(VirtualizationUnitModelEvent.TRANSACTION_CONFIRMED);
+        }
+      })
+      .on("error", (error) => {
+        this.contractTransactionStatus = "error";
 
-  // -------------------- Private --------------------
-  /**
-   * A private method that waits for the `GAS_RECEIVED` event to be emitted and
-   * then resolves the promise with the received gas value.
-   *
-   * @returns A promise that resolves with the received gas value as a string.
-   */
-  private _getGas = (): Promise<string> => {
-    return new Promise((resolve) => {
-      this.once(VirtualizationUnitModelEvent.GAS_RECEIVED, (gas: string) => {
-        resolve(gas);
+        this.emit(VirtualizationUnitModelEvent.TRANSACTION_ERROR, error);
       });
-    });
-  };
+  }
 }

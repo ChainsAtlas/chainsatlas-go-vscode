@@ -1,18 +1,12 @@
 import { ProviderAccounts } from "web3";
-import { WalletController } from "../controllers";
-import {
-  ExecutorModel,
-  TransactionHistoryModel,
-  VirtualizationUnitModel,
-  WalletModel,
-} from "../models";
+import { Controller } from "../lib";
 import { WalletView } from "../views";
 import { AuthStatus } from "./auth.type";
 import { Chain } from "./common.type";
 
 /**
  * Enum representing possible commands sent from {@link WalletView}
- * to the {@link WalletController}
+ * to the {@link Controller}
  */
 export enum WalletCommand {
   CHANGE_ACCOUNT = "changeAccount",
@@ -20,19 +14,8 @@ export enum WalletCommand {
   DISCONNECT = "disconnect",
   LOGIN = "login",
   LOGOUT = "logout",
-  READY = "ready",
+  READY = "walletReady",
 }
-
-/**
- * Represents a mapping of models required
- * for the {@link WalletController} constructor.
- */
-export type WalletControllerModelMap = {
-  executor: ExecutorModel;
-  transactionHistory: TransactionHistoryModel;
-  virtualizationUnit: VirtualizationUnitModel;
-  wallet: WalletModel;
-};
 
 /**
  * Represents the state of the {@link WalletView}

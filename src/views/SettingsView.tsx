@@ -15,7 +15,7 @@ export const SettingsView = (): JSX.Element => {
   const onTelemetryChange = (value: boolean): void => {
     vscodeApi.postMessage({
       command: SettingsCommand.SWITCH_TELEMETRY,
-      value: JSON.stringify(value),
+      data: JSON.stringify(value),
     });
   };
 

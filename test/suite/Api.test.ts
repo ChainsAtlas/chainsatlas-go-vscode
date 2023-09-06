@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import { SinonSandbox, SinonStub, createSandbox } from "sinon";
-import * as Utils from "../../src/Utils";
 import { Api } from "../../src/lib";
 import {
   BytecodeStructure,
@@ -41,28 +40,6 @@ suite("Api", () => {
 
   teardown(() => {
     sandbox.restore();
-  });
-
-  suite("withErrorHandling in public methods", () => {
-    let withErrorHandlingStub: SinonStub;
-
-    setup(() => {
-      withErrorHandlingStub = sandbox
-        .stub(Utils, "withErrorHandling")
-        .returns((() => {}) as unknown as (...args: any[]) => Promise<any>);
-    });
-
-    test("authenticate", () => {
-      instance.authenticate(mockAuthBody);
-
-      expect(withErrorHandlingStub).to.have.been.calledOnce;
-    });
-
-    test("generateBytecodeStructure", () => {
-      instance.generateBytecodeStructure(mockExecutorFile, mockNargs);
-
-      expect(withErrorHandlingStub).to.have.been.calledOnce;
-    });
   });
 
   suite("authenticate", () => {

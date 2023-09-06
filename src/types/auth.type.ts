@@ -1,7 +1,7 @@
-import { Api, ViewStateGenerator } from "../lib";
+import { Api } from "../lib";
 
 /**
  * Represents the authentication status of the {@link Api}
- * required to manage the state of the extension's views in the {@link ViewStateGenerator}.
+ * required to manage the state of the extension's views.
  */
 export type AuthStatus = "authenticated" | "authenticating";

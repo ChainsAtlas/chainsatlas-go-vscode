@@ -51,7 +51,7 @@ export const WalletView = (): JSX.Element => {
 
     vscodeApi.postMessage({
       command: WalletCommand.CONNECT,
-      value: chainId.toString(),
+      data: chainId.toString(),
     });
   }, []);
 
@@ -62,7 +62,7 @@ export const WalletView = (): JSX.Element => {
   const login = (): void => {
     vscodeApi.postMessage({
       command: WalletCommand.LOGIN,
-      value: JSON.stringify({ username, password }),
+      data: JSON.stringify({ username, password }),
     });
   };
 
@@ -80,7 +80,7 @@ export const WalletView = (): JSX.Element => {
 
         vscodeApi.postMessage({
           command: WalletCommand.CHANGE_ACCOUNT,
-          value: account,
+          data: account,
         });
       }
     },

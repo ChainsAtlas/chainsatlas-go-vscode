@@ -1,4 +1,4 @@
 export * from "./Api";
-export * from "./ChainsAtlasGOClient";
+export * from "./Client";
+export * from "./Controller";
 export * from "./CustomViewProvider";
-export * from "./ViewStateGenerator";

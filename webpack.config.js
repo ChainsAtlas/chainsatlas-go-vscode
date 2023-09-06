@@ -46,7 +46,6 @@ const extensionConfig = {
 };
 
 const viewsConfig = {
-  devtool: "nosources-source-map",
   entry: {
     executor: {
       import: "./src/views/ExecutorView.tsx",

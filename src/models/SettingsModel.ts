@@ -3,19 +3,19 @@ export class SettingsModel {
 
   constructor() {}
 
-  public logDeploymentAttempt = (): void => {
+  public logDeploymentAttempt(): void {
     console.log("Not implemented");
-  };
+  }
 
-  public logDeploymentConfirmation = (): void => {
+  public logDeploymentConfirmation(): void {
     console.log("Not implemented");
-  };
+  }
 
-  public logExecutionAttempt = (): void => {
+  public logExecutionAttempt(): void {
     console.log("Not implemented");
-  };
+  }
 
-  public logExecutionConfirmation = (): void => {
+  public logExecutionConfirmation(): void {
     console.log("Not implemented");
-  };
+  }
 }

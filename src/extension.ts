@@ -1,5 +1,9 @@
+import { UniversalProvider } from "@walletconnect/universal-provider";
 import { ExtensionContext, window } from "vscode";
-import { initClient, initViewProviders } from "./Utils";
+import { PROVIDER_OPTIONS } from "./constants";
+import { init } from "./helpers";
+import { Api, Client } from "./lib";
+import { withErrorHandling } from "./utils";
 
 /**
  * @module Extension
@@ -27,32 +31,26 @@ import { initClient, initViewProviders } from "./Utils";
  *
  * @returns {Promise<void>} A promise that resolves once the activation process is completed.
  *
- * @throws Will show an error message if the activation process fails.
- *
  * @example
  * vscode.extensions.getExtension('chainsatlas.chainsatlas-go').activate();
  */
 export const activate = async (context: ExtensionContext): Promise<void> => {
-  try {
-    const client = await initClient(context);
-    const viewProviders = initViewProviders(context.extensionUri);
-
-    for (const vProvider of Object.values(viewProviders)) {
-      vProvider.register();
-      vProvider.once("viewResolved", (view) => client.addView(view));
-      context.subscriptions.push(vProvider);
-    }
-
-    context.subscriptions.push(client);
+  withErrorHandling(async () => {
+    const provider = await UniversalProvider.init(PROVIDER_OPTIONS);
+    const client = new Client(provider);
+    const api = new Api();
+    init(client, api, context);
 
     window.showInformationMessage(
       `Disclaimer: By using the beta version of ChainsAtlas GO, you acknowledge and 
-  understand the potential risks and the unfinished state of the product. While we 
-  strive to offer a seamless experience, unexpected issues might occur. We highly 
-  recommend not using the beta version for critical tasks and always maintaining 
-  backups of your data.`,
+      understand the potential risks and the unfinished state of the product. While
+      we strive to offer a seamless experience, unexpected issues might occur. We
+      highly recommend not using the beta version for critical tasks and always
+      maintaining backups of your data.`
+        .replace(/\s+/g, " ") // To match test mock
+        .trim(),
     );
-  } catch {
-    window.showErrorMessage(`Extension activation failed.`);
-  }
+
+    context.subscriptions.push(client);
+  })();
 };
