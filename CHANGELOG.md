@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## 0.1.3-beta - 6 September 2023
+## 0.1.3 - 6 September 2023
 
 ### Added
 
@@ -22,3 +22,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Minor bugs in the user interface.
+
+---
+
+## 0.1.0 - 25 August 2023
+
+- Initial release
