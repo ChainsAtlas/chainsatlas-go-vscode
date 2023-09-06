@@ -77,9 +77,10 @@ export const ExecutorView = (): JSX.Element => {
   };
 
   const onEstimate = (): void => {
+    const data = JSON.stringify(args.map((arg) => Number(arg)));
     vscodeApi.postMessage({
       command: ExecutorCommand.ESTIMATE_GAS,
-      data: JSON.stringify(args),
+      data,
     });
   };
 
