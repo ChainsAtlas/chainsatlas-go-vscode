@@ -7,8 +7,6 @@ declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
 export const SettingsView = (): JSX.Element => {
-  const [_disabled, setDisabled] =
-    useState<SettingsViewState["disabled"]>(true);
   const [_telemetry, setTelemetry] =
     useState<SettingsViewState["telemetry"]>(true);
 
@@ -20,9 +18,8 @@ export const SettingsView = (): JSX.Element => {
   };
 
   const updateState = useCallback((data: SettingsViewState): void => {
-    const { disabled, telemetry } = data;
+    const { telemetry } = data;
 
-    setDisabled(disabled);
     setTelemetry(telemetry);
   }, []);
 
@@ -35,15 +32,7 @@ export const SettingsView = (): JSX.Element => {
     };
   }, [updateState]);
 
-  return _disabled ? (
-    <div className="container">
-      <div className="width-constraint">
-        <span className="disabled-text">
-          You need to be logged to change settings.
-        </span>
-      </div>
-    </div>
-  ) : (
+  return (
     <div className="container">
       <div className="width-constraint">
         <VSCodeCheckbox

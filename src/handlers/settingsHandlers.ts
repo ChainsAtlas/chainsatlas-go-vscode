@@ -14,6 +14,7 @@ export const switchTelemetry: ViewMessageHandler = (
     }
 
     client.settings.telemetry = JSON.parse(data);
+
     update(ViewType.SETTINGS);
   })();
 };

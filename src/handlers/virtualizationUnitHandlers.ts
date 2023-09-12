@@ -1,5 +1,6 @@
 import { ERROR_MESSAGE } from "../constants";
 import {
+  TelemetryType,
   ViewMessageHandler,
   ViewType,
   VirtualizationUnitModelEvent,
@@ -72,12 +73,7 @@ export const estimateGas: ViewMessageHandler = async (
   })();
 };
 
-export const deploy: ViewMessageHandler = async (
-  data,
-  update,
-  client,
-  _api,
-) => {
+export const deploy: ViewMessageHandler = async (data, update, client, api) => {
   withErrorHandling(async () => {
     if (!client.wallet.currentAccount) {
       throw new Error(ERROR_MESSAGE.INVALID_ACCOUNT);
@@ -93,11 +89,37 @@ export const deploy: ViewMessageHandler = async (
 
     const gas = data;
 
-    client.settings.logDeploymentAttempt();
+    if (client.settings.telemetry) {
+      const telemetryData = JSON.stringify({
+        type: TelemetryType.V_UNIT_DEPLOYMENT_ATTEMPT,
+        data: {
+          chain: {
+            id: client.wallet.chain?.id,
+            name: client.wallet.chain?.name,
+          },
+        },
+      });
+
+      await api.sendTelemetry(telemetryData);
+    }
 
     client.virtualizationUnit.once(
       VirtualizationUnitModelEvent.TRANSACTION_CONFIRMED,
       () => {
+        if (client.settings.telemetry) {
+          const telemetryData = JSON.stringify({
+            type: TelemetryType.V_UNIT_DEPLOYMENT_CONFIRMATION,
+            data: {
+              chain: {
+                id: client.wallet.chain?.id,
+                name: client.wallet.chain?.name,
+              },
+            },
+          });
+
+          api.sendTelemetry(telemetryData);
+        }
+
         client.virtualizationUnit.removeAllListeners();
         update(
           ViewType.WALLET,

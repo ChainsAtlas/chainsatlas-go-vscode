@@ -40,12 +40,10 @@ export const generateExecutorViewState = (
 
 export const generateSettingsViewState = (
   client: Client,
-  api: Api,
 ): SettingsViewState => {
-  const { authStatus } = api;
   const { telemetry } = client.settings;
 
-  return { telemetry, disabled: authStatus !== "authenticated" };
+  return { telemetry };
 };
 
 export const generateTransactionHistoryViewState = (

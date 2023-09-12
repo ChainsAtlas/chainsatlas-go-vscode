@@ -40,6 +40,11 @@
           "type": "webview",
           "id": "transactionHistory",
           "name": "Transaction History"
+        },
+        {
+          "type": "webview",
+          "id": "settings",
+          "name": "Settings"
         }
       ]
     },

@@ -7,6 +7,7 @@ import {
   BytecodeArg,
   ExecutorModelEvent,
   SupportedLanguage,
+  TelemetryType,
   ViewMessageHandler,
   ViewType,
 } from "../types";
@@ -152,7 +153,7 @@ export const executeBytecode: ViewMessageHandler = async (
   data,
   update,
   client,
-  _api,
+  api,
 ) => {
   withErrorHandling(async () => {
     if (!data) {
@@ -165,12 +166,36 @@ export const executeBytecode: ViewMessageHandler = async (
 
     const gas = data;
 
-    client.settings.logExecutionAttempt();
+    if (client.settings.telemetry) {
+      const telemetryData = JSON.stringify({
+        type: TelemetryType.BYTECODE_EXECUTION_ATTEMP,
+        data: {
+          chain: {
+            id: client.wallet.chain?.id,
+            name: client.wallet.chain?.name,
+          },
+        },
+      });
+
+      await api.sendTelemetry(telemetryData);
+    }
 
     client.executor.once(
       ExecutorModelEvent.TRANSACTION_OUTPUT,
       async (output: Bytes, transactionHash: Bytes) => {
-        client.settings.logExecutionConfirmation();
+        if (client.settings.telemetry) {
+          const telemetryData = JSON.stringify({
+            type: TelemetryType.BYTECODE_EXECUTION_CONFIRMATION,
+            data: {
+              chain: {
+                id: client.wallet.chain?.id,
+                name: client.wallet.chain?.name,
+              },
+            },
+          });
+
+          api.sendTelemetry(telemetryData);
+        }
 
         if (client.wallet.chain) {
           client.transactionHistory.rows.unshift({
