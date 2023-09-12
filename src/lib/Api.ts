@@ -122,6 +122,7 @@ export class Api {
    * to provide user feedback and help improve ChainsAtlas GO.
    */
   public async sendTelemetry(body: string): Promise<void> {
+    console.log("TELEMETRY: ", body);
     await this._fetch(`${Api._URL}/telemetry`, {
       method: "POST",
       body,
