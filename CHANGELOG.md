@@ -13,6 +13,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 0.2.0 - 13 September 2023
+
+### Added
+
+- Settings view to opt-in/opt-out telemetry
+- Unit tests for the `sendTelemetry` method of `Api` class.
+- Unit tests for `SettingsModel`
+
+### Fixed
+
+- Minor bug where login button would be stuck on "Authenticating..." if credentials are invalid.
+
+---
+
 ## 0.1.3 - 6 September 2023
 
 ### Added
