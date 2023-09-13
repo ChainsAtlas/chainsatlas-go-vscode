@@ -1,21 +1,22 @@
+import { ExtensionContext } from "vscode";
+
 export class SettingsModel {
-  public telemetry = true;
-
-  constructor() {}
-
-  public logDeploymentAttempt(): void {
-    console.log("Not implemented");
+  constructor(private readonly _context: ExtensionContext) {
+    this._context.globalState.setKeysForSync(["telemetry"]);
   }
 
-  public logDeploymentConfirmation(): void {
-    console.log("Not implemented");
+  /**
+   * Get telemetry setting from the extension global state.
+   */
+  get telemetry(): boolean {
+    return this._context.globalState.get("telemetry", true);
   }
 
-  public logExecutionAttempt(): void {
-    console.log("Not implemented");
-  }
-
-  public logExecutionConfirmation(): void {
-    console.log("Not implemented");
+  /**
+   * Set telemetry setting in the extension global state
+   * to persist across all workspaces and sessions.
+   */
+  set telemetry(value: boolean) {
+    this._context.globalState.update("telemetry", value);
   }
 }

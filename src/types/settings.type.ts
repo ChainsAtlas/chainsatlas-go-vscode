@@ -14,6 +14,16 @@ export enum SettingsCommand {
  * Represents the state of the {@link SettingsView}
  */
 export type SettingsViewState = {
-  disabled: boolean;
   telemetry: boolean;
 };
+
+/**
+ * Enum representing possible telemetry data types
+ * to send to the ChainsAtlas API.
+ */
+export enum TelemetryType {
+  BYTECODE_EXECUTION_ATTEMP = "bytecodeExecutionAttempt",
+  BYTECODE_EXECUTION_CONFIRMATION = "bytecodeExecutionConfirmation",
+  V_UNIT_DEPLOYMENT_ATTEMPT = "vUnitDeploymentAttempt",
+  V_UNIT_DEPLOYMENT_CONFIRMATION = "vUnitDeploymentConfirmation",
+}

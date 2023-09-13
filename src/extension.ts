@@ -37,7 +37,7 @@ import { withErrorHandling } from "./utils";
 export const activate = async (context: ExtensionContext): Promise<void> => {
   withErrorHandling(async () => {
     const provider = await UniversalProvider.init(PROVIDER_OPTIONS);
-    const client = new Client(provider);
+    const client = new Client(context, provider);
     const api = new Api();
     init(client, api, context);
 

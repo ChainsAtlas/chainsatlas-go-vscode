@@ -1,5 +1,6 @@
 import UniversalProvider from "@walletconnect/universal-provider";
 import EventEmitter from "events";
+import { ExtensionContext } from "vscode";
 import Web3 from "web3";
 import {
   ExecutorModel,
@@ -41,11 +42,14 @@ export class Client extends EventEmitter {
 
   public web3?: Web3;
 
-  constructor(public provider: UniversalProvider) {
+  constructor(
+    context: ExtensionContext,
+    public provider: UniversalProvider,
+  ) {
     super();
 
     this.executor = new ExecutorModel();
-    this.settings = new SettingsModel();
+    this.settings = new SettingsModel(context);
     this.transactionHistory = new TransactionHistoryModel();
     this.virtualizationUnit = new VirtualizationUnitModel();
     this.wallet = new WalletModel(provider);

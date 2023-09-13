@@ -116,4 +116,19 @@ export class Api {
     this._authToken = "";
     this.authStatus = undefined;
   }
+
+  /**
+   * The `telemetry` method sends usage info to the ChainsAtlas API
+   * to provide user feedback and help improve ChainsAtlas GO.
+   */
+  public async sendTelemetry(body: string): Promise<void> {
+    await this._fetch(`${Api._URL}/telemetry`, {
+      method: "POST",
+      body,
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-tokens": this._authToken,
+      },
+    });
+  }
 }

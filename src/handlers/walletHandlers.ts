@@ -103,16 +103,21 @@ export const login: ViewMessageHandler = async (data, update, _client, api) => {
 
     await update(ViewType.WALLET);
 
-    await api.authenticate(data);
+    try {
+      await api.authenticate(data);
+    } catch (error) {
+      update(ViewType.WALLET);
+      throw error;
+    }
 
-    update(ViewType.WALLET, ViewType.SETTINGS);
+    update(ViewType.WALLET);
   })();
 };
 
-export const logout: ViewMessageHandler = (_data, _update, _client, api) => {
-  withErrorHandling(() => {
+export const logout: ViewMessageHandler = async (data, update, client, api) => {
+  withErrorHandling(async () => {
     api.logout();
-    disconnect(_data, _update, _client, api);
+    disconnect(data, update, client, api);
   })();
 };
 
