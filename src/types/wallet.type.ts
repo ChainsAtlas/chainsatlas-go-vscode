@@ -5,8 +5,15 @@ import { AuthStatus } from "./auth.type";
 import { Chain } from "./common.type";
 
 /**
- * Enum representing possible commands sent from {@link WalletView} to the
- * {@link Controller}
+ * Represents the supported blockchain namespaces
+ */
+export enum ChainNamespace {
+  EIP155 = "eip155",
+}
+
+/**
+ * Enum representing possible commands sent from {@link WalletView}
+ * to the {@link Controller}
  */
 export enum WalletCommand {
   CHANGE_ACCOUNT = "changeAccount",

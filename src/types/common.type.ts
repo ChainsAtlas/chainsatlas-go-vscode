@@ -19,10 +19,11 @@ import { WalletCommand, WalletViewState } from "./wallet.type";
  * with `@walletconnect/universal-provider`
  */
 export type Chain = {
+  namespace: string;
   id: number;
   name: string;
   blockExplorer: string;
-  rpc: string;
+  httpRpc: string;
 };
 
 /**

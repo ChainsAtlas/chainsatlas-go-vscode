@@ -1,6 +1,22 @@
 import { ContractTransactionStatus } from "./types";
 
 /**
+ * A static list of events related to the EIP155 standard.
+ */
+export const EIP155_EVENTS = ["chainChanged", "accountsChanged"];
+
+/**
+ * A list of methods related to the EIP155 standard.
+ */
+export const EIP155_METHODS = [
+  "eth_sendTransaction",
+  "eth_signTransaction",
+  "eth_sign",
+  "personal_sign",
+  "eth_signTypedData",
+];
+
+/**
  * Constant representing error messages.
  */
 export const ERROR_MESSAGE = {

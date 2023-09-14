@@ -201,8 +201,10 @@ export const executeBytecode: ViewMessageHandler = async (
           client.transactionHistory.rows.unshift({
             output,
             transactionHash,
-            transactionUrl:
-              client.wallet.chain.blockExplorer + "/tx/" + transactionHash,
+            transactionUrl: client.wallet.chain.blockExplorer.replace(
+              "{{TX_HASH}}",
+              transactionHash.toString(),
+            ),
           });
 
           update(

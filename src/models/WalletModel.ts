@@ -2,6 +2,9 @@ import { ProviderAccounts } from "@walletconnect/universal-provider";
 // eslint-disable-next-line max-len
 import type { UniversalProvider } from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import * as chains from "../chains";
+import { EIP155_EVENTS, EIP155_METHODS } from "../constants";
+import { ChainNamespace } from "../types";
+
 /**
  * Represents a model for managing the wallet connection, including chain and
  * account management.
@@ -15,22 +18,6 @@ import * as chains from "../chains";
  */
 export class WalletModel {
   public static readonly CHAINS = Object.values(chains);
-
-  /**
-   * A static list of events related to the EIP155 standard.
-   */
-  private static readonly _EIP155_EVENTS = ["chainChanged", "accountsChanged"];
-
-  /**
-   * A static list of methods related to the EIP155 standard.
-   */
-  private static readonly _EIP155_METHODS = [
-    "eth_sendTransaction",
-    "eth_signTransaction",
-    "eth_sign",
-    "personal_sign",
-    "eth_signTypedData",
-  ];
 
   /**
    * The list of accounts available in the connected wallet provider.
@@ -109,11 +96,17 @@ export class WalletModel {
 
     await this._provider.connect({
       namespaces: {
-        eip155: {
-          methods: WalletModel._EIP155_METHODS,
-          chains: [`eip155:${chain.id}`],
-          events: WalletModel._EIP155_EVENTS,
-          rpcMap: { [chain.id]: chain.rpc },
+        [chain.namespace]: {
+          methods:
+            chain.namespace === ChainNamespace.EIP155 ? EIP155_METHODS : [],
+          chains: [
+            chain.namespace === ChainNamespace.EIP155
+              ? `${ChainNamespace.EIP155}:${chain.id}`
+              : chain.id.toString(),
+          ],
+          events:
+            chain.namespace === ChainNamespace.EIP155 ? EIP155_EVENTS : [],
+          rpcMap: { [chain.id]: chain.httpRpc },
         },
       },
     });
