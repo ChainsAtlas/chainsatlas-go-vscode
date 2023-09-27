@@ -1,7 +1,49 @@
 import Web3 from "web3";
 import { ERROR_MESSAGE } from "../constants";
-import { ViewMessageHandler, ViewType } from "../types";
+import { isChain } from "../typeguards";
+import { Chain, ViewMessageHandler, ViewType } from "../types";
 import { withErrorHandling } from "../utils";
+
+export const addChain: ViewMessageHandler = async (
+  data,
+  update,
+  client,
+  _api,
+) => {
+  withErrorHandling(async () => {
+    client.wallet.chainUpdateStatus = "updating";
+
+    await update(ViewType.WALLET);
+
+    if (!data) {
+      client.wallet.chainUpdateStatus = undefined;
+
+      await update(ViewType.WALLET);
+
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
+    }
+
+    const newChain = JSON.parse(data) as Chain;
+
+    if (!isChain(newChain)) {
+      client.wallet.chainUpdateStatus = undefined;
+
+      await update(ViewType.WALLET);
+
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
+    }
+
+    client.wallet.chain = newChain;
+    client.wallet.chains.push(newChain);
+    client.wallet.chains.sort((a, b) => a.name.localeCompare(b.name));
+    client.wallet.chainUpdateStatus = "done";
+    client.wallet.uri = undefined;
+
+    await update(ViewType.WALLET);
+
+    connect(newChain.id.toString(), update, client, _api);
+  })();
+};
 
 export const changeAccount: ViewMessageHandler = (
   data,
@@ -90,6 +132,58 @@ export const disconnect: ViewMessageHandler = async (
       ViewType.EXECUTOR,
       ViewType.TRANSACTION_HISTORY,
     );
+  })();
+};
+
+export const editChain: ViewMessageHandler = async (
+  data,
+  update,
+  client,
+  _api,
+) => {
+  withErrorHandling(async () => {
+    client.wallet.chainUpdateStatus = "updating";
+
+    await update(ViewType.WALLET);
+
+    if (!data) {
+      client.wallet.chainUpdateStatus = undefined;
+
+      await update(ViewType.WALLET);
+
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
+    }
+
+    const updatedChain = JSON.parse(data) as Chain;
+
+    if (!isChain(updatedChain)) {
+      client.wallet.chainUpdateStatus = undefined;
+
+      await update(ViewType.WALLET);
+
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
+    }
+
+    const chainIndex = client.wallet.chains.findIndex(
+      (chain) => chain.id === updatedChain.id,
+    );
+
+    if (chainIndex === -1) {
+      client.wallet.chainUpdateStatus = undefined;
+
+      await update(ViewType.WALLET);
+
+      throw new Error(ERROR_MESSAGE.CHAIN_NOT_FOUND);
+    }
+
+    client.wallet.chain = updatedChain;
+    client.wallet.chains[chainIndex] = updatedChain;
+    client.wallet.chainUpdateStatus = "done";
+    client.wallet.uri = undefined;
+
+    await update(ViewType.WALLET);
+
+    connect(updatedChain.id.toString(), update, client, _api);
   })();
 };
 

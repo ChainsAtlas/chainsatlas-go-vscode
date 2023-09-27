@@ -1,12 +1,12 @@
 import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react";
-import { JSX, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { SettingsCommand, SettingsViewState, VsCodeApi } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
 
-export const SettingsView = (): JSX.Element => {
+export const SettingsView = (): ReactElement => {
   const [_telemetry, setTelemetry] =
     useState<SettingsViewState["telemetry"]>(true);
 

@@ -4,7 +4,7 @@ import {
   VSCodeDataGridRow,
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
-import { JSX, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   TransactionHistoryCommand,
@@ -32,7 +32,7 @@ const vscodeApi = acquireVsCodeApi();
  * @returns {JSX.Element}
  * A React element that renders the transaction history view.
  */
-export const TransactionHistoryView = (): JSX.Element => {
+export const TransactionHistoryView = (): ReactElement => {
   const [_disabled, setDisabled] =
     useState<TransactionHistoryViewState["disabled"]>(true);
   const [_rows, setRows] = useState<TransactionHistoryViewState["rows"]>([]);

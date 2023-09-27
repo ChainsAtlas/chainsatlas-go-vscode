@@ -6,7 +6,7 @@
   width: 100%;
 }
 
-.dropdown-container {
+.field-container {
   box-sizing: border-box;
   display: flex;
   flex-flow: column nowrap;
@@ -14,7 +14,7 @@
   justify-content: flex-start;
 }
 
-.dropdown-container label {
+.field-container label {
   display: block;
   color: var(--vscode-foreground);
   cursor: pointer;
@@ -25,7 +25,7 @@
 
 .width-constraint {
   max-width: 380px;
-  min-width: 130px;
+  min-width: 225px;
   width: 100%;
 }
 
@@ -61,7 +61,7 @@ vscode-button {
 
 .file-upload-input {
   max-width: calc(380px - 10px - 72px);
-  min-width: calc(130px - 10px - 72px);
+  min-width: calc(225px - 10px - 72px);
   width: 100%;
 }
 

@@ -22,8 +22,8 @@ export type Chain = {
   namespace: string;
   id: number;
   name: string;
-  blockExplorer: string;
-  httpRpc: string;
+  transactionExplorerUrl: string;
+  httpRpcUrl: string;
 };
 
 /**

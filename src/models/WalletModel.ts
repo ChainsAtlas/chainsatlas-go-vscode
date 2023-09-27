@@ -3,7 +3,7 @@ import { ProviderAccounts } from "@walletconnect/universal-provider";
 import type { UniversalProvider } from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import * as chains from "../chains";
 import { EIP155_EVENTS, EIP155_METHODS } from "../constants";
-import { ChainNamespace } from "../types";
+import { Chain, ChainNamespace, ChainUpdateStatus } from "../types";
 
 /**
  * Represents a model for managing the wallet connection, including chain and
@@ -17,7 +17,7 @@ import { ChainNamespace } from "../types";
  * walletModel.connect(11155111);
  */
 export class WalletModel {
-  public static readonly CHAINS = Object.values(chains);
+  public chains = Object.values(chains);
 
   /**
    * The list of accounts available in the connected wallet provider.
@@ -29,7 +29,7 @@ export class WalletModel {
    *
    * Default is Ethereum Sepolia.
    */
-  public chain = WalletModel.CHAINS.find((chain) => chain.id === 11_155_111);
+  public chain: Chain;
 
   /**
    * The address of the currently selected account in the connected wallet.
@@ -40,6 +40,11 @@ export class WalletModel {
    * Indicates whether the wallet is currently connected to the provider.
    */
   public connected?: boolean;
+
+  /**
+   * Indicates whether the chain list is being updated.
+   */
+  public chainUpdateStatus?: ChainUpdateStatus;
 
   /**
    * Represents the URI used for the wallet connection.
@@ -57,7 +62,10 @@ export class WalletModel {
    * @param _provider
    * An instance of UniversalProvider.
    */
-  constructor(private readonly _provider: UniversalProvider) {}
+  constructor(private readonly _provider: UniversalProvider) {
+    // Set Ethereum Sepolia as default chain
+    this.chain = this.chains.find((chain) => chain.id === 11_155_111) as Chain;
+  }
 
   /**
    * Connects the wallet to the specified chain or network.
@@ -85,7 +93,7 @@ export class WalletModel {
 
     await this.disconnect();
 
-    const chain = WalletModel.CHAINS.find((c) => c.id === id);
+    const chain = this.chains.find((c) => c.id === id);
 
     if (!chain) {
       throw new Error("invalid chain id.");
@@ -106,7 +114,7 @@ export class WalletModel {
           ],
           events:
             chain.namespace === ChainNamespace.EIP155 ? EIP155_EVENTS : [],
-          rpcMap: { [chain.id]: chain.httpRpc },
+          rpcMap: { [chain.id]: chain.httpRpcUrl },
         },
       },
     });

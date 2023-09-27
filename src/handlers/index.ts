@@ -67,9 +67,11 @@ export const virtualizationUnitCommandHandler: Record<
 };
 
 export const walletCommandHandler: Record<WalletCommand, ViewMessageHandler> = {
+  [WalletCommand.ADD_CHAIN]: walletHandlers[WalletCommand.ADD_CHAIN],
   [WalletCommand.CHANGE_ACCOUNT]: walletHandlers[WalletCommand.CHANGE_ACCOUNT],
   [WalletCommand.CONNECT]: walletHandlers[WalletCommand.CONNECT],
   [WalletCommand.DISCONNECT]: walletHandlers[WalletCommand.DISCONNECT],
+  [WalletCommand.EDIT_CHAIN]: walletHandlers[WalletCommand.EDIT_CHAIN],
   [WalletCommand.LOGIN]: walletHandlers[WalletCommand.LOGIN],
   [WalletCommand.LOGOUT]: walletHandlers[WalletCommand.LOGOUT],
   [WalletCommand.READY]: walletHandlers[WalletCommand.READY],

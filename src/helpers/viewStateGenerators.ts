@@ -1,7 +1,6 @@
 import { getBalance } from ".";
 import { ERROR_MESSAGE } from "../constants";
 import { Api, Client } from "../lib";
-import { WalletModel } from "../models";
 import {
   ExecutorViewState,
   SettingsViewState,
@@ -86,7 +85,15 @@ export const generateWalletViewState = async (
   client: Client,
   api: Api,
 ): Promise<WalletViewState> => {
-  const { accounts, currentAccount, chain, connected, uri } = client.wallet;
+  const {
+    accounts,
+    currentAccount,
+    chain,
+    chainUpdateStatus,
+    chains,
+    connected,
+    uri,
+  } = client.wallet;
   const { authStatus } = api;
 
   if (!chain) {
@@ -98,7 +105,8 @@ export const generateWalletViewState = async (
     authStatus,
     balance: await getBalance(currentAccount, chain.id, client.web3),
     chain,
-    chains: WalletModel.CHAINS,
+    chainUpdateStatus,
+    chains,
     currentAccount,
     connected,
     uri,

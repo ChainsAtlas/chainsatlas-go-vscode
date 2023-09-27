@@ -7,7 +7,7 @@ import {
   VSCodeRadioGroup,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import { JSX, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { TRANSACTION_STATUS_LABEL } from "../constants";
 import {
@@ -34,7 +34,7 @@ const vscodeApi = acquireVsCodeApi();
  * @returns {JSX.Element}
  * A React element that renders the virtualization unit view.
  */
-export const VirtualizationUnitView = (): JSX.Element => {
+export const VirtualizationUnitView = (): ReactElement => {
   const [_contracts, setContracts] = useState<
     VirtualizationUnitViewState["contracts"]
   >([]);
@@ -221,7 +221,7 @@ export const VirtualizationUnitView = (): JSX.Element => {
         </div>
       )}
       <VSCodeDivider className="width-constraint" />
-      <div className="dropdown-container">
+      <div className="field-container">
         <label htmlFor="contract">Contract</label>
         <VSCodeDropdown
           className="width-constraint"

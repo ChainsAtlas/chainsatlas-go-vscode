@@ -5,7 +5,7 @@ import {
   VSCodeRadioGroup,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import { JSX, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { TRANSACTION_STATUS_LABEL } from "../constants";
 import {
@@ -31,9 +31,11 @@ const vscodeApi = acquireVsCodeApi();
  *
  * This component communicates with the extension environment using the
  * `vscodeApi` to fetch and update the executor view state.
- * @returns {JSX.Element} A React element that renders the executor view.
+ *
+ * @returns {JSX.Element}
+ * A React element that renders the executor view.
  */
-export const ExecutorView = (): JSX.Element => {
+export const ExecutorView = (): ReactElement => {
   const [_compilerStatus, setCompilerStatus] =
     useState<ExecutorViewState["compilerStatus"]>(undefined);
   const [_contractTransactionStatus, setContractTransactionStatus] =
@@ -331,7 +333,7 @@ export const ExecutorView = (): JSX.Element => {
                       value={gas}
                     />
                   ) : null}
-                  <div className="width-constraint action-button-container">
+                  <div className="action-button-container width-constraint">
                     <VSCodeButton
                       appearance="secondary"
                       disabled={

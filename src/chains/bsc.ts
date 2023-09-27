@@ -4,6 +4,6 @@ export const bsc: Chain = {
   namespace: "eip155",
   id: 56,
   name: "BNB Smart Chain",
-  blockExplorer: "https://bscscan.com/tx/{{TX_HASH}}",
-  httpRpc: "https://rpc.ankr.com/bsc",
+  transactionExplorerUrl: "https://bscscan.com/tx/{{TX_HASH}}",
+  httpRpcUrl: "https://rpc.ankr.com/bsc",
 };

@@ -21,7 +21,8 @@ export const EIP155_METHODS = [
  */
 export const ERROR_MESSAGE = {
   ARGS_MISMATCH: `The number of argument is a constant.
-    Generate a new BytecodeStructure through the API to update it.`,
+  Generate a new BytecodeStructure through the API to update it.`,
+  CHAIN_NOT_FOUND: "Chain not found",
   INVALID_ACCOUNT: "Invalid account.",
   INVALID_ARGUMENTS: "Invalid arguments.",
   INVALID_BYTECODE_STRUCTURE: "Invalid bytecode structure.",
