@@ -1,10 +1,9 @@
 import { expect } from "chai";
-import { SinonSandbox, SinonStub, createSandbox } from "sinon";
+import { SinonStub, restore, stub } from "sinon";
 import { ExtensionContext, Uri } from "vscode";
-import { SettingsModel } from "../../src/models";
+import { SettingsModel } from "../../../src/models";
 
 suite("SettingsModel", () => {
-  let sandbox: SinonSandbox;
   let mockContext: ExtensionContext;
   let mockGlobalState: {
     get: SinonStub;
@@ -14,12 +13,10 @@ suite("SettingsModel", () => {
   let instance: SettingsModel;
 
   setup(() => {
-    sandbox = createSandbox();
-
     mockGlobalState = {
-      get: sandbox.stub(),
-      update: sandbox.stub(),
-      setKeysForSync: sandbox.stub(),
+      get: stub(),
+      update: stub(),
+      setKeysForSync: stub(),
     };
 
     mockContext = {
@@ -28,7 +25,7 @@ suite("SettingsModel", () => {
       storagePath: undefined,
       globalStoragePath: "",
       logPath: "",
-      asAbsolutePath: sandbox.stub(),
+      asAbsolutePath: stub(),
       storageUri: undefined,
       globalStorageUri: Uri.parse("mock:globalStorageUri"),
       extensionUri: Uri.parse("mock:extensionUri"),
@@ -45,7 +42,7 @@ suite("SettingsModel", () => {
   });
 
   teardown(() => {
-    sandbox.restore();
+    restore();
   });
 
   suite("constructor", () => {

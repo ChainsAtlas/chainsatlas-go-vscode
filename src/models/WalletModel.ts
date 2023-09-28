@@ -2,7 +2,7 @@ import { ProviderAccounts } from "@walletconnect/universal-provider";
 // eslint-disable-next-line max-len
 import type { UniversalProvider } from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import * as chains from "../chains";
-import { EIP155_EVENTS, EIP155_METHODS } from "../constants";
+import { EIP155_EVENTS, EIP155_METHODS, ERROR_MESSAGE } from "../constants";
 import { Chain, ChainNamespace, ChainUpdateStatus } from "../types";
 
 /**
@@ -17,7 +17,10 @@ import { Chain, ChainNamespace, ChainUpdateStatus } from "../types";
  * walletModel.connect(11155111);
  */
 export class WalletModel {
-  public chains = Object.values(chains);
+  /**
+   * The list of default supported chains.
+   */
+  public chains: Chain[];
 
   /**
    * The list of accounts available in the connected wallet provider.
@@ -63,7 +66,8 @@ export class WalletModel {
    * An instance of UniversalProvider.
    */
   constructor(private readonly _provider: UniversalProvider) {
-    // Set Ethereum Sepolia as default chain
+    this.chains = Object.values(chains);
+    // Set Ethereum Sepolia as selected chain by default
     this.chain = this.chains.find((chain) => chain.id === 11_155_111) as Chain;
   }
 
@@ -85,10 +89,7 @@ export class WalletModel {
     this._controller.signal.addEventListener("abort", () => {
       this._provider.abortPairingAttempt();
       this._provider.cleanupPendingPairings({ deletePairings: true });
-
       this.uri = undefined;
-
-      throw new Error("Aborted!");
     });
 
     await this.disconnect();
@@ -96,7 +97,7 @@ export class WalletModel {
     const chain = this.chains.find((c) => c.id === id);
 
     if (!chain) {
-      throw new Error("invalid chain id.");
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN_ID);
     }
 
     // important to sync correct state when provider emits uri

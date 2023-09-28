@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { EventEmitter } from "events";
-import { SinonSandbox, SinonSpy, SinonStub, createSandbox } from "sinon";
+import { SinonSpy, SinonStub, restore, spy, stub } from "sinon";
 import {
   CancellationToken,
   Uri,
@@ -8,25 +8,23 @@ import {
   WebviewViewResolveContext,
   window,
 } from "vscode";
-import { CustomViewProvider } from "../../src/lib";
-import { ViewType } from "../../src/types";
+import { CustomViewProvider } from "../../../src/lib";
+import { ViewType } from "../../../src/types";
 
 suite("CustomViewProvider", () => {
-  let sandbox: SinonSandbox;
   let instance: CustomViewProvider;
 
   const mockUri = Uri.parse("mock:extensionUri");
   const mockViewType = ViewType.EXECUTOR;
 
   setup(() => {
-    sandbox = createSandbox();
-    sandbox.stub(window, "registerWebviewViewProvider");
+    stub(window, "registerWebviewViewProvider");
 
     instance = new CustomViewProvider(mockUri, mockViewType);
   });
 
   teardown(() => {
-    sandbox.restore();
+    restore();
   });
 
   suite("constructor", () => {
@@ -38,7 +36,7 @@ suite("CustomViewProvider", () => {
 
   suite("dispose", () => {
     test("should call _disposable.dispose when _disposable is set", () => {
-      const mockDisposable = { dispose: sandbox.stub() };
+      const mockDisposable = { dispose: stub() };
 
       (instance as any)._disposable = mockDisposable;
 
@@ -83,11 +81,9 @@ suite("CustomViewProvider", () => {
 
     setup(() => {
       const mockNonce = "mockNonce";
-      _getNonceStub = sandbox
-        .stub(instance as any, "_getNonce")
-        .returns(mockNonce);
-      emitSpy = sandbox.spy(instance, "emit");
-      mockAsWebviewUri = sandbox.stub().returnsArg(0);
+      _getNonceStub = stub(instance as any, "_getNonce").returns(mockNonce);
+      emitSpy = spy(instance, "emit");
+      mockAsWebviewUri = stub().returnsArg(0);
       mockWebviewView = {
         webview: {
           asWebviewUri: mockAsWebviewUri,

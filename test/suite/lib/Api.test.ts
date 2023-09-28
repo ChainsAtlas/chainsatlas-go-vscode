@@ -1,15 +1,14 @@
 import { expect } from "chai";
-import { SinonSandbox, SinonStub, createSandbox } from "sinon";
-import { Api } from "../../src/lib";
+import { SinonStub, restore, stub } from "sinon";
+import { Api } from "../../../src/lib";
 import {
   BytecodeStructure,
   ExecutorFile,
   SupportedLanguage,
   TelemetryType,
-} from "../../src/types";
+} from "../../../src/types";
 
 suite("Api", () => {
-  let sandbox: SinonSandbox;
   let instance: Api;
   let fetchStub: SinonStub;
   const mockAuthToken = "mockAuthToken";
@@ -34,13 +33,12 @@ suite("Api", () => {
   const mockHttpError = "HTTP error! [401]: Unauthorized";
 
   setup(() => {
-    sandbox = createSandbox();
-    fetchStub = sandbox.stub();
+    fetchStub = stub();
     instance = new Api(fetchStub);
   });
 
   teardown(() => {
-    sandbox.restore();
+    restore();
   });
 
   suite("authenticate", () => {

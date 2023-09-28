@@ -27,6 +27,7 @@ export const ERROR_MESSAGE = {
   INVALID_ARGUMENTS: "Invalid arguments.",
   INVALID_BYTECODE_STRUCTURE: "Invalid bytecode structure.",
   INVALID_CHAIN: "Invalid chain.",
+  INVALID_CHAIN_ID: "Invalid chain id.",
   INVALID_CONTRACT_ADDRESS: "Invalid contract address.",
   INVALID_CREDENTIALS: "Invalid credentials",
   INVALID_FILE: "Invalid file.",
