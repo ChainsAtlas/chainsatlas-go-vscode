@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-len
 import UniversalProvider from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import { expect } from "chai";
 import { SinonStub, restore, stub } from "sinon";
@@ -34,7 +35,7 @@ suite("WalletModel", () => {
   });
 
   suite("constructor", () => {
-    test("should initialize with the correct chains list and default selected chain", () => {
+    test("should initialize 'chain' and 'chains' correctly", () => {
       expect(walletModel.chains).to.deep.equal(Object.values(chains));
       expect(walletModel.chain).to.deep.equal(
         Object.values(chains).find((chain) => chain.id === defaultChainId),
@@ -60,7 +61,7 @@ suite("WalletModel", () => {
       }
     });
 
-    test("should connect to a valid chain ID and set account information correctly", async () => {
+    test("should connect and set account information correctly", async () => {
       const validChain = Object.values(chains).find(
         (c) => c.id === defaultChainId,
       ) as Chain;
@@ -102,7 +103,7 @@ suite("WalletModel", () => {
   });
 
   suite("disconnect", () => {
-    test("should disconnect and reset the state correctly when a session exists", async () => {
+    test("should disconnect and reset if session exists", async () => {
       mockProvider = {
         ...mockProvider,
         session: true,
@@ -117,7 +118,7 @@ suite("WalletModel", () => {
       expect(walletModel.connected).to.be.false;
     });
 
-    test("should reset the state correctly when no session exists", async () => {
+    test("should reset when no session exists", async () => {
       mockProvider = {
         ...mockProvider,
         session: undefined,
