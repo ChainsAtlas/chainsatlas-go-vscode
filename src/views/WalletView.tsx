@@ -26,10 +26,11 @@ const version = require("../../package.json").version;
  * - Viewing the balance of the selected account.
  * - Displaying QR codes for WalletConnect-enabled connections.
  *
- * This component communicates with the extension environment using the `vscodeApi`
- * to fetch and update the wallet view state.
+ * This component communicates with the extension environment using the
+ * `vscodeApi` to fetch and update the wallet view state.
  *
- * @returns {JSX.Element} A React element that renders the wallet view.
+ * @returns {JSX.Element}
+ * A React element that renders the wallet view.
  */
 export const WalletView = (): JSX.Element => {
   const [_accounts, setAccounts] = useState<WalletViewState["accounts"]>();
@@ -141,6 +142,7 @@ export const WalletView = (): JSX.Element => {
     };
   }, [updateState]);
 
+  /* eslint-disable max-len */
   return _authStatus !== "authenticated" ? (
     <div className="container">
       <VSCodeTextField
@@ -289,6 +291,7 @@ export const WalletView = (): JSX.Element => {
       )}
     </>
   );
+  /* eslint-enable max-len */
 };
 
 const root = createRoot(document.getElementById("root") as HTMLElement);

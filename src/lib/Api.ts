@@ -2,8 +2,7 @@ import fetch from "cross-fetch";
 import { AuthStatus, BytecodeStructure, ExecutorFile } from "../types";
 
 /**
- * Represents the API client.
- * It handles authentication and bytecode structure generation.
+ * Represents the API client. It handles auth and bytecode structure generation.
  */
 export class Api {
   /**
@@ -12,8 +11,8 @@ export class Api {
   private static _URL = "https://api.chainsatlas.com";
 
   /**
-   * Represents the current authentication status of the user.
-   * The status can be "authenticated", "authenticating" or undefined.
+   * Represents the current authentication status of the user. The status can be
+   * "authenticated", "authenticating" or undefined.
    */
   public authStatus?: AuthStatus;
 
@@ -25,19 +24,25 @@ export class Api {
   /**
    * Constructs a new instance of the `Api` class.
    *
-   * @param _fetch A fetch function, primarily used for test stubbing. Defaults to the global fetch function.
+   * @param _fetch
+   * A fetch function, primarily used for test stubbing. Defaults to the global
+   * fetch function.
    */
   constructor(private readonly _fetch = fetch) {}
 
   /**
-   * The `authenticate` method attempts to authenticate a user with the ChainsAtlas GO API.
+   * The `authenticate` method attempts to authenticate a user with the
+   * ChainsAtlas GO API.
    *
-   * @param body - The request payload for authentication. Should be a `{username: string, password: string}`
-   * stringified object
+   * @param body
+   * The request payload for authentication. Should be a
+   * `{username: string, password: string}` stringified object
    *
-   * @returns A promise that resolves when authentication is successful.
+   * @returns
+   * A promise that resolves when authentication is successful.
    *
-   * @throws An error if the authentication fails.
+   * @throws
+   * An error if the authentication fails.
    */
   public async authenticate(body: string): Promise<void> {
     const response = await this._fetch(`${Api._URL}/login`, {
@@ -65,12 +70,18 @@ export class Api {
   }
 
   /**
-   * Sends a request to generate a {@link BytecodeStructure} for a given {@link ExecutorFile}.
+   * Sends a request to generate a {@link BytecodeStructure} for a given
+   * {@link ExecutorFile}.
    *
-   * @param file The executor file containing details like extension and content.
-   * @param nargs Number of arguments for the bytecode.
+   * @param file
+   * The executor file containing details like extension and content.
    *
-   * @returns A promise that resolves to a bytecode structure object or is undefined if the generation fails.
+   * @param nargs
+   * Number of arguments for the bytecode.
+   *
+   * @returns
+   * A promise that resolves to a bytecode structure object or is undefined if
+   * the generation fails.
    *
    * @throws An error if the request fails.
    */
@@ -109,8 +120,8 @@ export class Api {
   }
 
   /**
-   * The `logout` method clears the stored authentication token
-   * and sets the `authStatus` to undefined.
+   * The `logout` method clears the stored authentication token and sets the
+   * `authStatus` to undefined.
    */
   public logout(): void {
     this._authToken = "";
@@ -118,8 +129,8 @@ export class Api {
   }
 
   /**
-   * The `telemetry` method sends usage info to the ChainsAtlas API
-   * to provide user feedback and help improve ChainsAtlas GO.
+   * The `telemetry` method sends usage info to the ChainsAtlas API to provide
+   * user feedback and help improve ChainsAtlas GO.
    */
   public async sendTelemetry(body: string): Promise<void> {
     await this._fetch(`${Api._URL}/telemetry`, {

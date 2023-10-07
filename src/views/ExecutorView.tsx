@@ -20,8 +20,8 @@ const vscodeApi = acquireVsCodeApi();
 
 /**
  * `ExecutorView` component provides the user interface for bytecode compilation
- * and execution. It interacts with the VS Code extension through the `vscodeApi`
- * and manages its internal state using React hooks.
+ * and execution. It interacts with the extension through `vscodeApi` and
+ * manages its internal state using React hooks.
  *
  * The component provides functionalities such as:
  * - File selection for bytecode compilation
@@ -29,8 +29,8 @@ const vscodeApi = acquireVsCodeApi();
  * - Estimation of gas required for execution
  * - Execution of the bytecode
  *
- * This component communicates with the extension environment using the `vscodeApi`
- * to fetch and update the executor view state.
+ * This component communicates with the extension environment using the
+ * `vscodeApi` to fetch and update the executor view state.
  * @returns {JSX.Element} A React element that renders the executor view.
  */
 export const ExecutorView = (): JSX.Element => {

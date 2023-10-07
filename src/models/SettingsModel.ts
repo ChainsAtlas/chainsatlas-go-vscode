@@ -13,8 +13,8 @@ export class SettingsModel {
   }
 
   /**
-   * Set telemetry setting in the extension global state
-   * to persist across all workspaces and sessions.
+   * Set telemetry setting in the extension global state to persist across all
+   * workspaces and sessions.
    */
   set telemetry(value: boolean) {
     this._context.globalState.update("telemetry", value);

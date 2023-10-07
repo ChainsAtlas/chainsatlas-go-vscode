@@ -5,8 +5,8 @@ import { AuthStatus } from "./auth.type";
 import { Chain } from "./common.type";
 
 /**
- * Enum representing possible commands sent from {@link WalletView}
- * to the {@link Controller}
+ * Enum representing possible commands sent from {@link WalletView} to the
+ * {@link Controller}
  */
 export enum WalletCommand {
   CHANGE_ACCOUNT = "changeAccount",

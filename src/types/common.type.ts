@@ -15,8 +15,8 @@ import {
 import { WalletCommand, WalletViewState } from "./wallet.type";
 
 /**
- * Represents required chain data for the {@link WalletModel}
- * to work correctly with `@walletconnect/universal-provider`
+ * Represents required chain data for the {@link WalletModel} to work correctly
+ * with `@walletconnect/universal-provider`
  */
 export type Chain = {
   id: number;
@@ -29,8 +29,8 @@ export type Chain = {
  * Represents the status of web3.js contract transactions of the
  * {@link VirtualizationUnitModel} and {@link ExecutorModel}.
  *
- * The status is emitted to their respective controllers so they can
- * update their respective views accordingly.
+ * The status is emitted to their respective controllers so they can update
+ * their respective views accordingly.
  */
 export type ContractTransactionStatus =
   | "confirmation"
@@ -48,8 +48,8 @@ export enum ControllerEvent {
 }
 
 /**
- * Enum representing gas options for the {@link VirtualizationUnitView}
- * and {@link ExecutorView} transaction forms.
+ * Enum representing gas options for the {@link VirtualizationUnitView} and
+ * {@link ExecutorView} transaction forms.
  */
 export enum GasOption {
   BUFFER = "buffer",
@@ -58,8 +58,8 @@ export enum GasOption {
 }
 
 /**
- * Represents all command enums to facilitate
- * the @{link Controller} management of handlers.
+ * Represents all command enums to facilitate the {@link Controller} management
+ * of handlers.
  */
 export type ViewCommand =
   | ExecutorCommand
@@ -69,16 +69,16 @@ export type ViewCommand =
   | WalletCommand;
 
 /**
- * Represents a map of webview views used to manage each
- * view's Controller initialization and state sync.
+ * Represents a map of webview views used to manage each view's Controller
+ * initialization and state sync.
  */
 export type ViewMap = Record<ViewType, WebviewView>;
 
 /**
  * Represents a message from any webview view to a {@link Controller} subclass.
  *
- * Stringify `value` for values of types other than `string`
- * and parse them in the respective Controller for consistency.
+ * Stringify `value` for values of types other than `string` and parse them in
+ * the respective Controller for consistency.
  */
 export type ViewMessage = {
   command: ViewCommand;
@@ -86,8 +86,8 @@ export type ViewMessage = {
 };
 
 /**
- * Represents a handler function required to manage commmunications
- * and operations between models and their respective views.`
+ * Represents a handler function required to manage commmunications and
+ * operations between models and their respective views.`
  */
 export type ViewMessageHandler = (
   data: string | undefined,
@@ -110,8 +110,8 @@ export type ViewStateGenerator = (
   | Promise<WalletViewState>;
 
 /**
- * Enum representing types of views to avoid hardcoded string values
- * when managing view's initialization, state and communication.
+ * Enum representing types of views to avoid hardcoded string values when
+ * managing view's initialization, state and communication.
  */
 export enum ViewType {
   EXECUTOR = "executor",
@@ -122,8 +122,8 @@ export enum ViewType {
 }
 
 /**
- * Represents the VS Code API for a webview view to
- * communicate with a {@link Controller} subclass.
+ * Represents the VS Code API for a webview view to communicate with a
+ * {@link Controller} subclass.
  */
 export type VsCodeApi = {
   postMessage(message: ViewMessage): void;

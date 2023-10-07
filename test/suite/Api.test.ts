@@ -64,7 +64,7 @@ suite("Api", () => {
       );
     });
 
-    test("should update auth status and store auth token successfully", async () => {
+    test("should update auth status and store token successfully", async () => {
       await instance.authenticate(mockAuthBody);
 
       expect(instance.authStatus).to.equal("authenticated");

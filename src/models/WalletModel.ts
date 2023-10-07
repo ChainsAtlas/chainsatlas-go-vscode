@@ -1,11 +1,13 @@
 import { ProviderAccounts } from "@walletconnect/universal-provider";
-import UniversalProvider from "@walletconnect/universal-provider/dist/types/UniversalProvider";
+// eslint-disable-next-line max-len
+import type { UniversalProvider } from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import * as chains from "../chains";
-
 /**
- * Represents a model for managing the wallet connection, including chain and account management.
+ * Represents a model for managing the wallet connection, including chain and
+ * account management.
  *
- * This class provides functionalities for connecting to a wallet, switching chains, and managing account states.
+ * This class provides functionalities for connecting to a wallet, switching
+ * chains, and managing account states.
  *
  * @example
  * const walletModel = new WalletModel(universalProviderInstance);
@@ -37,11 +39,13 @@ export class WalletModel {
 
   /**
    * Represents the current chain or network the wallet is connected to.
+   *
+   * Default is Ethereum Sepolia.
    */
-  public chain = WalletModel.CHAINS.find((chain) => chain.id === 11_155_111); // ethereum sepolia
+  public chain = WalletModel.CHAINS.find((chain) => chain.id === 11_155_111);
 
   /**
-   * The account address of the currently selected account in the connected wallet.
+   * The address of the currently selected account in the connected wallet.
    */
   public currentAccount?: string;
 
@@ -63,17 +67,22 @@ export class WalletModel {
   /**
    * Initializes a new instance of the `WalletModel` class.
    *
-   * @param _provider - An instance of the UniversalProvider to manage the wallet connection.
+   * @param _provider
+   * An instance of UniversalProvider.
    */
   constructor(private readonly _provider: UniversalProvider) {}
 
   /**
    * Connects the wallet to the specified chain or network.
    *
-   * This method initiates the connection, sets the selected chain, and fetches the available accounts.
+   * This method initiates the connection, sets the selected chain,
+   * and fetches the available accounts.
    *
-   * @param id - The ID of the chain or network to connect to.
-   * @throws Will throw an error if the chain ID is invalid or the connection fails.
+   * @param id
+   * The ID of the chain or network to connect to.
+   *
+   * @throws
+   * Throws an error if the chain ID is invalid or the connection fails.
    */
   public async connect(id: number): Promise<void> {
     this._controller.abort();
@@ -95,7 +104,8 @@ export class WalletModel {
       throw new Error("invalid chain id.");
     }
 
-    this.chain = chain; // important to sync correct state when provider emits uri
+    // important to sync correct state when provider emits uri
+    this.chain = chain;
 
     await this._provider.connect({
       namespaces: {
@@ -121,9 +131,11 @@ export class WalletModel {
   /**
    * Disconnects the wallet from the current provider and resets the state.
    *
-   * This method ensures a clean state after disconnection by also resetting account and connection information.
+   * This method ensures a clean state after disconnection by also resetting
+   * account and connection information.
    *
-   * @throws Will throw an error if the disconnection process encounters any issues.
+   * @throws
+   * Throws an error if the disconnection process encounters any issues.
    */
   public async disconnect(): Promise<void> {
     if (this._provider.session) {

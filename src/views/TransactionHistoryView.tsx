@@ -26,10 +26,11 @@ const vscodeApi = acquireVsCodeApi();
  * - Informing the user to connect their wallet to view the transaction history
  * - Handling empty transaction history state
  *
- * This component communicates with the extension environment using the `vscodeApi`
- * to fetch and update the transaction history view state.
+ * This component communicates with the extension environment using the
+ * `vscodeApi` to fetch and update the transaction history view state.
  *
- * @returns {JSX.Element} A React element that renders the transaction history view.
+ * @returns {JSX.Element}
+ * A React element that renders the transaction history view.
  */
 export const TransactionHistoryView = (): JSX.Element => {
   const [_disabled, setDisabled] =

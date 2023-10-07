@@ -5,8 +5,8 @@ import { BytecodeCompilerStatus, BytecodeStructure } from "./bytecode.type";
 import { ContractTransactionStatus } from "./common.type";
 
 /**
- * Enum representing possible commands sent from {@link ExecutorView}
- * to the {@link Controller}
+ * Enum representing possible commands sent from {@link ExecutorView} to the
+ * {@link Controller}
  */
 export enum ExecutorCommand {
   CANCEL_COMPILE = "cancelCompile",
@@ -21,9 +21,9 @@ export enum ExecutorCommand {
 }
 
 /**
- * Represents the processed user input file stored by the
- * {@link ExecutorModel} to update the {@link ExecutorViewState}
- * and generate a {@link BytecodeStructure} through the {@link Api}.
+ * Represents the processed user input file stored by the {@link ExecutorModel}
+ * to update the {@link ExecutorViewState} and generate a
+ * {@link BytecodeStructure} through the {@link Api}.
  */
 export type ExecutorFile = {
   content: string;
@@ -32,9 +32,9 @@ export type ExecutorFile = {
 };
 
 /**
- * Enum representing events emitted from the {@link ExecutorModel}
- * to the {@link Controller} to manage state synchronization
- * with the {@link ExecutorView}.
+ * Enum representing events emitted from the {@link ExecutorModel} to the
+ * {@link Controller} to manage state synchronization with the
+ * {@link ExecutorView}.
  */
 export enum ExecutorModelEvent {
   TRANSACTION_ERROR = "transactionError",
@@ -69,7 +69,8 @@ export enum FileSource {
 }
 
 /**
- * Enum representing the supported programming languages of the ChainsAtlas' VirtualizationUnit.
+ * Enum representing the supported programming languages of the ChainsAtlas'
+ * VirtualizationUnit.
  *
  * It is used by the {@link ExecutorController} to filter user's file input.
  */

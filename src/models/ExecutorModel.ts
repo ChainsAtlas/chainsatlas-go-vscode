@@ -10,27 +10,60 @@ import {
 } from "../types";
 
 /**
- * The `ExecutorModel` class provides a comprehensive model to manage and execute bytecode contracts.
- * It encapsulates the logic to handle bytecode compilation, gas estimation, and contract execution.
- * This model primarily interacts with Ethereum-based operations using Web3.js and emits events to
- * signal different stages or statuses of these operations.
+ * The `ExecutorModel` class provides a comprehensive model to manage and
+ * execute bytecode contracts. It encapsulates the logic to handle bytecode
+ * compilation, gas estimation, and contract execution.
  *
- * @emits {ExecutorModelEvent.WAITING_BYTECODE_STRUCTURE} Emitted when waiting for a bytecode structure.
- * @emits {ExecutorModelEvent.SYNC} Emitted to synchronize or update any listeners of state changes.
- * @emits {ExecutorModelEvent.WAITING_GAS} Emitted when waiting for gas estimation.
- * @emits {ExecutorModelEvent.BYTECODE_STRUCTURE_RECEIVED} Emitted when a bytecode structure is received.
- * @emits {ExecutorModelEvent.GAS_RECEIVED} Emitted when gas amount is received.
+ * This model primarily interacts with Ethereum-based operations using Web3.js
+ * and emits events to signal different stages or statuses of these operations.
  *
- * @property {BytecodeCompilerStatus | undefined} compilerStatus - Status of the bytecode compiler.
- * @property {ContractTransactionStatus | undefined} contractTransactionStatus - Status of the contract transaction.
- * @property {ExecutorFile | undefined} currentFile - Current file being processed.
- * @property {boolean} estimating - Flag indicating if gas estimation is in progress.
- * @property {string | undefined} gasEstimate - Estimated gas required for execution.
- * @property {number | undefined} nargs - Number of arguments expected by the bytecode.
- * @property {Bytes | undefined} output - The output data after executing the bytecode.
- * @property {Bytes | undefined} transactionHash - Hash of the transaction on the Ethereum network.
- * @property {ExecutorFile | undefined} userFile - User provided file for execution.
- * @property {BytecodeStructure | undefined} _bytecodeStructure - Internal representation of the bytecode structure.
+ * @emits
+ * {ExecutorModelEvent.WAITING_BYTECODE_STRUCTURE} Emitted when waiting for a
+ * bytecode structure.
+ *
+ * @emits
+ * {ExecutorModelEvent.SYNC} Emitted to synchronize or update any listeners of
+ * state changes.
+ *
+ * @emits
+ * {ExecutorModelEvent.WAITING_GAS} Emitted when waiting for gas estimation.
+ *
+ * @emits
+ * {ExecutorModelEvent.BYTECODE_STRUCTURE_RECEIVED} Emitted when a bytecode
+ * structure is received.
+ *
+ * @emits
+ * {ExecutorModelEvent.GAS_RECEIVED} Emitted when gas amount is received.
+ *
+ * @property {BytecodeCompilerStatus | undefined} compilerStatus
+ * Status of the bytecode compiler.
+ *
+ * @property {ContractTransactionStatus | undefined} contractTransactionStatus
+ * Status of the contract transaction.
+ *
+ * @property {ExecutorFile | undefined} currentFile
+ * Current file being processed.
+ *
+ * @property {boolean} estimating
+ * Flag indicating if gas estimation is in progress.
+ *
+ * @property {string | undefined} gasEstimate
+ * Estimated gas required for execution.
+ *
+ * @property {number | undefined} nargs
+ * Number of arguments expected by the bytecode.
+ *
+ * @property {Bytes | undefined} output
+ * The output data after executing the bytecode.
+ *
+ * @property {Bytes | undefined} transactionHash
+ * Hash of the transaction on the Ethereum network.
+ *
+ * @property {ExecutorFile | undefined} userFile
+ * User provided file for execution.
+ *
+ * @property {BytecodeStructure | undefined} _bytecodeStructure
+ * Internal representation of the bytecode structure.
  *
  * @example
  * const executor = new ExecutorModel();
@@ -43,8 +76,9 @@ export class ExecutorModel extends EventEmitter {
    * Represents the current status of the bytecode compiler.
    *
    * - `undefined` indicates that no compilation process has started.
-   * - Other possible values are based on the {@link BytecodeCompilerStatus} enum,
-   *   which may include statuses like "compiling", "failed", or "completed".
+   * - Other possible values are based on the {@link BytecodeCompilerStatus}
+   *   enum, which may include statuses like "compiling", "failed", or
+   *   "completed".
    */
   public compilerStatus?: BytecodeCompilerStatus;
 
@@ -52,25 +86,28 @@ export class ExecutorModel extends EventEmitter {
    * Represents the current status of the contract transaction.
    *
    * - `undefined` indicates that no transaction process has started.
-   * - Other possible values are based on the {@link ContractTransactionStatus} enum,
-   *   which may include statuses like "sending", "sent", or "error".
+   * - Other possible values are based on the {@link ContractTransactionStatus}
+   *   enum, which may include statuses like "sending", "sent", or "error".
    */
   public contractTransactionStatus?: ContractTransactionStatus;
 
   public currentContractInstance?: Contract<typeof V_UNIT_ABI>;
 
   /**
-   * Holds the current file being processed for bytecode compilation and execution.
+   * Holds the current file being processed for bytecode compilation and
+   * execution.
    *
-   * - `undefined` indicates that there's no file currently selected or being processed.
-   * - Otherwise, the value will be an object representation of the file, based on the {@link ExecutorFile} type.
+   * - `undefined` indicates that there's no file currently selected or being
+   *   processed.
+   * - Otherwise, the value will be an object representation of the file, based
+   *   on the {@link ExecutorFile} type.
    */
   public currentFile?: ExecutorFile;
 
   public currentTransaction?: Transaction;
 
   /**
-   * A boolean flag indicating if the gas estimation process is currently ongoing.
+   * A boolean flag indicating if the gas estimation process is ongoing.
    *
    * - `true` means the gas estimation is in progress.
    * - `false` means no estimation is currently happening.
@@ -81,7 +118,7 @@ export class ExecutorModel extends EventEmitter {
    * Represents the estimated amount of gas required to execute the bytecode.
    *
    * - `undefined` indicates that no gas estimation has been computed yet.
-   * - Otherwise, it's a string representation of the estimated gas amount in wei.
+   * - Otherwise, it's a string representation of the estimated gas in wei.
    */
   public gasEstimate?: string;
 
@@ -97,17 +134,20 @@ export class ExecutorModel extends EventEmitter {
    * Represents the user-provided file for bytecode execution.
    *
    * - `undefined` indicates that the user hasn't provided any file yet.
-   * - Otherwise, the value will be an object representation of the user's file, based on the {@link ExecutorFile} type.
+   * - Otherwise, the value will be an object representation of the user's file,
+   *   based on the {@link ExecutorFile} type.
    */
   public userFile?: ExecutorFile;
 
   /**
    * Holds the structure of the bytecode to be executed.
    *
-   * The structure includes information required to correctly compile and execute the bytecode.
+   * The structure includes information required to correctly compile and
+   * execute the bytecode.
    *
    * - `undefined` means the bytecode structure has not been determined yet.
-   * - Otherwise, it's based on the {@link BytecodeStructure} type, which may include fields like `key`, `nargs`, and the actual `bytecode`.
+   * - Otherwise, it's based on the {@link BytecodeStructure} type, which may
+   *   include fields like `key`, `nargs`, and the actual `bytecode`.
    */
   public bytecodeStructure?: BytecodeStructure;
 
@@ -143,29 +183,46 @@ export class ExecutorModel extends EventEmitter {
   }
 
   /**
-   * Runs the bytecode by invoking the appropriate contract method on the blockchain.
+   * Runs the bytecode by invoking the appropriate contract method.
    *
-   * This method initiates the process to execute the bytecode on the blockchain.
-   * After validating the bytecode structure, it composes the input for the bytecode,
-   * estimates the gas required for the transaction, and sends the transaction.
-   * It also handles various transaction events like sending, confirmation, and errors.
+   * After validating the bytecode structure, it composes the input for the
+   * bytecode, estimates the gas required for the transaction, and sends the
+   * transaction. It also handles various transaction events like sending,
+   * confirmation, and errors.
    *
-   * @param args - An array of arguments required by the bytecode.
-   * @param from - The Ethereum address from which the transaction is sent.
-   * @param vUnitAddress - The Ethereum address of the virtual unit contract.
-   * @param web3 - An instance of the Web3 library to interact with the Ethereum blockchain.
+   * @param args
+   * An array of arguments required by the bytecode.
    *
-   * @returns A promise that resolves once the bytecode has been executed.
+   * @param from
+   * The Ethereum address from which the transaction is sent.
+   *
+   * @param vUnitAddress
+   * The Ethereum address of the virtual unit contract.
+   *
+   * @param web3
+   * An instance of the Web3 library to interact with the Ethereum blockchain.
+   *
+   * @returns
+   * A promise that resolves once the bytecode has been executed.
    *
    * @throws {Error}
    * - Throws an error if the bytecode structure is invalid or not set.
-   * - Throws an error if there is any issue with the transaction or the returned data is invalid.
+   * - Throws an error if there is any issue with the transaction or the
+   *   returned data is invalid.
    *
-   * @emits ExecutorModelEvent.SYNC - Emitted to indicate synchronization with the current state.
-   * @emits ExecutorModelEvent.WAITING_GAS - Emitted when the system is waiting for the gas estimate.
+   * @emits ExecutorModelEvent.SYNC
+   * Emitted to indicate synchronization with the current state.
+   *
+   * @emits ExecutorModelEvent.WAITING_GAS
+   * Emitted when the system is waiting for the gas estimate.
    *
    * @example
-   * executorModel.runBytecode(args, fromAddress, contractAddress, web3Instance);
+   * executorModel.runBytecode(
+   *  args,
+   *  fromAddress,
+   *  contractAddress,
+   *  web3Instance
+   * );
    */
   public async runBytecode(gas: string, web3: Web3): Promise<void> {
     if (!this.currentTransaction) {

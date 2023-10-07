@@ -17,8 +17,8 @@ export enum VirtualizationUnitCommand {
 
 /**
  * Enum representing events emitted from the {@link VirtualizationUnitModel}
- * to the {@linkController} to manage state synchronization
- * with the {@link VirtualizationUnitView}.
+ * to the {@linkController} to manage state synchronization with the
+ * {@link VirtualizationUnitView}.
  */
 export enum VirtualizationUnitModelEvent {
   TRANSACTION_CONFIRMED = "transactionConfirmed",

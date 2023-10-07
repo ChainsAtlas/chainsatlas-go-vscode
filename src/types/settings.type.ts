@@ -2,8 +2,8 @@ import { Controller } from "../lib";
 import { SettingsView } from "../views";
 
 /**
- * Enum representing possible commands sent from {@link SettingsView}
- * to the {@link Controller}
+ * Enum representing possible commands sent from {@link SettingsView} to the
+ * {@link Controller}
  */
 export enum SettingsCommand {
   READY = "settingsReady",
@@ -18,8 +18,7 @@ export type SettingsViewState = {
 };
 
 /**
- * Enum representing possible telemetry data types
- * to send to the ChainsAtlas API.
+ * Enum representing possible telemetry data types.
  */
 export enum TelemetryType {
   BYTECODE_EXECUTION_ATTEMP = "bytecodeExecutionAttempt",

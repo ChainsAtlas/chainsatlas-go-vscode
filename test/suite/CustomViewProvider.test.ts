@@ -63,7 +63,7 @@ suite("CustomViewProvider", () => {
       instance = new CustomViewProvider(mockUri, mockViewType);
     });
 
-    test("should call window.registerWebviewViewProvider with appropriate arguments", () => {
+    test("should register webview view provider with correct arguments", () => {
       instance.register();
 
       expect(window.registerWebviewViewProvider).to.have.been.calledWith(
@@ -101,29 +101,32 @@ suite("CustomViewProvider", () => {
         style: Uri.joinPath(mockUri, "assets", "style", `${mockViewType}.css`),
         view: Uri.joinPath(mockUri, "dist", `${mockViewType}.js`),
       };
+      /* eslint-disable max-len */
       mockHtml = `<!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <!--
-          Use a content security policy to only allow loading styles from our extension directory,
-          and only allow scripts that have a specific nonce.
-          (See the 'webview-sample' extension sample for img-src content security policy examples)
-        -->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${mockWebviewView.webview.cspSource}; img-src ${mockWebviewView.webview.cspSource}; script-src 'nonce-${mockNonce}'; style-src * 'unsafe-inline'">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="${mockUriMap.style}" rel="stylesheet">        
-        <title>ChainsAtlas GO</title>
-      </head>
-      <body>
-        <div id="root"></div>
-        <script nonce="${mockNonce}" src="${mockUriMap.vendors}"></script>
-        <script nonce="${mockNonce}" src="${mockUriMap.view}" /></script>
-      </body>
-    </html>`
+			<html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <!--
+            Use a content security policy to only allow loading styles from the
+            extension directory, and only allow scripts with a specific nonce.
+            (See the 'webview-sample' extension sample for img-src content
+            security policy examples)
+          -->
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${mockWebviewView.webview.cspSource}; img-src ${mockWebviewView.webview.cspSource}; script-src 'nonce-${mockNonce}'; style-src * 'unsafe-inline'">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <link href="${mockUriMap.style}" rel="stylesheet">        
+          <title>ChainsAtlas GO</title>
+        </head>
+        <body>
+          <div id="root"></div>
+          <script nonce="${mockNonce}" src="${mockUriMap.vendors}"></script>
+          <script nonce="${mockNonce}" src="${mockUriMap.view}" /></script>
+        </body>
+			</html>`
         .replace(/\s+/g, " ") // To match test mock
         .trim();
     });
+    /* eslint-enable max-len */
 
     test("should resolve the view and emit it", () => {
       instance.resolveWebviewView(

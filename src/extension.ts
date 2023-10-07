@@ -20,16 +20,17 @@ import { withErrorHandling } from "./utils";
  * registering event listeners, and pushing necessary entities to the context's
  * subscription list for proper lifecycle management.
  *
- * Additionally, it informs the user about the beta nature of the extension with a
- * disclaimer message.
+ * Additionally, it informs the user about the beta nature of the extension with
+ * a disclaimer message.
  *
- * If there's any error during activation, an error message will be displayed to the user.
+ * An error message will be displayed to the user if an error is thrown.
  *
- * @param {ExtensionContext} context - The context in which the extension operates.
- *                                     It contains utilities to perform operations like
- *                                     storage, retrieve the extension's URI, etc.
+ * @param {ExtensionContext} context
+ * The context in which the extension operates. It contains utilities to perform
+ * operations like storage, retrieve the extension's URI, etc.
  *
- * @returns {Promise<void>} A promise that resolves once the activation process is completed.
+ * @returns {Promise<void>}
+ * A promise that resolves once the activation process is completed.
  *
  * @example
  * vscode.extensions.getExtension('chainsatlas.chainsatlas-go').activate();
@@ -42,11 +43,11 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
     init(client, api, context);
 
     window.showInformationMessage(
-      `Disclaimer: By using the beta version of ChainsAtlas GO, you acknowledge and 
-      understand the potential risks and the unfinished state of the product. While
-      we strive to offer a seamless experience, unexpected issues might occur. We
-      highly recommend not using the beta version for critical tasks and always
-      maintaining backups of your data.`
+      `Disclaimer: By using the beta version of ChainsAtlas GO, you
+      acknowledge and understand the potential risks and the unfinished
+      state of the product. While we strive to offer a seamless experience,
+      unexpected issues might occur. We highly recommend not using the beta
+      version for critical tasks and always maintaining backups of your data.`
         .replace(/\s+/g, " ") // To match test mock
         .trim(),
     );

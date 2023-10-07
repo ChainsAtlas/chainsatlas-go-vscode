@@ -28,10 +28,11 @@ const vscodeApi = acquireVsCodeApi();
  * * - Deploying new virtualization units.
  * - Viewing and selecting available virtualization unit contracts.
  *
- * This component communicates with the extension environment using the `vscodeApi`
- * to fetch and update the virtualization unit view state.
+ * This component communicates with the extension environment using the
+ * `vscodeApi` to fetch and update the virtualization unit view state.
  *
- * @returns {JSX.Element} A React element that renders the virtualization unit view.
+ * @returns {JSX.Element}
+ * A React element that renders the virtualization unit view.
  */
 export const VirtualizationUnitView = (): JSX.Element => {
   const [_contracts, setContracts] = useState<
