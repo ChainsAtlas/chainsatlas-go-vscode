@@ -1,9 +1,15 @@
+import TelemetryReporter from "@vscode/extension-telemetry";
 import { UniversalProvider } from "@walletconnect/universal-provider";
 import { ExtensionContext, window } from "vscode";
 import { PROVIDER_OPTIONS } from "./constants";
 import { init } from "./helpers";
 import { Api, Client } from "./lib";
 import { withErrorHandling } from "./utils";
+
+// the application insights key (also known as instrumentation key)
+const key = "c5d18b8f-b22a-4c26-a676-2e08ebe92d7a";
+
+let reporter: TelemetryReporter;
 
 /**
  * @module Extension
@@ -37,9 +43,12 @@ import { withErrorHandling } from "./utils";
  */
 export const activate = async (context: ExtensionContext): Promise<void> => {
   withErrorHandling(async () => {
+    reporter = new TelemetryReporter(key);
+
     const provider = await UniversalProvider.init(PROVIDER_OPTIONS);
     const client = new Client(context, provider);
     const api = new Api();
+
     init(client, api, context);
 
     window.showInformationMessage(
@@ -52,6 +61,10 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
         .trim(),
     );
 
-    context.subscriptions.push(client);
+    context.subscriptions.push(client, reporter);
   })();
+};
+
+export const deactivate = () => {
+  reporter.dispose();
 };

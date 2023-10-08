@@ -108,6 +108,7 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
+    "@vscode/extension-telemetry": "^0.8.5",
     "@vscode/webview-ui-toolkit": "^1.2.2",
     "@walletconnect/sign-client": "^2.9.1",
     "@walletconnect/universal-provider": "^2.9.1",
