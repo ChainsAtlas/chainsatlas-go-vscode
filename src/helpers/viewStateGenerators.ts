@@ -3,7 +3,6 @@ import { ERROR_MESSAGE } from "../constants";
 import { Api, Client } from "../lib";
 import {
   ExecutorViewState,
-  SettingsViewState,
   TransactionHistoryViewState,
   VirtualizationUnitViewState,
   WalletViewState,
@@ -35,14 +34,6 @@ export const generateExecutorViewState = (
     nargs,
     userFile,
   };
-};
-
-export const generateSettingsViewState = (
-  client: Client,
-): SettingsViewState => {
-  const { telemetry } = client.settings;
-
-  return { telemetry };
 };
 
 export const generateTransactionHistoryViewState = (

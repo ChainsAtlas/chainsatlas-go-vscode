@@ -1,7 +1,13 @@
 import Web3 from "web3";
 import { ERROR_MESSAGE } from "../constants";
+import { reporter } from "../extension";
 import { isChain } from "../typeguards";
-import { Chain, ViewMessageHandler, ViewType } from "../types";
+import {
+  Chain,
+  TelemetryEventName,
+  ViewMessageHandler,
+  ViewType,
+} from "../types";
 import { withErrorHandling } from "../utils";
 
 export const addChain: ViewMessageHandler = async (
@@ -38,6 +44,12 @@ export const addChain: ViewMessageHandler = async (
     client.wallet.chains.sort((a, b) => a.name.localeCompare(b.name));
     client.wallet.chainUpdateStatus = "done";
     client.wallet.uri = undefined;
+
+    reporter.sendTelemetryEvent(TelemetryEventName.ADD_CHAIN, {
+      name: client.wallet.chain.name,
+      namespace: client.wallet.chain.namespace,
+      id: client.wallet.chain.id.toString(),
+    });
 
     await update(ViewType.WALLET);
 
@@ -95,6 +107,12 @@ export const connect: ViewMessageHandler = async (
     client.virtualizationUnit.currentContract = undefined;
     client.virtualizationUnit.gasEstimate = undefined;
     client.transactionHistory.rows = [];
+
+    reporter.sendTelemetryEvent(TelemetryEventName.CONNECT, {
+      name: client.wallet.chain.name,
+      namespace: client.wallet.chain.namespace,
+      id: client.wallet.chain.id.toString(),
+    });
 
     update(
       ViewType.WALLET,
@@ -181,6 +199,12 @@ export const editChain: ViewMessageHandler = async (
     client.wallet.chainUpdateStatus = "done";
     client.wallet.uri = undefined;
 
+    reporter.sendTelemetryEvent(TelemetryEventName.EDIT_CHAIN, {
+      name: client.wallet.chain.name,
+      namespace: client.wallet.chain.namespace,
+      id: client.wallet.chain.id.toString(),
+    });
+
     await update(ViewType.WALLET);
 
     connect(updatedChain.id.toString(), update, client, _api);
@@ -204,6 +228,8 @@ export const login: ViewMessageHandler = async (data, update, _client, api) => {
       throw error;
     }
 
+    reporter.sendTelemetryEvent(TelemetryEventName.LOGIN);
+
     update(ViewType.WALLET);
   })();
 };
@@ -211,6 +237,7 @@ export const login: ViewMessageHandler = async (data, update, _client, api) => {
 export const logout: ViewMessageHandler = async (data, update, client, api) => {
   withErrorHandling(async () => {
     api.logout();
+    reporter.sendTelemetryEvent(TelemetryEventName.LOGOUT);
     disconnect(data, update, client, api);
   })();
 };

@@ -5,7 +5,6 @@ import {
   BytecodeStructure,
   ExecutorFile,
   SupportedLanguage,
-  TelemetryType,
 } from "../../../src/types";
 
 suite("Api", () => {
@@ -207,40 +206,6 @@ suite("Api", () => {
           },
         },
       ]);
-    });
-  });
-
-  suite("sendTelmetry", () => {
-    setup(async () => {
-      fetchStub.resolves({
-        ok: true,
-        json: async () => ({ token: mockAuthToken }),
-      });
-
-      await instance.authenticate(mockAuthBody);
-
-      fetchStub.resolves(undefined);
-    });
-
-    test("should send telemetry data correctly", async () => {
-      const mockBody = JSON.stringify({
-        type: TelemetryType.V_UNIT_DEPLOYMENT_ATTEMPT,
-        data: { chain: { id: 1, name: "Ethereum" } },
-      });
-
-      await instance.sendTelemetry(mockBody);
-
-      const fetchArgs = fetchStub.getCall(1).args;
-
-      expect(fetchArgs[0]).to.equal(`${(Api as any)._URL}/telemetry`);
-      expect(fetchArgs[1]).to.deep.equal({
-        method: "POST",
-        body: mockBody,
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-tokens": mockAuthToken,
-        },
-      });
     });
   });
 });

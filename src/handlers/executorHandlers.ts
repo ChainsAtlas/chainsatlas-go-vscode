@@ -2,12 +2,13 @@ import { extname } from "path";
 import { window, workspace } from "vscode";
 import { Bytes } from "web3";
 import { ERROR_MESSAGE } from "../constants";
+import { reporter } from "../extension";
 import { composeInput } from "../helpers";
 import {
   BytecodeArg,
   ExecutorModelEvent,
   SupportedLanguage,
-  TelemetryType,
+  TelemetryEventName,
   ViewMessageHandler,
   ViewType,
 } from "../types";
@@ -97,6 +98,12 @@ export const compileBytecode: ViewMessageHandler = async (
     client.executor.currentFile = client.executor.userFile;
     client.executor.nargs = nargs;
 
+    reporter.sendTelemetryEvent(
+      TelemetryEventName.COMPILE_BYTECODE,
+      { language: client.executor.currentFile.extension },
+      { nargs },
+    );
+
     update(ViewType.EXECUTOR);
   })();
 };
@@ -153,7 +160,7 @@ export const executeBytecode: ViewMessageHandler = async (
   data,
   update,
   client,
-  api,
+  _api,
 ) => {
   withErrorHandling(async () => {
     if (!data) {
@@ -166,36 +173,22 @@ export const executeBytecode: ViewMessageHandler = async (
 
     const gas = data;
 
-    if (client.settings.telemetry) {
-      const telemetryData = JSON.stringify({
-        type: TelemetryType.BYTECODE_EXECUTION_ATTEMP,
-        data: {
-          chain: {
-            id: client.wallet.chain?.id,
-            name: client.wallet.chain?.name,
-          },
-        },
-      });
-
-      await api.sendTelemetry(telemetryData);
-    }
+    reporter.sendTelemetryEvent(TelemetryEventName.EXECUTE_BYTECODE, {
+      name: client.wallet.chain.name,
+      namespace: client.wallet.chain.namespace,
+      id: client.wallet.chain.id.toString(),
+      status: "pending",
+    });
 
     client.executor.once(
       ExecutorModelEvent.TRANSACTION_OUTPUT,
       async (output: Bytes, transactionHash: Bytes) => {
-        if (client.settings.telemetry) {
-          const telemetryData = JSON.stringify({
-            type: TelemetryType.BYTECODE_EXECUTION_CONFIRMATION,
-            data: {
-              chain: {
-                id: client.wallet.chain?.id,
-                name: client.wallet.chain?.name,
-              },
-            },
-          });
-
-          api.sendTelemetry(telemetryData);
-        }
+        reporter.sendTelemetryEvent(TelemetryEventName.EXECUTE_BYTECODE, {
+          name: client.wallet.chain.name,
+          namespace: client.wallet.chain.namespace,
+          id: client.wallet.chain.id.toString(),
+          status: "success",
+        });
 
         if (client.wallet.chain) {
           client.transactionHistory.rows.unshift({

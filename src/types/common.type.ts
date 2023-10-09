@@ -3,7 +3,6 @@ import { Api, Client, Controller } from "../lib";
 import { ExecutorModel, VirtualizationUnitModel } from "../models";
 import { ExecutorView, VirtualizationUnitView } from "../views";
 import { ExecutorCommand, ExecutorViewState } from "./executor.types";
-import { SettingsCommand, SettingsViewState } from "./settings.type";
 import {
   TransactionHistoryCommand,
   TransactionHistoryViewState,
@@ -59,12 +58,25 @@ export enum GasOption {
 }
 
 /**
+ * Enum representing possible telemetry event names.
+ */
+export enum TelemetryEventName {
+  ADD_CHAIN = "addChain",
+  COMPILE_BYTECODE = "compileBytecode",
+  CONNECT = "connect",
+  DEPLOY_V_UNIT = "deployVirtualizationUnit",
+  EDIT_CHAIN = "editChain",
+  EXECUTE_BYTECODE = "executeByecode",
+  LOGIN = "login",
+  LOGOUT = "logout",
+}
+
+/**
  * Represents all command enums to facilitate the {@link Controller} management
  * of handlers.
  */
 export type ViewCommand =
   | ExecutorCommand
-  | SettingsCommand
   | TransactionHistoryCommand
   | VirtualizationUnitCommand
   | WalletCommand;
@@ -105,7 +117,6 @@ export type ViewStateGenerator = (
   api: Api,
 ) =>
   | ExecutorViewState
-  | SettingsViewState
   | TransactionHistoryViewState
   | VirtualizationUnitViewState
   | Promise<WalletViewState>;
@@ -116,7 +127,6 @@ export type ViewStateGenerator = (
  */
 export enum ViewType {
   EXECUTOR = "executor",
-  SETTINGS = "settings",
   TRANSACTION_HISTORY = "transactionHistory",
   VIRTUALIZATION_UNIT = "virtualizationUnit",
   WALLET = "wallet",

@@ -6,16 +6,28 @@ import { init } from "./helpers";
 import { Api, Client } from "./lib";
 import { withErrorHandling } from "./utils";
 
-// the application insights key (also known as instrumentation key)
-const key = "c5d18b8f-b22a-4c26-a676-2e08ebe92d7a";
-
-let reporter: TelemetryReporter;
-
 /**
  * @module Extension
  *
  * This module provides the activation logic for the ChainsAtlas GO extension.
  */
+
+/**
+ * The Application Insights Key (also known as Instrumentation Key).
+ *
+ * Not sensitive.
+ */
+const key = "c5d18b8f-b22a-4c26-a676-2e08ebe92d7a";
+/**
+ * @instance {@link TelemetryReporter}
+ *
+ * The {@link TelemetryReporter} module provides a consistent way for extensions
+ * to report telemetry over Application Insights. The module respects the user's
+ * decision about whether or not to send telemetry data. See telemetry extension
+ * guidelines (https://code.visualstudio.com/api/extension-guides/telemetry)
+ * for more information on using telemetry in your extension.
+ */
+export const reporter = new TelemetryReporter(key);
 
 /**
  * Activates the ChainsAtlas GO extension.
@@ -43,10 +55,8 @@ let reporter: TelemetryReporter;
  */
 export const activate = async (context: ExtensionContext): Promise<void> => {
   withErrorHandling(async () => {
-    reporter = new TelemetryReporter(key);
-
     const provider = await UniversalProvider.init(PROVIDER_OPTIONS);
-    const client = new Client(context, provider);
+    const client = new Client(provider);
     const api = new Api();
 
     init(client, api, context);
@@ -63,8 +73,4 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
 
     context.subscriptions.push(client, reporter);
   })();
-};
-
-export const deactivate = () => {
-  reporter.dispose();
 };

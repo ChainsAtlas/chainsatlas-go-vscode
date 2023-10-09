@@ -1,13 +1,11 @@
 import {
   ExecutorCommand,
-  SettingsCommand,
   TransactionHistoryCommand,
   ViewMessageHandler,
   VirtualizationUnitCommand,
   WalletCommand,
 } from "../types";
 import * as executorHandlers from "./executorHandlers";
-import * as settingsHandlers from "./settingsHandlers";
 import * as transactionHistoryHandlers from "./transactionHistoryHandlers";
 import * as virtualizationUnitHandlers from "./virtualizationUnitHandlers";
 import * as walletHandlers from "./walletHandlers";
@@ -31,15 +29,6 @@ export const executorCommandHandler: Record<
     executorHandlers[ExecutorCommand.GET_ACTIVE_FILE],
   [ExecutorCommand.READY]: executorHandlers[ExecutorCommand.READY],
   [ExecutorCommand.SELECT_FILE]: executorHandlers[ExecutorCommand.SELECT_FILE],
-};
-
-export const settingsCommandHandler: Record<
-  SettingsCommand,
-  ViewMessageHandler
-> = {
-  [SettingsCommand.READY]: settingsHandlers[SettingsCommand.READY],
-  [SettingsCommand.SWITCH_TELEMETRY]:
-    settingsHandlers[SettingsCommand.SWITCH_TELEMETRY],
 };
 
 export const transactionHistoryCommandHandler: Record<
