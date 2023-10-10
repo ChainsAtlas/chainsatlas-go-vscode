@@ -1,5 +1,5 @@
 import fetch from "cross-fetch";
-import { AuthStatus, BytecodeStructure, ExecutorFile } from "../types";
+import type { AuthStatus, BytecodeStructure, ExecutorFile } from "../types";
 
 /**
  * Represents the API client. It handles auth and bytecode structure generation.

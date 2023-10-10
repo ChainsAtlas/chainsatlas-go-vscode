@@ -1,5 +1,5 @@
 import { ERROR_MESSAGE } from "../constants";
-import { BytecodeArg, BytecodeStructure } from "../types";
+import type { BytecodeArg, BytecodeStructure } from "../types";
 
 /**
  * Composes the final bytecode by replacing placeholders with the provided

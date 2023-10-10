@@ -1,6 +1,6 @@
-import { Api } from "../lib";
-import { ExecutorModel } from "../models";
-import { ExecutorView } from "../views";
+import type { Api } from "../lib";
+import type { ExecutorModel } from "../models";
+import type { ExecutorView } from "../views";
 
 /**
  * Represents the supported argument types for bytecode input used

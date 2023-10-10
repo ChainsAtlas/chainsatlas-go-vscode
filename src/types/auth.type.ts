@@ -1,4 +1,4 @@
-import { Api } from "../lib";
+import type { Api } from "../lib";
 
 /**
  * Represents the authentication status of the {@link Api} required to manage

@@ -1,10 +1,8 @@
 import EventEmitter from "events";
 import { FMT_BYTES, FMT_NUMBER, type Web3 } from "web3";
 import { ERROR_MESSAGE, V_UNIT_ABI, V_UNIT_BYTECODE } from "../constants";
-import {
-  ContractTransactionStatus,
-  VirtualizationUnitModelEvent,
-} from "../types";
+import { VirtualizationUnitModelEvent } from "../enums";
+import type { ContractTransactionStatus } from "../types";
 
 /**
  * Represents the model for managing the deployment and interaction with

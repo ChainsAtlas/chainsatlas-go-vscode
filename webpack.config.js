@@ -68,7 +68,7 @@ const viewsConfig = {
       dependOn: "vendors",
     },
     wallet: {
-      import: "./src/views/WalletView.tsx",
+      import: "./src/views/Wallet/index.tsx",
       dependOn: "vendors",
     },
     vendors: ["react", "react-dom", "@vscode/webview-ui-toolkit"],

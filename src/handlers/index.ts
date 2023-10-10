@@ -1,10 +1,10 @@
 import {
   ExecutorCommand,
   TransactionHistoryCommand,
-  ViewMessageHandler,
   VirtualizationUnitCommand,
   WalletCommand,
-} from "../types";
+} from "../enums";
+import type { ViewMessageHandler } from "../types";
 import * as executorHandlers from "./executorHandlers";
 import * as transactionHistoryHandlers from "./transactionHistoryHandlers";
 import * as virtualizationUnitHandlers from "./virtualizationUnitHandlers";

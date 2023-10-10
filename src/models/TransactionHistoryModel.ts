@@ -1,4 +1,4 @@
-import { TransactionHistoryRow } from "../types";
+import type { TransactionHistoryRow } from "../types";
 
 /**
  * Represents the model for managing the transaction history associated with a

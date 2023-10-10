@@ -1,9 +1,10 @@
-import { ProviderAccounts } from "@walletconnect/universal-provider";
+import type { ProviderAccounts } from "@walletconnect/universal-provider";
 // eslint-disable-next-line max-len
 import type { UniversalProvider } from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import * as chains from "../chains";
 import { EIP155_EVENTS, EIP155_METHODS, ERROR_MESSAGE } from "../constants";
-import { Chain, ChainNamespace, ChainUpdateStatus } from "../types";
+import { ChainNamespace } from "../enums";
+import type { Chain, ChainUpdateStatus, ValidChain } from "../types";
 
 /**
  * Represents a model for managing the wallet connection, including chain and
@@ -18,9 +19,9 @@ import { Chain, ChainNamespace, ChainUpdateStatus } from "../types";
  */
 export class WalletModel {
   /**
-   * The list of default supported chains.
+   * The list of supported chains.
    */
-  public chains: Chain[];
+  public chains: (Chain | ValidChain)[];
 
   /**
    * The list of accounts available in the connected wallet provider.
@@ -29,10 +30,8 @@ export class WalletModel {
 
   /**
    * Represents the current chain or network the wallet is connected to.
-   *
-   * Default is Ethereum Sepolia.
    */
-  public chain: Chain;
+  public chain?: ValidChain;
 
   /**
    * The address of the currently selected account in the connected wallet.
@@ -42,7 +41,7 @@ export class WalletModel {
   /**
    * Indicates whether the wallet is currently connected to the provider.
    */
-  public connected?: boolean;
+  public connected: boolean;
 
   /**
    * Indicates whether the chain list is being updated.
@@ -55,11 +54,6 @@ export class WalletModel {
   public uri?: string;
 
   /**
-   * A controller used to manage abortable operations.
-   */
-  private _controller = new AbortController();
-
-  /**
    * Initializes a new instance of the `WalletModel` class.
    *
    * @param _provider
@@ -67,8 +61,7 @@ export class WalletModel {
    */
   constructor(private readonly _provider: UniversalProvider) {
     this.chains = Object.values(chains);
-    // Set Ethereum Sepolia as selected chain by default
-    this.chain = this.chains.find((chain) => chain.id === 11_155_111) as Chain;
+    this.connected = false;
   }
 
   /**
@@ -84,20 +77,14 @@ export class WalletModel {
    * Throws an error if the chain ID is invalid or the connection fails.
    */
   public async connect(id: number): Promise<void> {
-    this._controller.abort();
-
-    this._controller.signal.addEventListener("abort", () => {
-      this._provider.abortPairingAttempt();
-      this._provider.cleanupPendingPairings({ deletePairings: true });
-      this.uri = undefined;
-    });
-
-    await this.disconnect();
-
-    const chain = this.chains.find((c) => c.id === id);
+    const chain = this.chains.find((c) => c.id === id) as ValidChain;
 
     if (!chain) {
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN_ID);
+    }
+
+    if (!chain.httpRpcUrl) {
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN_RPC);
     }
 
     // important to sync correct state when provider emits uri
@@ -108,11 +95,7 @@ export class WalletModel {
         [chain.namespace]: {
           methods:
             chain.namespace === ChainNamespace.EIP155 ? EIP155_METHODS : [],
-          chains: [
-            chain.namespace === ChainNamespace.EIP155
-              ? `${ChainNamespace.EIP155}:${chain.id}`
-              : chain.id.toString(),
-          ],
+          chains: [`${chain.namespace}:${chain.id}`],
           events:
             chain.namespace === ChainNamespace.EIP155 ? EIP155_EVENTS : [],
           rpcMap: { [chain.id]: chain.httpRpcUrl },
@@ -123,7 +106,6 @@ export class WalletModel {
     this.accounts = await this._provider.enable();
     this.chain = chain;
     this.connected = true;
-    this.uri = undefined;
 
     if (this.accounts.length > 0) {
       this.currentAccount = this.accounts[0];
@@ -140,12 +122,16 @@ export class WalletModel {
    * Throws an error if the disconnection process encounters any issues.
    */
   public async disconnect(): Promise<void> {
-    if (this._provider.session) {
+    if (this._provider.session?.topic) {
       await this._provider.disconnect();
     }
+
+    this._provider.abortPairingAttempt();
+    this._provider.cleanupPendingPairings({ deletePairings: true });
 
     this.accounts = undefined;
     this.currentAccount = undefined;
     this.connected = false;
+    this.uri = undefined;
   }
 }

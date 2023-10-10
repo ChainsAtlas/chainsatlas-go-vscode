@@ -1,17 +1,16 @@
 import { extname } from "path";
 import { window, workspace } from "vscode";
-import { Bytes } from "web3";
+import type { Bytes } from "web3";
 import { ERROR_MESSAGE } from "../constants";
-import { reporter } from "../extension";
-import { composeInput } from "../helpers";
 import {
-  BytecodeArg,
   ExecutorModelEvent,
   SupportedLanguage,
   TelemetryEventName,
-  ViewMessageHandler,
   ViewType,
-} from "../types";
+} from "../enums";
+import { reporter } from "../extension";
+import { composeInput } from "../helpers";
+import type { BytecodeArg, ViewMessageHandler } from "../types";
 import { withErrorHandling } from "../utils";
 
 export const cancelCompile: ViewMessageHandler = (
@@ -163,12 +162,16 @@ export const executeBytecode: ViewMessageHandler = async (
   _api,
 ) => {
   withErrorHandling(async () => {
-    if (!data) {
-      throw new Error(ERROR_MESSAGE.INVALID_GAS);
+    if (!client.wallet.chain) {
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
     if (!client.web3) {
       throw new Error(ERROR_MESSAGE.INVALID_WEB3);
+    }
+
+    if (!data) {
+      throw new Error(ERROR_MESSAGE.INVALID_GAS);
     }
 
     const gas = data;
@@ -183,6 +186,10 @@ export const executeBytecode: ViewMessageHandler = async (
     client.executor.once(
       ExecutorModelEvent.TRANSACTION_OUTPUT,
       async (output: Bytes, transactionHash: Bytes) => {
+        if (!client.wallet.chain) {
+          throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
+        }
+
         reporter.sendTelemetryEvent(TelemetryEventName.EXECUTE_BYTECODE, {
           name: client.wallet.chain.name,
           namespace: client.wallet.chain.namespace,

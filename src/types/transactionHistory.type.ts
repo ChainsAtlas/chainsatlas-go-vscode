@@ -1,15 +1,6 @@
-import { Bytes } from "web3";
-import { Controller } from "../lib";
-import { TransactionHistoryModel } from "../models";
-import { TransactionHistoryView } from "../views";
-
-/**
- * Enum representing possible commands sent from {@link TransactionHistoryView}
- * to the {@link Controller}
- */
-export enum TransactionHistoryCommand {
-  READY = "transactionHistoryReady",
-}
+import type { Bytes } from "web3";
+import type { TransactionHistoryModel } from "../models";
+import type { TransactionHistoryView } from "../views";
 
 /**
  * Represents a row of the {@link TransactionHistoryModel}.

@@ -10,12 +10,8 @@ import {
 import { ReactElement, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { TRANSACTION_STATUS_LABEL } from "../constants";
-import {
-  GasOption,
-  VirtualizationUnitCommand,
-  VirtualizationUnitViewState,
-  VsCodeApi,
-} from "../types";
+import { GasOption, VirtualizationUnitCommand } from "../enums";
+import type { VirtualizationUnitViewState, VsCodeApi } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();

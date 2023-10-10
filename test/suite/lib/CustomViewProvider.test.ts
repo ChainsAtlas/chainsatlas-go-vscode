@@ -8,8 +8,8 @@ import {
   WebviewViewResolveContext,
   window,
 } from "vscode";
+import { ViewType } from "../../../src/enums";
 import { CustomViewProvider } from "../../../src/lib";
-import { ViewType } from "../../../src/types";
 
 suite("CustomViewProvider", () => {
   let instance: CustomViewProvider;

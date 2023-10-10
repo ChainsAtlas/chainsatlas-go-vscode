@@ -1,16 +1,8 @@
-import { ProviderAccounts } from "web3";
-import { Controller } from "../lib";
-import { WalletModel } from "../models";
-import { WalletView } from "../views";
-import { AuthStatus } from "./auth.type";
-import { Chain } from "./common.type";
-
-/**
- * Represents the supported blockchain namespaces
- */
-export enum ChainNamespace {
-  EIP155 = "eip155",
-}
+import type { ProviderAccounts } from "@walletconnect/universal-provider";
+import type { WalletModel } from "../models";
+import type { WalletView } from "../views/Wallet";
+import type { AuthStatus } from "./auth.type";
+import type { Chain, ValidChain } from "./common.type";
 
 /**
  * Represents the chain update status for {@link WalletModel}
@@ -19,31 +11,15 @@ export enum ChainNamespace {
 export type ChainUpdateStatus = "done" | "updating";
 
 /**
- * Enum representing possible commands sent from {@link WalletView}
- * to the {@link Controller}
- */
-export enum WalletCommand {
-  ADD_CHAIN = "addChain",
-  CHANGE_ACCOUNT = "changeAccount",
-  CONNECT = "connect",
-  DISCONNECT = "disconnect",
-  EDIT_CHAIN = "editChain",
-  LOGIN = "login",
-  LOGOUT = "logout",
-  READY = "walletReady",
-}
-
-/**
  * Represents the state of the {@link WalletView}
  */
 export type WalletViewState = {
   accounts?: ProviderAccounts;
   authStatus?: AuthStatus;
-  balance?: string;
-  chain: Chain;
+  balance: string;
   chainUpdateStatus?: ChainUpdateStatus;
-  chains: Chain[];
+  chains: (Chain | ValidChain)[];
   currentAccount?: string;
-  connected?: boolean;
+  connected: boolean;
   uri?: string;
 };

@@ -1,12 +1,13 @@
 import EventEmitter from "events";
-import Web3, { AbiFragment, AbiParameter, Contract, Transaction } from "web3";
+import type Web3 from "web3";
+import type { AbiFragment, AbiParameter, Contract, Transaction } from "web3";
 import { ERROR_MESSAGE, V_UNIT_ABI } from "../constants";
+import { ExecutorModelEvent } from "../enums";
 import {
   BytecodeCompilerStatus,
   BytecodeStructure,
   ContractTransactionStatus,
   ExecutorFile,
-  ExecutorModelEvent,
 } from "../types";
 
 /**

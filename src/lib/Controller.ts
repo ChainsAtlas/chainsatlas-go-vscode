@@ -1,4 +1,5 @@
 import { Disposable, WebviewView } from "vscode";
+import { ViewType } from "../enums";
 import {
   executorCommandHandler,
   transactionHistoryCommandHandler,
@@ -11,14 +12,13 @@ import {
   generateVirtualizationUnitViewState,
   generateWalletViewState,
 } from "../helpers";
-import {
+import type {
   ViewMessage,
   ViewMessageHandler,
   ViewStateGenerator,
-  ViewType,
 } from "../types";
-import { Api } from "./Api";
-import { Client } from "./Client";
+import type { Api } from "./Api";
+import type { Client } from "./Client";
 
 export class Controller {
   private readonly _viewStateGenerators: Record<ViewType, ViewStateGenerator> =

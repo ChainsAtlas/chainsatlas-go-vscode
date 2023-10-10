@@ -1,1 +1,1 @@
-export * from "./isChain";
+export * from "./isValidChain";

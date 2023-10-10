@@ -1,6 +1,6 @@
 import { ExtensionContext, WebviewView } from "vscode";
+import { ViewType } from "../enums";
 import { Api, Client, Controller, CustomViewProvider } from "../lib";
-import { ViewType } from "../types";
 
 /**
  * Initializes the view providers for the extension.

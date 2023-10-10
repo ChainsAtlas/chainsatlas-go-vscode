@@ -1,13 +1,9 @@
 import Web3 from "web3";
 import { ERROR_MESSAGE } from "../constants";
+import { TelemetryEventName, ViewType } from "../enums";
 import { reporter } from "../extension";
-import { isChain } from "../typeguards";
-import {
-  Chain,
-  TelemetryEventName,
-  ViewMessageHandler,
-  ViewType,
-} from "../types";
+import { isValidChain } from "../typeguards";
+import type { ValidChain, ViewMessageHandler } from "../types";
 import { withErrorHandling } from "../utils";
 
 export const addChain: ViewMessageHandler = async (
@@ -29,9 +25,9 @@ export const addChain: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
-    const newChain = JSON.parse(data) as Chain;
+    const addedChain = JSON.parse(data) as ValidChain;
 
-    if (!isChain(newChain)) {
+    if (!isValidChain(addedChain)) {
       client.wallet.chainUpdateStatus = undefined;
 
       await update(ViewType.WALLET);
@@ -39,8 +35,8 @@ export const addChain: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
-    client.wallet.chain = newChain;
-    client.wallet.chains.push(newChain);
+    client.wallet.chain = addedChain;
+    client.wallet.chains.push(addedChain);
     client.wallet.chains.sort((a, b) => a.name.localeCompare(b.name));
     client.wallet.chainUpdateStatus = "done";
     client.wallet.uri = undefined;
@@ -53,7 +49,9 @@ export const addChain: ViewMessageHandler = async (
 
     await update(ViewType.WALLET);
 
-    connect(newChain.id.toString(), update, client, _api);
+    client.wallet.chainUpdateStatus = undefined;
+
+    update(ViewType.WALLET);
   })();
 };
 
@@ -100,6 +98,10 @@ export const connect: ViewMessageHandler = async (
     const chainId = Number(data);
 
     await client.wallet.connect(chainId);
+
+    if (!client.wallet.chain) {
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
+    }
 
     client.web3 = new Web3(client.provider);
     client.virtualizationUnit.contractTransactionStatus = undefined;
@@ -172,9 +174,9 @@ export const editChain: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
-    const updatedChain = JSON.parse(data) as Chain;
+    const updatedChain = JSON.parse(data) as ValidChain;
 
-    if (!isChain(updatedChain)) {
+    if (!isValidChain(updatedChain)) {
       client.wallet.chainUpdateStatus = undefined;
 
       await update(ViewType.WALLET);
@@ -207,7 +209,9 @@ export const editChain: ViewMessageHandler = async (
 
     await update(ViewType.WALLET);
 
-    connect(updatedChain.id.toString(), update, client, _api);
+    client.wallet.chainUpdateStatus = undefined;
+
+    update(ViewType.WALLET);
   })();
 };
 

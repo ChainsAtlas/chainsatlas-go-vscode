@@ -1,28 +1,26 @@
-import { WebviewView } from "vscode";
-import { Api, Client, Controller } from "../lib";
-import { ExecutorModel, VirtualizationUnitModel } from "../models";
-import { ExecutorView, VirtualizationUnitView } from "../views";
-import { ExecutorCommand, ExecutorViewState } from "./executor.types";
-import {
+import type { WebviewView } from "vscode";
+import type {
+  ExecutorCommand,
   TransactionHistoryCommand,
-  TransactionHistoryViewState,
-} from "./transactionHistory.type";
-import {
+  ViewType,
   VirtualizationUnitCommand,
-  VirtualizationUnitViewState,
-} from "./virtualizationUnit.type";
-import { WalletCommand, WalletViewState } from "./wallet.type";
+  WalletCommand,
+} from "../enums";
+import type { Api, Client, Controller } from "../lib";
+import type { ExecutorModel, VirtualizationUnitModel } from "../models";
+import type { ExecutorViewState } from "./executor.type";
+import type { TransactionHistoryViewState } from "./transactionHistory.type";
+import type { VirtualizationUnitViewState } from "./virtualizationUnit.type";
+import type { WalletViewState } from "./wallet.type";
 
 /**
- * Represents required chain data for the {@link WalletModel} to work correctly
- * with `@walletconnect/universal-provider`
+ * Represents default chain data available in the {@link WalletModel}.
  */
 export type Chain = {
   namespace: string;
   id: number;
   name: string;
   transactionExplorerUrl: string;
-  httpRpcUrl: string;
 };
 
 /**
@@ -41,35 +39,10 @@ export type ContractTransactionStatus =
   | "transactionHash";
 
 /**
- * Enum representing common {@link Controller} subclasses events.
+ * Represents valid chain data to enable the {@link WalletModel} to connect
+ * correctly.
  */
-export enum ControllerEvent {
-  SYNC = "sync",
-}
-
-/**
- * Enum representing gas options for the {@link VirtualizationUnitView} and
- * {@link ExecutorView} transaction forms.
- */
-export enum GasOption {
-  BUFFER = "buffer",
-  CUSTOM = "custom",
-  ESTIMATE = "estimate",
-}
-
-/**
- * Enum representing possible telemetry event names.
- */
-export enum TelemetryEventName {
-  ADD_CHAIN = "addChain",
-  COMPILE_BYTECODE = "compileBytecode",
-  CONNECT = "connect",
-  DEPLOY_V_UNIT = "deployVirtualizationUnit",
-  EDIT_CHAIN = "editChain",
-  EXECUTE_BYTECODE = "executeByecode",
-  LOGIN = "login",
-  LOGOUT = "logout",
-}
+export type ValidChain = Chain & { httpRpcUrl: string };
 
 /**
  * Represents all command enums to facilitate the {@link Controller} management
@@ -120,17 +93,6 @@ export type ViewStateGenerator = (
   | TransactionHistoryViewState
   | VirtualizationUnitViewState
   | Promise<WalletViewState>;
-
-/**
- * Enum representing types of views to avoid hardcoded string values when
- * managing view's initialization, state and communication.
- */
-export enum ViewType {
-  EXECUTOR = "executor",
-  TRANSACTION_HISTORY = "transactionHistory",
-  VIRTUALIZATION_UNIT = "virtualizationUnit",
-  WALLET = "wallet",
-}
 
 /**
  * Represents the VS Code API for a webview view to communicate with a

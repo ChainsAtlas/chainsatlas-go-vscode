@@ -8,8 +8,9 @@ import {
   EIP155_METHODS,
   ERROR_MESSAGE,
 } from "../../../src/constants";
+import { ChainNamespace } from "../../../src/enums";
 import { WalletModel } from "../../../src/models/WalletModel";
-import { Chain, ChainNamespace } from "../../../src/types";
+import type { ValidChain } from "../../../src/types";
 import "../../testSetup";
 
 suite("WalletModel", () => {
@@ -35,11 +36,8 @@ suite("WalletModel", () => {
   });
 
   suite("constructor", () => {
-    test("should initialize 'chain' and 'chains' correctly", () => {
+    test("should initialize 'chains' correctly", () => {
       expect(walletModel.chains).to.deep.equal(Object.values(chains));
-      expect(walletModel.chain).to.deep.equal(
-        Object.values(chains).find((chain) => chain.id === defaultChainId),
-      );
     });
   });
 
@@ -61,41 +59,58 @@ suite("WalletModel", () => {
       }
     });
 
+    test("should throw an error for an invalid chain RPC", async () => {
+      try {
+        await walletModel.connect(defaultChainId);
+        expect.fail(ERROR_MESSAGE.INVALID_CHAIN_ID);
+      } catch (error) {
+        expect((error as Error).message).to.equal(
+          ERROR_MESSAGE.INVALID_CHAIN_RPC,
+        );
+      }
+    });
+
     test("should connect and set account information correctly", async () => {
-      const validChain = Object.values(chains).find(
-        (c) => c.id === defaultChainId,
-      ) as Chain;
       const fakeAccounts = ["0x1234"];
       (mockProvider.enable as SinonStub).resolves(fakeAccounts);
 
-      expect(validChain).to.exist;
+      walletModel.chains = walletModel.chains.map((chain) =>
+        chain.id === defaultChainId
+          ? { ...chain, httpRpcUrl: "https://ethereum-sepolia.publicnode.com" }
+          : chain,
+      );
 
-      await walletModel.connect(validChain.id);
+      const selectedChain = walletModel.chains.find(
+        (c) => c.id === defaultChainId,
+      ) as ValidChain;
 
-      expect(walletModel.disconnect).to.have.been.calledOnce;
+      expect(selectedChain).to.exist;
+
+      await walletModel.connect(selectedChain.id);
+
       expect(mockProvider.connect).to.have.been.calledOnce;
       expect(mockProvider.connect).to.have.been.calledWithExactly({
         namespaces: {
-          [validChain.namespace]: {
+          [selectedChain.namespace]: {
             methods:
-              validChain.namespace === ChainNamespace.EIP155
+              selectedChain.namespace === ChainNamespace.EIP155
                 ? EIP155_METHODS
                 : [],
             chains: [
-              validChain.namespace === ChainNamespace.EIP155
-                ? `${ChainNamespace.EIP155}:${validChain.id}`
-                : validChain.id.toString(),
+              selectedChain.namespace === ChainNamespace.EIP155
+                ? `${ChainNamespace.EIP155}:${selectedChain.id}`
+                : selectedChain.id.toString(),
             ],
             events:
-              validChain.namespace === ChainNamespace.EIP155
+              selectedChain.namespace === ChainNamespace.EIP155
                 ? EIP155_EVENTS
                 : [],
-            rpcMap: { [validChain.id]: validChain.httpRpcUrl },
+            rpcMap: { [selectedChain.id]: selectedChain.httpRpcUrl },
           },
         },
       });
       expect(walletModel.accounts).to.equal(fakeAccounts);
-      expect(walletModel.chain).to.be.equal(validChain);
+      expect(walletModel.chain).to.be.equal(selectedChain);
       expect(walletModel.connected).to.be.true;
       expect(walletModel.uri).to.be.undefined;
       expect(walletModel.currentAccount).to.equal(fakeAccounts[0]);
@@ -106,7 +121,7 @@ suite("WalletModel", () => {
     test("should disconnect and reset if session exists", async () => {
       mockProvider = {
         ...mockProvider,
-        session: true,
+        session: { topic: "mockTopic" },
       } as unknown as UniversalProvider;
       walletModel = new WalletModel(mockProvider);
 

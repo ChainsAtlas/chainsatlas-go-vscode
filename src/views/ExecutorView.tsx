@@ -8,12 +8,8 @@ import {
 import { ReactElement, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { TRANSACTION_STATUS_LABEL } from "../constants";
-import {
-  ExecutorCommand,
-  ExecutorViewState,
-  GasOption,
-  VsCodeApi,
-} from "../types";
+import { ExecutorCommand, GasOption } from "../enums";
+import type { ExecutorViewState, VsCodeApi } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();

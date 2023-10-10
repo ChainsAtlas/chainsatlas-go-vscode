@@ -1,9 +1,8 @@
-import { Chain } from "../types";
+import type { Chain } from "../types";
 
 export const polygon: Chain = {
   namespace: "eip155",
   id: 137,
   name: "Polygon",
-  transactionExplorerUrl: "https://polygonscan.com/tx/{{TX_HASH}}",
-  httpRpcUrl: "https://polygon-rpc.com",
+  transactionExplorerUrl: "https://polygonscan.com/tx/{txHash}",
 };

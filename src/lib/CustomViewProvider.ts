@@ -8,7 +8,7 @@ import {
   WebviewViewResolveContext,
   window,
 } from "vscode";
-import { ViewType } from "../types";
+import { ViewType } from "../enums";
 
 /**
  * It is a custom view provider within the VSCode environment.

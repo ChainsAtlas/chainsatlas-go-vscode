@@ -1,7 +1,6 @@
 import { getBalance } from ".";
-import { ERROR_MESSAGE } from "../constants";
 import { Api, Client } from "../lib";
-import {
+import type {
   ExecutorViewState,
   TransactionHistoryViewState,
   VirtualizationUnitViewState,
@@ -87,15 +86,13 @@ export const generateWalletViewState = async (
   } = client.wallet;
   const { authStatus } = api;
 
-  if (!chain) {
-    throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
-  }
-
   return {
     accounts,
     authStatus,
-    balance: await getBalance(currentAccount, chain.id, client.web3),
-    chain,
+    balance:
+      chain && currentAccount && client.web3
+        ? await getBalance(currentAccount, chain.id, client.web3)
+        : "0",
     chainUpdateStatus,
     chains,
     currentAccount,

@@ -1,6 +1,6 @@
-import { Chain } from "../types";
+import type { ValidChain } from "../types";
 
-export const isChain = (obj: any): obj is Chain => {
+export const isValidChain = (obj: any): obj is ValidChain => {
   return (
     typeof obj === "object" &&
     obj !== null &&
@@ -9,6 +9,7 @@ export const isChain = (obj: any): obj is Chain => {
     typeof obj.name === "string" &&
     typeof obj.transactionExplorerUrl === "string" &&
     obj.transactionExplorerUrl.includes("{txHash}") &&
-    typeof obj.httpRpcUrl === "string"
+    typeof obj.httpRpcUrl === "string" &&
+    obj.httpRpcUrl.length > 0
   );
 };

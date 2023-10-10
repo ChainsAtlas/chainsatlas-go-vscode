@@ -1,6 +1,6 @@
 import UniversalProvider from "@walletconnect/universal-provider";
 import EventEmitter from "events";
-import Web3 from "web3";
+import type Web3 from "web3";
 import {
   ExecutorModel,
   TransactionHistoryModel,

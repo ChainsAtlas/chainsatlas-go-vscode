@@ -1,9 +1,8 @@
-import { Chain } from "../types";
+import type { Chain } from "../types";
 
 export const ethereum: Chain = {
   namespace: "eip155",
   id: 1,
   name: "Ethereum",
-  transactionExplorerUrl: "https://etherscan.io/tx/{{TX_HASH}}",
-  httpRpcUrl: "https://cloudflare-eth.com",
+  transactionExplorerUrl: "https://etherscan.io/tx/{txHash}",
 };

@@ -1,11 +1,11 @@
 import { ERROR_MESSAGE } from "../constants";
-import { reporter } from "../extension";
 import {
   TelemetryEventName,
-  ViewMessageHandler,
   ViewType,
   VirtualizationUnitModelEvent,
-} from "../types";
+} from "../enums";
+import { reporter } from "../extension";
+import type { ViewMessageHandler } from "../types";
 import { withErrorHandling } from "../utils";
 
 export const changeContract: ViewMessageHandler = async (
@@ -81,6 +81,10 @@ export const deploy: ViewMessageHandler = async (
   _api,
 ) => {
   withErrorHandling(async () => {
+    if (!client.wallet.chain) {
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
+    }
+
     if (!client.wallet.currentAccount) {
       throw new Error(ERROR_MESSAGE.INVALID_ACCOUNT);
     }
@@ -105,6 +109,10 @@ export const deploy: ViewMessageHandler = async (
     client.virtualizationUnit.once(
       VirtualizationUnitModelEvent.TRANSACTION_CONFIRMED,
       () => {
+        if (!client.wallet.chain) {
+          throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
+        }
+
         reporter.sendTelemetryEvent(TelemetryEventName.DEPLOY_V_UNIT, {
           name: client.wallet.chain.name,
           namespace: client.wallet.chain.namespace,

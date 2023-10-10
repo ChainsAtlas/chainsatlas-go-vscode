@@ -6,11 +6,8 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { ReactElement, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  TransactionHistoryCommand,
-  TransactionHistoryViewState,
-  VsCodeApi,
-} from "../types";
+import { TransactionHistoryCommand } from "../enums";
+import type { TransactionHistoryViewState, VsCodeApi } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();

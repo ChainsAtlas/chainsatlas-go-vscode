@@ -1,11 +1,8 @@
 import { expect } from "chai";
 import { SinonStub, restore, stub } from "sinon";
+import { SupportedLanguage } from "../../../src/enums";
 import { Api } from "../../../src/lib";
-import {
-  BytecodeStructure,
-  ExecutorFile,
-  SupportedLanguage,
-} from "../../../src/types";
+import type { BytecodeStructure, ExecutorFile } from "../../../src/types";
 
 suite("Api", () => {
   let instance: Api;
