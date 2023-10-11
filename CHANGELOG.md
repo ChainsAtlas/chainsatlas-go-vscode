@@ -13,6 +13,18 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 0.3.0 - 10 October 2023
+
+### Added
+
+- Custom chain configuration (name, namespace, ID, Transaction Explorer URL and HTTP RPC URL).
+
+### Fixed
+
+- Telemetry now complies with vscode guidelines and uses the [@vscode/extension-telemetry](https://github.com/microsoft/vscode-extension-telemetry).
+
+---
+
 ## 0.2.0 - 13 September 2023
 
 ### Added
