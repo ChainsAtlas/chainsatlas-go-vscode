@@ -12,59 +12,88 @@
 <div class="col-content">
 <div class="tsd-page-title">
 <h2>chainsatlas-go</h2></div>
-<div class="tsd-panel tsd-typography"><a id="md:chainsatlas-go-vscode" class="tsd-anchor"></a><h1><a href="#md:chainsatlas-go-vscode"><strong>ChainsAtlas GO VSCode</strong></a></h1><p>Bring your favorite programming languages to any blockchain with ChainsAtlas GO!</p>
+<div class="tsd-panel tsd-typography"><a id="md:chainsatlas-go-vscode" class="tsd-anchor"></a><h1><a href="#md:chainsatlas-go-vscode"><strong>ChainsAtlas GO VSCode</strong></a></h1><p>Bring your favorite programming languages to any blockchain.</p>
+<a id="md:beta-version-disclaimer" class="tsd-anchor"></a><h2><a href="#md:beta-version-disclaimer">Beta version disclaimer</a></h2><p>By using the beta version of ChainsAtlas GO, you acknowledge and understand the potential risks and the unfinished state of the product.</p>
+<p>While we strive to offer a seamless experience, unexpected issues might occur. We highly recommend not using the beta version for critical tasks and always maintaining backups of your data.</p>
 <a id="md:table-of-contents" class="tsd-anchor"></a><h2><a href="#md:table-of-contents"><strong>Table of Contents</strong></a></h2><ul>
-<li><a href="#features">Features</a></li>
-<li><a href="#getting-started">Getting Started</a></li>
 <li><a href="#usage">Usage</a><ul>
-<li><a href="#wallet-controller">Wallet Controller</a></li>
-<li><a href="#virtualization-unit-controller">Virtualization Unit Controller</a></li>
-<li><a href="#transaction-history-controller">Transaction History Controller</a></li>
-<li><a href="#executor-controller">Executor Controller</a></li>
+<li><a href="#1-login">1. Login</a></li>
+<li><a href="#2-connecting-crypto-wallet">2. Connecting crypto wallet</a></li>
+<li><a href="#3-deploying-a-virtualization-unit">3. Deploying a Virtualization Unit</a></li>
+<li><a href="#4-compiling-web2-code">4. Compiling web2 code</a></li>
+<li><a href="#5-executing-web2-code">5. Executing web2 code</a></li>
 </ul>
 </li>
 <li><a href="#troubleshooting">Troubleshooting</a></li>
 <li><a href="#contributing">Contributing</a></li>
 </ul>
-<a id="md:features" class="tsd-anchor"></a><h2><a href="#md:features"><strong>Features</strong></a></h2><ul>
-<li>🌐 <strong>Blockchain Interoperability</strong>: ChainsAtlas Virtualization Unit is compatible with any chain.</li>
-<li>💼 <strong>Programming Language Flexibility</strong>: Use what you know instead of having to learn new programming languages.</li>
-<li>🛠 <strong>Native Execution</strong>: Compile and execute web2 code on web3 natively.</li>
+<a id="md:usage" class="tsd-anchor"></a><h2><a href="#md:usage"><strong>Usage</strong></a></h2><a id="md:1-login" class="tsd-anchor"></a><h3><a href="#md:1-login"><strong>1. Login</strong></a></h3><p>You should have received your credentials in your email if you subscribed to the ChainsAtlas GO Early Access list.</p>
+<p>If you are not subscribed, <a href="https://chainsatlas.com">subscribe here</a>.</p>
+<p>If you are subscribed but did not receive your credentials yet, please wait. We are releasing the early access in batches.</p>
+<p>Once you have your credentials at hand, use them to login.</p>
+<p><img src="./assets/img/docs/login.png" alt="Login"></p>
+<a id="md:2-connecting-crypto-wallet" class="tsd-anchor"></a><h3><a href="#md:2-connecting-crypto-wallet"><strong>2. Connecting crypto wallet</strong></a></h3><p>ChainsAtlas GO uses <a href="https://walletconnect.com/">WalletConnect</a> to sign transactions and <a href="https://walletconnect.com/explorer?type=wallet">supports more than 300 crypto wallets</a>.</p>
+<p>Once you are logged in, you will be prompted to add your chain data to enable WalletConnect to work properly with your wallet.</p>
+<p><img src="./assets/img/docs/chain-config.png" alt="Chain Configuration"></p>
+<p>You need to fill the following data:</p>
+<ul>
+<li><strong>Name</strong>: only when adding a new chain configuration</li>
+<li><strong>Namespace</strong>: chain namespace for proper id mapping</li>
+<li><strong>ID</strong>: chain ID accordingly to the aforementioned namespace</li>
+<li><strong>Transaction Explorer URL</strong>: Remember to add the <code>{txHash}</code> placeholder where you want the transaction hash to be included.</li>
+<li><strong>HTTP RPC URL</strong>: Make sure to use a stable RPC. Unstable RPC might cause errors that affect your experience with the plugin.</li>
 </ul>
-<a id="md:getting-started" class="tsd-anchor"></a><h2><a href="#md:getting-started"><strong>Getting Started</strong></a></h2><ol>
-<li><strong>Prerequisites</strong>:<ul>
-<li>Install Visual Studio Code.</li>
-</ul>
-</li>
-<li><strong>Installation</strong>:<ul>
-<li>Search for &quot;ChainsAtlas GO&quot; in the VSCode extensions marketplace.</li>
-<li>Click &quot;Install&quot; to add the extension to VSCode.</li>
-</ul>
-</li>
-</ol>
-<a id="md:usage" class="tsd-anchor"></a><h2><a href="#md:usage"><strong>Usage</strong></a></h2><a id="md:wallet-view" class="tsd-anchor"></a><h3><a href="#md:wallet-view"><strong>Wallet View</strong></a></h3><ul>
-<li><strong>Login</strong>: Pprovide the necessary credentials, and click <strong>Login</strong>.</li>
-<li><strong>Logout</strong>: Navigate to the <strong>Logout</strong> section and click <strong>Logout</strong> to disconnect your wallet and end your session.</li>
-<li><strong>Connect</strong>: Navigate to the Wallet section and click on the <strong>Connect</strong> button. Choose your desired blockchain by its <code>chainId</code> and scan the QR Code with your mobile wallet to connect.</li>
-<li><strong>Change Account</strong>: Pick your desired account from the connected wallet.</li>
-</ul>
-<a id="md:virtualization-unit-controller" class="tsd-anchor"></a><h3><a href="#md:virtualization-unit-controller"><strong>Virtualization Unit Controller</strong></a></h3><ul>
-<li><strong>Deploy</strong>: Navigate to the Virtualization Unit section and click <strong>Deploy</strong> to deploy a contract.</li>
-<li><strong>Set Gas</strong>: Choose an option or set a custom gas value.</li>
-<li><strong>Change Contract</strong>: Select among your deployed virtualization units.</li>
-</ul>
-<a id="md:executor-controller" class="tsd-anchor"></a><h3><a href="#md:executor-controller"><strong>Executor Controller</strong></a></h3><ul>
-<li><strong>File Management</strong>: Use <strong>Select File</strong> to choose a system file or <strong>Get Active File</strong> to work with the current VSCode file. Use <strong>Clear File</strong> to remove a file.</li>
-<li><strong>Compile &amp; Execute</strong>: After selecting a file, click <strong>Compile</strong>. Use <strong>Execute</strong> for execution. Use the <strong>Estimate</strong> option to check gas requirements.</li>
-</ul>
-<a id="md:transaction-history-controller" class="tsd-anchor"></a><h3><a href="#md:transaction-history-controller"><strong>Transaction History Controller</strong></a></h3><ul>
-<li><strong>View History</strong>: Navigate to the Transaction History section to see past transactions. Each entry provides details like output, transaction hash, and a link to view the transaction on a block explorer.</li>
-</ul>
+<p>After saving your chain data, a QR code will be displayed. Scan it using one of the supported mobile wallets to connect your wallet.</p>
+<p>You can switch chains by selecting an option in the Chain dropdown. Once a new chain is selected, the QR code will be updated to reflect the selected chain info. You can always edit the current chain or decide to add a new one instead by clicking on the &quot;Edit&quot; or &quot;Add&quot; buttons on the right side of the chain dropdown.</p>
+<p><img src="./assets/img/docs/qr-code-walletconnect.png" alt="QR code WalletConnect"></p>
+<p>When you scan the QR code with your mobile wallet, you will be prompted for a confirmation of the wallet connection. Below is an example of a <a href="https://metamask.io/">Metamask</a> prompt.</p>
+<p><img src="./assets/img/docs/walletconnect-metamask.jpeg" alt="WalletConnect Metamask"></p>
+<p>After confirming the connection, you will be able to see your wallet accounts and balance in wei.</p>
+<p><img src="./assets/img/docs/wallet-data.png" alt="Wallet data"></p>
+<a id="md:3-deploying-a-virtualization-unit" class="tsd-anchor"></a><h3><a href="#md:3-deploying-a-virtualization-unit"><strong>3. Deploying a Virtualization Unit</strong></a></h3><p>After connecting your wallet, you are enabled to deploy a ChainsAtlas Virtualzation Unit.</p>
+<p>Virtualization Units are smart contracts with an integrated virtual machine capable of executing web2 code on any blockchain.</p>
+<p><img src="./assets/img/docs/virtualization-unit-view.png" alt="Virtualization Unit View"></p>
+<p>Click on the deploy button to initiate the deployment process.</p>
+<p><img src="./assets/img/docs/virtualization-unit-gas.png" alt="Virtualization Unit Gas Options"></p>
+<p>You will be prompted to choose a gas option. You can choose one of the estimated ones, or enter your custom gas amount. <strong>Remember that the gas amount is measured in wei</strong>.</p>
+<p>After choosing an option, click &quot;Send&quot; and confirm the Virtualizatioon Unit deployment through your mobile crypto wallet.</p>
+<p><img src="./assets/img/docs/virtualization-unit-waiting-approval.png" alt="Virtualization Unit Waiting Approval"></p>
+<p><img src="./assets/img/docs/metamask-v-unit-deploy.jpeg" alt="Metamask Virtualization Unit Deployment Confirmation"></p>
+<p><img src="./assets/img/docs/virtualization-unit-waiting-confirmation.png" alt="Virtualization Unit Waiting Confirmation"></p>
+<p>Once confirmed, your newly deployed Virtualization Unit will be selected by default.</p>
+<p><img src="./assets/img/docs/virtualization-unit-contract-selected.png" alt="Virtualization Unit Contract Selected"></p>
+<a id="md:4-compiling-web2-code" class="tsd-anchor"></a><h3><a href="#md:4-compiling-web2-code"><strong>4. Compiling web2 code</strong></a></h3><p>Now, you will need to compile your web2 code to a specific bytecode structure to send it as input to the Virtualization Unit to execute it.</p>
+<blockquote>
+<p><strong>Important</strong>: ChainsAtlas GO is in beta. We are continuously supporting more language features and blockchains to improve user experience. Please <a href="https://docs.chainsatlas.com/">check our documentation</a> to see currently available language features. Using unsupported language features will cause the compiling process to fail.</p>
+</blockquote>
+<p>Click on the &quot;Compile&quot; button to get started.</p>
+<p><img src="./assets/img/docs/executor-view.png" alt="Executor View"></p>
+<p>If you have an active file in your editor that is from one of the Virtualization Unit supported programming languages, it will be selected by default. If that is not the case or, if you want to change the file to be compiled, click on the &quot;Upload&quot; button to choose a file from your system.</p>
+<p>After selecting a file, you need to input the number of arguments required for your file code execution. You will be setting each argument value in the next step.</p>
+<p>In our example, we&#39;re using a simple C sum function as follows:</p>
+<pre><code class="language-c"><span class="hl-0">long</span><span class="hl-1"> </span><span class="hl-2">sum</span><span class="hl-1">(</span><span class="hl-0">long</span><span class="hl-1"> </span><span class="hl-3">x</span><span class="hl-1">, </span><span class="hl-0">long</span><span class="hl-1"> </span><span class="hl-3">y</span><span class="hl-1">) {</span><br/><span class="hl-1">    </span><span class="hl-4">return</span><span class="hl-1"> x + y;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-0">long</span><span class="hl-1"> </span><span class="hl-2">main</span><span class="hl-1">() {</span><br/><span class="hl-1">    </span><span class="hl-0">long</span><span class="hl-1"> x, y, z;</span><br/><span class="hl-1">    x = </span><span class="hl-2">__chainsatlas_evm_sload</span><span class="hl-1">(</span><span class="hl-5">1</span><span class="hl-1">);</span><br/><span class="hl-1">    y = </span><span class="hl-2">__chainsatlas_evm_sload</span><span class="hl-1">(</span><span class="hl-5">2</span><span class="hl-1">);</span><br/><span class="hl-1">    z = </span><span class="hl-2">sum</span><span class="hl-1">(x, y);</span><br/><span class="hl-1">    </span><span class="hl-2">__chainsatlas_evm_sstore</span><span class="hl-1">(z)</span><br/><span class="hl-1">    </span><span class="hl-4">return</span><span class="hl-1"> z;</span><br/><span class="hl-1">}</span>
+</code><button>Copy</button></pre>
+<p>The <code>__chainsatlas_evm_sload</code> function loads the argument values passed to the virtualization unit in order to execute the code. The <code>__chainsatlas_evm_sstore</code> on the other hand, stores the result on-chain. For further details, check our <a href="https://docs.chainsatlas.com/">documentation</a>.</p>
+<p>Click on &quot;Compile&quot; to send your file content and number of arguments (in this case, 2 for the sum function) to the ChainsAtlas API to compile them to a Virtualization Unit supported bytecode structure.</p>
+<p><img src="./assets/img/docs/executor-compile.png" alt="Executor Bytecode Compile"></p>
+<a id="md:5-executing-web2-code" class="tsd-anchor"></a><h3><a href="#md:5-executing-web2-code"><strong>5. Executing web2 code</strong></a></h3><p>If you have done all the previous steps correctly, you will see a new form with your uploaded file path and text inputs for your arguments values. Fill them and click on &quot;Estimate Gas&quot; to move forward.</p>
+<p><img src="./assets/img/docs/executor-estimated-gas.png" alt="Executor Estimate Gas"></p>
+<p>You will be prompted to choose a gas option. You can choose one of the estimated ones, or enter your custom gas amount. <strong>Remember that the gas amount is measured in wei</strong>.</p>
+<p>After choosing an option, click &quot;Execute&quot; and confirm the smart contract interaction through your mobile crypto wallet.</p>
+<p><img src="./assets/img/docs/executor-gas-option.png" alt="Executor Gas Options"></p>
+<p><img src="./assets/img/docs/executor-waiting-approval.png" alt="Executor Waiting Approval"></p>
+<p><img src="./assets/img/docs/metamask-bytecode-execution.jpeg" alt="Metamask Bytecode Execution"></p>
+<p><img src="./assets/img/docs/executor-waiting-confirmation.png" alt="Executor Waiting Confirmation"></p>
+<p>Once your transaction is confirmed, the transaction hash and output will be displayed in the Transaction History View. Clicking on the transaction hash value will forward you the selected chain block explorer to visualize the transaction details.</p>
+<p><img src="./assets/img/docs/transaction-history-view.png" alt="Transaction History View"></p>
 <a id="md:troubleshooting" class="tsd-anchor"></a><h2><a href="#md:troubleshooting"><strong>Troubleshooting</strong></a></h2><p>If you encounter issues:</p>
 <ul>
 <li>Check the error message for guidance.</li>
 <li>Ensure login credentials are correct.</li>
-<li>Try disconnecting your wallet and connecting again (could be a problem on your wallet)</li>
+<li>Ensure you are using a stable RPC.</li>
+<li>Try disconnecting your wallet and connecting again (could be a problem on your wallet).</li>
+<li>Make sure you are not using a language feature that has not been added yet. <a href="https://docs.chainsatlas.com/">See our docs on available language features</a>.</li>
+<li>Contact us at <a href="mailto:info@chainsatlas.com">info@chainsatlas.com</a></li>
 </ul>
 <a id="md:contributing" class="tsd-anchor"></a><h2><a href="#md:contributing"><strong>Contributing</strong></a></h2><p>We welcome contributions! If you have suggestions, bug reports, or feature requests, please open an issue on our GitHub repository.</p>
 <hr>
@@ -92,48 +121,80 @@
 <li><a href="#md:chainsatlas-go-vscode"><span>Chains<wbr/>Atlas GO VSCode</span></a></li>
 <li>
 <ul>
+<li><a href="#md:beta-version-disclaimer"><span>Beta version disclaimer</span></a></li>
 <li><a href="#md:table-of-contents"><span>Table of <wbr/>Contents</span></a></li>
-<li><a href="#md:features"><span>Features</span></a></li>
-<li><a href="#md:getting-started"><span>Getting <wbr/>Started</span></a></li>
 <li><a href="#md:usage"><span>Usage</span></a></li>
 <li>
 <ul>
-<li><a href="#md:wallet-view"><span>Wallet <wbr/>View</span></a></li>
-<li><a href="#md:virtualization-unit-controller"><span>Virtualization <wbr/>Unit <wbr/>Controller</span></a></li>
-<li><a href="#md:executor-controller"><span>Executor <wbr/>Controller</span></a></li>
-<li><a href="#md:transaction-history-controller"><span>Transaction <wbr/>History <wbr/>Controller</span></a></li></ul></li>
+<li><a href="#md:1-login"><span>1. <wbr/>Login</span></a></li>
+<li><a href="#md:2-connecting-crypto-wallet"><span>2. <wbr/>Connecting crypto wallet</span></a></li>
+<li><a href="#md:3-deploying-a-virtualization-unit"><span>3. <wbr/>Deploying a <wbr/>Virtualization <wbr/>Unit</span></a></li>
+<li><a href="#md:4-compiling-web2-code"><span>4. <wbr/>Compiling web2 code</span></a></li>
+<li><a href="#md:5-executing-web2-code"><span>5. <wbr/>Executing web2 code</span></a></li></ul></li>
 <li><a href="#md:troubleshooting"><span>Troubleshooting</span></a></li>
 <li><a href="#md:contributing"><span>Contributing</span></a></li></ul></li></ul></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="index.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>chainsatlas-<wbr/>go</span></a>
 <ul class="tsd-small-nested-navigation">
+<li><a href="modules/chains.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains</span></a></li>
+<li><a href="modules/chains_arbitrum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/arbitrum</span></a></li>
+<li><a href="modules/chains_bsc.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/bsc</span></a></li>
+<li><a href="modules/chains_bscTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/bsc<wbr/>Testnet</span></a></li>
+<li><a href="modules/chains_celo.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/celo</span></a></li>
+<li><a href="modules/chains_ethereum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/ethereum</span></a></li>
+<li><a href="modules/chains_ethereumSepolia.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/ethereum<wbr/>Sepolia</span></a></li>
+<li><a href="modules/chains_klaytn.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/klaytn</span></a></li>
+<li><a href="modules/chains_polygon.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/polygon</span></a></li>
+<li><a href="modules/chains_polygonMumbai.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/polygon<wbr/>Mumbai</span></a></li>
 <li><a href="modules/constants.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>constants</span></a></li>
-<li><a href="modules/controllers.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers</span></a></li>
-<li><a href="modules/controllers_Controller_abstract.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Controller.abstract</span></a></li>
-<li><a href="modules/controllers_ExecutorController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Executor<wbr/>Controller</span></a></li>
-<li><a href="modules/controllers_SettingsController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Settings<wbr/>Controller</span></a></li>
-<li><a href="modules/controllers_TransactionHistoryController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Transaction<wbr/>History<wbr/>Controller</span></a></li>
-<li><a href="modules/controllers_VirtualizationUnitController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Virtualization<wbr/>Unit<wbr/>Controller</span></a></li>
-<li><a href="modules/controllers_WalletController.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>controllers/<wbr/>Wallet<wbr/>Controller</span></a></li>
+<li><a href="modules/enums.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>enums</span></a></li>
+<li><a href="modules/enums_common_enum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>enums/common.enum</span></a></li>
+<li><a href="modules/enums_executor_enum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>enums/executor.enum</span></a></li>
+<li><a href="modules/enums_transactionHistory_enum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>enums/transaction<wbr/>History.enum</span></a></li>
+<li><a href="modules/enums_virtualizationUnit_enum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>enums/virtualization<wbr/>Unit.enum</span></a></li>
+<li><a href="modules/enums_wallet_enum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>enums/wallet.enum</span></a></li>
 <li><a href="modules/extension.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>extension</span></a></li>
+<li><a href="modules/handlers.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>handlers</span></a></li>
+<li><a href="modules/handlers_executorHandlers.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>handlers/executor<wbr/>Handlers</span></a></li>
+<li><a href="modules/handlers_transactionHistoryHandlers.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>handlers/transaction<wbr/>History<wbr/>Handlers</span></a></li>
+<li><a href="modules/handlers_virtualizationUnitHandlers.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>handlers/virtualization<wbr/>Unit<wbr/>Handlers</span></a></li>
+<li><a href="modules/handlers_walletHandlers.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>handlers/wallet<wbr/>Handlers</span></a></li>
+<li><a href="modules/helpers.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>helpers</span></a></li>
+<li><a href="modules/helpers_composeInput.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>helpers/compose<wbr/>Input</span></a></li>
+<li><a href="modules/helpers_getBalance.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>helpers/get<wbr/>Balance</span></a></li>
+<li><a href="modules/helpers_init.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>helpers/init</span></a></li>
+<li><a href="modules/helpers_viewStateGenerators.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>helpers/view<wbr/>State<wbr/>Generators</span></a></li>
 <li><a href="modules/lib.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib</span></a></li>
-<li><a href="modules/lib_ChainsAtlasGOApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib/<wbr/>Chains<wbr/>AtlasGOApi</span></a></li>
-<li><a href="modules/lib_ChainsAtlasGOClient.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib/<wbr/>Chains<wbr/>AtlasGOClient</span></a></li>
+<li><a href="modules/lib_Api.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib/<wbr/>Api</span></a></li>
+<li><a href="modules/lib_Client.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib/<wbr/>Client</span></a></li>
+<li><a href="modules/lib_Controller.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib/<wbr/>Controller</span></a></li>
 <li><a href="modules/lib_CustomViewProvider.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib/<wbr/>Custom<wbr/>View<wbr/>Provider</span></a></li>
-<li><a href="modules/lib_ViewStateGenerator.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib/<wbr/>View<wbr/>State<wbr/>Generator</span></a></li>
 <li><a href="modules/models.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models</span></a></li>
 <li><a href="modules/models_ExecutorModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Executor<wbr/>Model</span></a></li>
-<li><a href="modules/models_SettingsModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Settings<wbr/>Model</span></a></li>
 <li><a href="modules/models_TransactionHistoryModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Transaction<wbr/>History<wbr/>Model</span></a></li>
 <li><a href="modules/models_VirtualizationUnitModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Virtualization<wbr/>Unit<wbr/>Model</span></a></li>
 <li><a href="modules/models_WalletModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Wallet<wbr/>Model</span></a></li>
+<li><a href="modules/typeguards.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards</span></a></li>
+<li><a href="modules/typeguards_isValidChain.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards/is<wbr/>Valid<wbr/>Chain</span></a></li>
 <li><a href="modules/types.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types</span></a></li>
+<li><a href="modules/types_auth_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/auth.type</span></a></li>
+<li><a href="modules/types_bytecode_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/bytecode.type</span></a></li>
+<li><a href="modules/types_common_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/common.type</span></a></li>
+<li><a href="modules/types_executor_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/executor.type</span></a></li>
+<li><a href="modules/types_transactionHistory_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/transaction<wbr/>History.type</span></a></li>
+<li><a href="modules/types_virtualizationUnit_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/virtualization<wbr/>Unit.type</span></a></li>
+<li><a href="modules/types_wallet_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/wallet.type</span></a></li>
 <li><a href="modules/utils.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils</span></a></li>
+<li><a href="modules/views.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views</span></a></li>
 <li><a href="modules/views_ExecutorView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Executor<wbr/>View</span></a></li>
-<li><a href="modules/views_SettingsView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Settings<wbr/>View</span></a></li>
 <li><a href="modules/views_TransactionHistoryView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Transaction<wbr/>History<wbr/>View</span></a></li>
 <li><a href="modules/views_VirtualizationUnitView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Virtualization<wbr/>Unit<wbr/>View</span></a></li>
-<li><a href="modules/views_WalletView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Wallet<wbr/>View</span></a></li></ul></nav></div></div></div>
+<li><a href="modules/views_Wallet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Wallet</span></a></li>
+<li><a href="modules/views_Wallet_LoginForm_LoginForm.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Wallet/<wbr/>Login<wbr/>Form/<wbr/>Login<wbr/>Form</span></a></li>
+<li><a href="modules/views_Wallet_WalletConnector_AddChainForm_AddChainForm.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Wallet/<wbr/>Wallet<wbr/>Connector/<wbr/>Add<wbr/>Chain<wbr/>Form/<wbr/>Add<wbr/>Chain<wbr/>Form</span></a></li>
+<li><a href="modules/views_Wallet_WalletConnector_EditChainForm_EditChainForm.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Wallet/<wbr/>Wallet<wbr/>Connector/<wbr/>Edit<wbr/>Chain<wbr/>Form/<wbr/>Edit<wbr/>Chain<wbr/>Form</span></a></li>
+<li><a href="modules/views_Wallet_WalletConnector_WalletConnector.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Wallet/<wbr/>Wallet<wbr/>Connector/<wbr/>Wallet<wbr/>Connector</span></a></li>
+<li><a href="modules/views_Wallet_WalletData_WalletData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>views/<wbr/>Wallet/<wbr/>Wallet<wbr/>Data/<wbr/>Wallet<wbr/>Data</span></a></li></ul></nav></div></div></div>
 <div class="tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
 <div class="overlay"></div></body></html>

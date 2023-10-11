@@ -24,8 +24,8 @@ export type BytecodeStructure = {
 
 /**
  * Represents the status of the bytecode compilation that controls
- * the {@link ExecutorModel} events emitted to the {@link ExecutorController}
- * so that the {@link ExecutorView} can update appropriately to the compiler
+ * the events that the {@link ExecutorModel} emits so that the
+ * {@link ExecutorView} can update appropriately to the compiler
  * status.
  */
 export type BytecodeCompilerStatus = "compiling" | "done";

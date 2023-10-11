@@ -7,7 +7,11 @@ import type {
   WalletCommand,
 } from "../enums";
 import type { Api, Client, Controller } from "../lib";
-import type { ExecutorModel, VirtualizationUnitModel } from "../models";
+import type {
+  ExecutorModel,
+  VirtualizationUnitModel,
+  WalletModel,
+} from "../models";
 import type { ExecutorViewState } from "./executor.type";
 import type { TransactionHistoryViewState } from "./transactionHistory.type";
 import type { VirtualizationUnitViewState } from "./virtualizationUnit.type";

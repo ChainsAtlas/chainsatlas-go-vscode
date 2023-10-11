@@ -1,5 +1,7 @@
+import type { Controller } from "../lib";
+import type { VirtualizationUnitModel } from "../models";
 /**
- * Enum representing possible commands sent from {@link VirtualizationUnitView}
+ * Enum representing possible commands sent from the Virtualization Unit View
  * to the {@link Controller}
  */
 export enum VirtualizationUnitCommand {
@@ -12,8 +14,8 @@ export enum VirtualizationUnitCommand {
 
 /**
  * Enum representing events emitted from the {@link VirtualizationUnitModel}
- * to the {@linkController} to manage state synchronization with the
- * {@link VirtualizationUnitView}.
+ * to the {@link Controller} to manage state synchronization with the
+ * Virtualization Unit View.
  */
 export enum VirtualizationUnitModelEvent {
   TRANSACTION_CONFIRMED = "transactionConfirmed",

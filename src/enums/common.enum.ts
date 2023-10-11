@@ -1,3 +1,5 @@
+import type { Controller } from "../lib";
+
 /**
  * Enum representing common {@link Controller} subclasses events.
  */
@@ -6,8 +8,8 @@ export enum ControllerEvent {
 }
 
 /**
- * Enum representing gas options for the {@link VirtualizationUnitView} and
- * {@link ExecutorView} transaction forms.
+ * Enum representing gas options for the Virtualization Unit View and
+ * Executor View transaction forms.
  */
 export enum GasOption {
   BUFFER = "buffer",

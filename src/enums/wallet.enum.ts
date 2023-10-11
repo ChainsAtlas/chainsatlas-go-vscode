@@ -1,3 +1,5 @@
+import type { Controller } from "../lib";
+
 /**
  * Represents the supported blockchain namespaces
  */
@@ -6,7 +8,7 @@ export enum ChainNamespace {
 }
 
 /**
- * Enum representing possible commands sent from {@link WalletView}
+ * Enum representing possible commands sent from the Wallet View
  * to the {@link Controller}
  */
 export enum WalletCommand {
