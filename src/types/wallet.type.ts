@@ -1,21 +1,14 @@
-import { ProviderAccounts } from "web3";
-import { Controller } from "../lib";
-import { WalletView } from "../views";
-import { AuthStatus } from "./auth.type";
-import { Chain } from "./common.type";
+import type { ProviderAccounts } from "@walletconnect/universal-provider";
+import type { WalletModel } from "../models";
+import type { WalletView } from "../views/Wallet";
+import type { AuthStatus } from "./auth.type";
+import type { Chain, ValidChain } from "./common.type";
 
 /**
- * Enum representing possible commands sent from {@link WalletView}
- * to the {@link Controller}
+ * Represents the chain update status for {@link WalletModel}
+ * required to manage the state of the Wallet view.
  */
-export enum WalletCommand {
-  CHANGE_ACCOUNT = "changeAccount",
-  CONNECT = "connect",
-  DISCONNECT = "disconnect",
-  LOGIN = "login",
-  LOGOUT = "logout",
-  READY = "walletReady",
-}
+export type ChainUpdateStatus = "done" | "updating";
 
 /**
  * Represents the state of the {@link WalletView}
@@ -23,10 +16,10 @@ export enum WalletCommand {
 export type WalletViewState = {
   accounts?: ProviderAccounts;
   authStatus?: AuthStatus;
-  chain: Chain;
-  balance?: string;
-  chains: Chain[];
+  balance: string;
+  chainUpdateStatus?: ChainUpdateStatus;
+  chains: (Chain | ValidChain)[];
   currentAccount?: string;
-  connected?: boolean;
+  connected: boolean;
   uri?: string;
 };

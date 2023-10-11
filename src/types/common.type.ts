@@ -1,36 +1,38 @@
-import { WebviewView } from "vscode";
-import { Api, Client, Controller } from "../lib";
-import { ExecutorModel, VirtualizationUnitModel } from "../models";
-import { ExecutorView, VirtualizationUnitView } from "../views";
-import { ExecutorCommand, ExecutorViewState } from "./executor.types";
-import { SettingsCommand, SettingsViewState } from "./settings.type";
-import {
+import type { WebviewView } from "vscode";
+import type {
+  ExecutorCommand,
   TransactionHistoryCommand,
-  TransactionHistoryViewState,
-} from "./transactionHistory.type";
-import {
+  ViewType,
   VirtualizationUnitCommand,
-  VirtualizationUnitViewState,
-} from "./virtualizationUnit.type";
-import { WalletCommand, WalletViewState } from "./wallet.type";
+  WalletCommand,
+} from "../enums";
+import type { Api, Client, Controller } from "../lib";
+import type {
+  ExecutorModel,
+  VirtualizationUnitModel,
+  WalletModel,
+} from "../models";
+import type { ExecutorViewState } from "./executor.type";
+import type { TransactionHistoryViewState } from "./transactionHistory.type";
+import type { VirtualizationUnitViewState } from "./virtualizationUnit.type";
+import type { WalletViewState } from "./wallet.type";
 
 /**
- * Represents required chain data for the {@link WalletModel}
- * to work correctly with `@walletconnect/universal-provider`
+ * Represents default chain data available in the {@link WalletModel}.
  */
 export type Chain = {
+  namespace: string;
   id: number;
   name: string;
-  blockExplorer: string;
-  rpc: string;
+  transactionExplorerUrl: string;
 };
 
 /**
  * Represents the status of web3.js contract transactions of the
  * {@link VirtualizationUnitModel} and {@link ExecutorModel}.
  *
- * The status is emitted to their respective controllers so they can
- * update their respective views accordingly.
+ * The status is emitted to their respective controllers so they can update
+ * their respective views accordingly.
  */
 export type ContractTransactionStatus =
   | "confirmation"
@@ -41,44 +43,32 @@ export type ContractTransactionStatus =
   | "transactionHash";
 
 /**
- * Enum representing common {@link Controller} subclasses events.
+ * Represents valid chain data to enable the {@link WalletModel} to connect
+ * correctly.
  */
-export enum ControllerEvent {
-  SYNC = "sync",
-}
+export type ValidChain = Chain & { httpRpcUrl: string };
 
 /**
- * Enum representing gas options for the {@link VirtualizationUnitView}
- * and {@link ExecutorView} transaction forms.
- */
-export enum GasOption {
-  BUFFER = "buffer",
-  CUSTOM = "custom",
-  ESTIMATE = "estimate",
-}
-
-/**
- * Represents all command enums to facilitate
- * the @{link Controller} management of handlers.
+ * Represents all command enums to facilitate the {@link Controller} management
+ * of handlers.
  */
 export type ViewCommand =
   | ExecutorCommand
-  | SettingsCommand
   | TransactionHistoryCommand
   | VirtualizationUnitCommand
   | WalletCommand;
 
 /**
- * Represents a map of webview views used to manage each
- * view's Controller initialization and state sync.
+ * Represents a map of webview views used to manage each view's Controller
+ * initialization and state sync.
  */
 export type ViewMap = Record<ViewType, WebviewView>;
 
 /**
  * Represents a message from any webview view to a {@link Controller} subclass.
  *
- * Stringify `value` for values of types other than `string`
- * and parse them in the respective Controller for consistency.
+ * Stringify `value` for values of types other than `string` and parse them in
+ * the respective Controller for consistency.
  */
 export type ViewMessage = {
   command: ViewCommand;
@@ -86,8 +76,8 @@ export type ViewMessage = {
 };
 
 /**
- * Represents a handler function required to manage commmunications
- * and operations between models and their respective views.`
+ * Represents a handler function required to manage commmunications and
+ * operations between models and their respective views.`
  */
 export type ViewMessageHandler = (
   data: string | undefined,
@@ -104,26 +94,13 @@ export type ViewStateGenerator = (
   api: Api,
 ) =>
   | ExecutorViewState
-  | SettingsViewState
   | TransactionHistoryViewState
   | VirtualizationUnitViewState
   | Promise<WalletViewState>;
 
 /**
- * Enum representing types of views to avoid hardcoded string values
- * when managing view's initialization, state and communication.
- */
-export enum ViewType {
-  EXECUTOR = "executor",
-  SETTINGS = "settings",
-  TRANSACTION_HISTORY = "transactionHistory",
-  VIRTUALIZATION_UNIT = "virtualizationUnit",
-  WALLET = "wallet",
-}
-
-/**
- * Represents the VS Code API for a webview view to
- * communicate with a {@link Controller} subclass.
+ * Represents the VS Code API for a webview view to communicate with a
+ * {@link Controller} subclass.
  */
 export type VsCodeApi = {
   postMessage(message: ViewMessage): void;

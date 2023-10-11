@@ -1,8 +1,8 @@
-import { Chain } from "../types";
+import type { Chain } from "../types";
 
 export const polygonMumbai: Chain = {
+  namespace: "eip155",
   id: 80_001,
   name: "Polygon Mumbai",
-  blockExplorer: "https://mumbai.polygonscan.com",
-  rpc: "https://rpc.ankr.com/polygon_mumbai/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  transactionExplorerUrl: "https://mumbai.polygonscan.com/tx/{txHash}",
 };

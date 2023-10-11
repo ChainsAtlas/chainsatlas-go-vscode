@@ -1,19 +1,25 @@
-import { TransactionHistoryRow } from "../types";
+import type { TransactionHistoryRow } from "../types";
 
 /**
- * Represents the model for managing the transaction history associated with a particular account.
+ * Represents the model for managing the transaction history associated with a
+ * particular account.
  *
- * This class provides functionalities to maintain a list of transaction history rows
- * and manage operations such as adding a new row or clearing the existing history.
+ * This class provides functionalities to maintain a list of transaction history
+ * rows and manage operations such as adding a new row or clearing the existing
+ * history.
  *
  * @example
  * const historyModel = new TransactionHistoryModel();
- * historyModel.addRow({ transactionHash: '0x123...', transactionUrl: 'http://example.com/tx/0x123...' });
+ * historyModel.addRow({
+ *  transactionHash: '0x123...',
+ *  transactionUrl: 'http://example.com/tx/0x123...'
+ * });
  */
 export class TransactionHistoryModel {
   /**
-   * An array containing rows of transaction history associated with the `currentAccount`.
-   * Each row provides details about a particular transaction, such as the transaction hash and URL.
+   * An array containing rows of transaction history associated with the
+   * `currentAccount`. Each row provides details about a particular transaction,
+   * such as the transaction hash and URL.
    */
   public rows: TransactionHistoryRow[] = [];
 

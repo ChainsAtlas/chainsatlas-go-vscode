@@ -4,13 +4,10 @@ import {
   VSCodeDataGridRow,
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
-import { JSX, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  TransactionHistoryCommand,
-  TransactionHistoryViewState,
-  VsCodeApi,
-} from "../types";
+import { TransactionHistoryCommand } from "../enums";
+import type { TransactionHistoryViewState, VsCodeApi } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
@@ -26,12 +23,13 @@ const vscodeApi = acquireVsCodeApi();
  * - Informing the user to connect their wallet to view the transaction history
  * - Handling empty transaction history state
  *
- * This component communicates with the extension environment using the `vscodeApi`
- * to fetch and update the transaction history view state.
+ * This component communicates with the extension environment using the
+ * `vscodeApi` to fetch and update the transaction history view state.
  *
- * @returns {JSX.Element} A React element that renders the transaction history view.
+ * @returns {JSX.Element}
+ * A React element that renders the transaction history view.
  */
-export const TransactionHistoryView = (): JSX.Element => {
+export const TransactionHistoryView = (): ReactElement => {
   const [_disabled, setDisabled] =
     useState<TransactionHistoryViewState["disabled"]>(true);
   const [_rows, setRows] = useState<TransactionHistoryViewState["rows"]>([]);

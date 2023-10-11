@@ -1,4 +1,5 @@
-import { ViewMessageHandler, ViewType } from "../types";
+import { ViewType } from "../enums";
+import type { ViewMessageHandler } from "../types";
 import { withErrorHandling } from "../utils";
 
 export const transactionHistoryReady: ViewMessageHandler = (

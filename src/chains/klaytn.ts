@@ -1,8 +1,8 @@
-import { Chain } from "../types";
+import type { Chain } from "../types";
 
 export const klaytn: Chain = {
+  namespace: "eip155",
   id: 8_217,
   name: "Klaytn",
-  blockExplorer: "https://scope.klaytn.com",
-  rpc: "https://rpc.ankr.com/klaytn/0ecf35836cd2670fa1abc4a84347f8b5c848aa608706b6c9eb44aaf241af6023",
+  transactionExplorerUrl: "https://scope.klaytn.com/tx/{txHash}",
 };

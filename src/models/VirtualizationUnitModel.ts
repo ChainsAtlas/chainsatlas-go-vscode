@@ -1,10 +1,8 @@
 import EventEmitter from "events";
 import { FMT_BYTES, FMT_NUMBER, type Web3 } from "web3";
 import { ERROR_MESSAGE, V_UNIT_ABI, V_UNIT_BYTECODE } from "../constants";
-import {
-  ContractTransactionStatus,
-  VirtualizationUnitModelEvent,
-} from "../types";
+import { VirtualizationUnitModelEvent } from "../enums";
+import type { ContractTransactionStatus } from "../types";
 
 /**
  * Represents the model for managing the deployment and interaction with
@@ -36,20 +34,19 @@ export class VirtualizationUnitModel extends EventEmitter {
   public currentContract?: string;
 
   /**
-   * Indicates whether the gas estimation for the deployment is currently in progress.
+   * Indicates whether the gas estimation for the deployment is in progress.
    */
   public estimating = false;
 
   /**
-   * Represents the estimated gas required for deploying the contract. This value
-   * is set after estimating the gas and before the deployment transaction is sent.
+   * Represents the estimated gas required for deploying the contract. This
+   * value is set after estimating the gas and before the deployment transaction
+   * is sent.
    */
   public gasEstimate?: string;
 
   /**
    * Initializes a new instance of the `VirtualizationUnitModel` class.
-   *
-   * Upon instantiation, the `contracts` property is initialized as an empty array.
    */
   constructor() {
     super();
@@ -70,10 +67,14 @@ export class VirtualizationUnitModel extends EventEmitter {
    * Deploys the virtualization unit smart contract to the active chain.
    *
    * This method initiates the deployment, estimates the gas required, and sends
-   * the transaction. It emits various events during the process to provide real-time feedback.
+   * the transaction. It emits various events during the process to provide
+   * real-time feedback.
    *
-   * @param from - The account address from which the deployment transaction will be sent.
-   * @param web3 - An instance of web3.js library to interact with the active chain.
+   * @param from
+   * The account address from which the deployment transaction will be sent.
+   *
+   * @param web3
+   * An instance of web3.js library to interact with the active chain.
    */
   public async deploy(from: string, gas: string, web3: Web3): Promise<void> {
     const contract = new web3.eth.Contract(V_UNIT_ABI);

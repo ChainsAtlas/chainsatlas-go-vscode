@@ -1,10 +1,7 @@
 import { getBalance } from ".";
-import { ERROR_MESSAGE } from "../constants";
 import { Api, Client } from "../lib";
-import { WalletModel } from "../models";
-import {
+import type {
   ExecutorViewState,
-  SettingsViewState,
   TransactionHistoryViewState,
   VirtualizationUnitViewState,
   WalletViewState,
@@ -36,14 +33,6 @@ export const generateExecutorViewState = (
     nargs,
     userFile,
   };
-};
-
-export const generateSettingsViewState = (
-  client: Client,
-): SettingsViewState => {
-  const { telemetry } = client.settings;
-
-  return { telemetry };
 };
 
 export const generateTransactionHistoryViewState = (
@@ -86,19 +75,26 @@ export const generateWalletViewState = async (
   client: Client,
   api: Api,
 ): Promise<WalletViewState> => {
-  const { accounts, currentAccount, chain, connected, uri } = client.wallet;
+  const {
+    accounts,
+    currentAccount,
+    chain,
+    chainUpdateStatus,
+    chains,
+    connected,
+    uri,
+  } = client.wallet;
   const { authStatus } = api;
-
-  if (!chain) {
-    throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
-  }
 
   return {
     accounts,
     authStatus,
-    balance: await getBalance(currentAccount, chain.id, client.web3),
-    chain,
-    chains: WalletModel.CHAINS,
+    balance:
+      chain && currentAccount && client.web3
+        ? await getBalance(currentAccount, chain.id, client.web3)
+        : "0",
+    chainUpdateStatus,
+    chains,
     currentAccount,
     connected,
     uri,

@@ -4,7 +4,7 @@ export const getBalance = async (
   account?: string,
   chainId?: number,
   web3?: Web3,
-): Promise<string | undefined> => {
+): Promise<string> => {
   if (account && chainId && web3) {
     const web3ChainId = await web3.eth.getChainId({
       number: FMT_NUMBER.NUMBER,
@@ -16,8 +16,8 @@ export const getBalance = async (
           number: FMT_NUMBER.STR,
           bytes: FMT_BYTES.HEX,
         })
-      : undefined;
+      : "0";
   }
 
-  return undefined;
+  return "0";
 };

@@ -1,34 +1,27 @@
-import { ProviderAccounts } from "@walletconnect/universal-provider";
-import UniversalProvider from "@walletconnect/universal-provider/dist/types/UniversalProvider";
+import type { ProviderAccounts } from "@walletconnect/universal-provider";
+// eslint-disable-next-line max-len
+import type { UniversalProvider } from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import * as chains from "../chains";
+import { EIP155_EVENTS, EIP155_METHODS, ERROR_MESSAGE } from "../constants";
+import { ChainNamespace } from "../enums";
+import type { Chain, ChainUpdateStatus, ValidChain } from "../types";
 
 /**
- * Represents a model for managing the wallet connection, including chain and account management.
+ * Represents a model for managing the wallet connection, including chain and
+ * account management.
  *
- * This class provides functionalities for connecting to a wallet, switching chains, and managing account states.
+ * This class provides functionalities for connecting to a wallet, switching
+ * chains, and managing account states.
  *
  * @example
  * const walletModel = new WalletModel(universalProviderInstance);
  * walletModel.connect(11155111);
  */
 export class WalletModel {
-  public static readonly CHAINS = Object.values(chains);
-
   /**
-   * A static list of events related to the EIP155 standard.
+   * The list of supported chains.
    */
-  private static readonly _EIP155_EVENTS = ["chainChanged", "accountsChanged"];
-
-  /**
-   * A static list of methods related to the EIP155 standard.
-   */
-  private static readonly _EIP155_METHODS = [
-    "eth_sendTransaction",
-    "eth_signTransaction",
-    "eth_sign",
-    "personal_sign",
-    "eth_signTypedData",
-  ];
+  public chains: (Chain | ValidChain)[];
 
   /**
    * The list of accounts available in the connected wallet provider.
@@ -38,17 +31,22 @@ export class WalletModel {
   /**
    * Represents the current chain or network the wallet is connected to.
    */
-  public chain = WalletModel.CHAINS.find((chain) => chain.id === 11_155_111); // ethereum sepolia
+  public chain?: ValidChain;
 
   /**
-   * The account address of the currently selected account in the connected wallet.
+   * The address of the currently selected account in the connected wallet.
    */
   public currentAccount?: string;
 
   /**
    * Indicates whether the wallet is currently connected to the provider.
    */
-  public connected?: boolean;
+  public connected: boolean;
+
+  /**
+   * Indicates whether the chain list is being updated.
+   */
+  public chainUpdateStatus?: ChainUpdateStatus;
 
   /**
    * Represents the URI used for the wallet connection.
@@ -56,54 +54,51 @@ export class WalletModel {
   public uri?: string;
 
   /**
-   * A controller used to manage abortable operations.
-   */
-  private _controller = new AbortController();
-
-  /**
    * Initializes a new instance of the `WalletModel` class.
    *
-   * @param _provider - An instance of the UniversalProvider to manage the wallet connection.
+   * @param _provider
+   * An instance of UniversalProvider.
    */
-  constructor(private readonly _provider: UniversalProvider) {}
+  constructor(private readonly _provider: UniversalProvider) {
+    this.chains = Object.values(chains);
+    this.connected = false;
+  }
 
   /**
    * Connects the wallet to the specified chain or network.
    *
-   * This method initiates the connection, sets the selected chain, and fetches the available accounts.
+   * This method initiates the connection, sets the selected chain,
+   * and fetches the available accounts.
    *
-   * @param id - The ID of the chain or network to connect to.
-   * @throws Will throw an error if the chain ID is invalid or the connection fails.
+   * @param id
+   * The ID of the chain or network to connect to.
+   *
+   * @throws
+   * Throws an error if the chain ID is invalid or the connection fails.
    */
   public async connect(id: number): Promise<void> {
-    this._controller.abort();
-
-    this._controller.signal.addEventListener("abort", () => {
-      this._provider.abortPairingAttempt();
-      this._provider.cleanupPendingPairings({ deletePairings: true });
-
-      this.uri = undefined;
-
-      throw new Error("Aborted!");
-    });
-
-    await this.disconnect();
-
-    const chain = WalletModel.CHAINS.find((c) => c.id === id);
+    const chain = this.chains.find((c) => c.id === id) as ValidChain;
 
     if (!chain) {
-      throw new Error("invalid chain id.");
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN_ID);
     }
 
-    this.chain = chain; // important to sync correct state when provider emits uri
+    if (!chain.httpRpcUrl) {
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN_RPC);
+    }
+
+    // important to sync correct state when provider emits uri
+    this.chain = chain;
 
     await this._provider.connect({
       namespaces: {
-        eip155: {
-          methods: WalletModel._EIP155_METHODS,
-          chains: [`eip155:${chain.id}`],
-          events: WalletModel._EIP155_EVENTS,
-          rpcMap: { [chain.id]: chain.rpc },
+        [chain.namespace]: {
+          methods:
+            chain.namespace === ChainNamespace.EIP155 ? EIP155_METHODS : [],
+          chains: [`${chain.namespace}:${chain.id}`],
+          events:
+            chain.namespace === ChainNamespace.EIP155 ? EIP155_EVENTS : [],
+          rpcMap: { [chain.id]: chain.httpRpcUrl },
         },
       },
     });
@@ -111,7 +106,6 @@ export class WalletModel {
     this.accounts = await this._provider.enable();
     this.chain = chain;
     this.connected = true;
-    this.uri = undefined;
 
     if (this.accounts.length > 0) {
       this.currentAccount = this.accounts[0];
@@ -121,17 +115,23 @@ export class WalletModel {
   /**
    * Disconnects the wallet from the current provider and resets the state.
    *
-   * This method ensures a clean state after disconnection by also resetting account and connection information.
+   * This method ensures a clean state after disconnection by also resetting
+   * account and connection information.
    *
-   * @throws Will throw an error if the disconnection process encounters any issues.
+   * @throws
+   * Throws an error if the disconnection process encounters any issues.
    */
   public async disconnect(): Promise<void> {
-    if (this._provider.session) {
+    if (this._provider.session?.topic) {
       await this._provider.disconnect();
     }
+
+    this._provider.abortPairingAttempt();
+    this._provider.cleanupPendingPairings({ deletePairings: true });
 
     this.accounts = undefined;
     this.currentAccount = undefined;
     this.connected = false;
+    this.uri = undefined;
   }
 }

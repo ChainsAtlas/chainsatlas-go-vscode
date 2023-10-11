@@ -1,13 +1,11 @@
 import {
   ExecutorCommand,
-  SettingsCommand,
   TransactionHistoryCommand,
-  ViewMessageHandler,
   VirtualizationUnitCommand,
   WalletCommand,
-} from "../types";
+} from "../enums";
+import type { ViewMessageHandler } from "../types";
 import * as executorHandlers from "./executorHandlers";
-import * as settingsHandlers from "./settingsHandlers";
 import * as transactionHistoryHandlers from "./transactionHistoryHandlers";
 import * as virtualizationUnitHandlers from "./virtualizationUnitHandlers";
 import * as walletHandlers from "./walletHandlers";
@@ -31,15 +29,6 @@ export const executorCommandHandler: Record<
     executorHandlers[ExecutorCommand.GET_ACTIVE_FILE],
   [ExecutorCommand.READY]: executorHandlers[ExecutorCommand.READY],
   [ExecutorCommand.SELECT_FILE]: executorHandlers[ExecutorCommand.SELECT_FILE],
-};
-
-export const settingsCommandHandler: Record<
-  SettingsCommand,
-  ViewMessageHandler
-> = {
-  [SettingsCommand.READY]: settingsHandlers[SettingsCommand.READY],
-  [SettingsCommand.SWITCH_TELEMETRY]:
-    settingsHandlers[SettingsCommand.SWITCH_TELEMETRY],
 };
 
 export const transactionHistoryCommandHandler: Record<
@@ -67,9 +56,11 @@ export const virtualizationUnitCommandHandler: Record<
 };
 
 export const walletCommandHandler: Record<WalletCommand, ViewMessageHandler> = {
+  [WalletCommand.ADD_CHAIN]: walletHandlers[WalletCommand.ADD_CHAIN],
   [WalletCommand.CHANGE_ACCOUNT]: walletHandlers[WalletCommand.CHANGE_ACCOUNT],
   [WalletCommand.CONNECT]: walletHandlers[WalletCommand.CONNECT],
   [WalletCommand.DISCONNECT]: walletHandlers[WalletCommand.DISCONNECT],
+  [WalletCommand.EDIT_CHAIN]: walletHandlers[WalletCommand.EDIT_CHAIN],
   [WalletCommand.LOGIN]: walletHandlers[WalletCommand.LOGIN],
   [WalletCommand.LOGOUT]: walletHandlers[WalletCommand.LOGOUT],
   [WalletCommand.READY]: walletHandlers[WalletCommand.READY],

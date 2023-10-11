@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/ChainsAtlas/chainsatlas-go-vscode.git"
   },
-  "version": "0.2.0",
+  "version": "0.3.0",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -40,11 +40,6 @@
           "type": "webview",
           "id": "transactionHistory",
           "name": "Transaction History"
-        },
-        {
-          "type": "webview",
-          "id": "settings",
-          "name": "Settings"
         }
       ]
     },
@@ -59,17 +54,18 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "yarn run package",
     "compile": "webpack",
-    "watch": "webpack --watch",
-    "package": "webpack --mode production --devtool hidden-source-map",
     "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
-    "lint": "eslint src --ext ts --fix && eslint test --ext ts --fix",
+    "docs": "typedoc --out ./docs ./src",
     "format": "prettier --write src",
+    "lint": "eslint src --ext ts --fix && eslint test --ext ts --fix",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "prepare": "husky install",
+    "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
     "test": "node ./out/test/runTest.js",
-    "prepare": "husky install"
+    "vscode:prepublish": "yarn run package",
+    "watch": "webpack --watch",
+    "watch-tests": "tsc -p . -w --outDir out"
   },
   "devDependencies": {
     "@babel/core": "^7.22.9",
@@ -108,6 +104,7 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
+    "@vscode/extension-telemetry": "^0.8.5",
     "@vscode/webview-ui-toolkit": "^1.2.2",
     "@walletconnect/sign-client": "^2.9.1",
     "@walletconnect/universal-provider": "^2.9.1",

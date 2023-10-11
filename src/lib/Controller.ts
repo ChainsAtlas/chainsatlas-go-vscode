@@ -1,32 +1,29 @@
 import { Disposable, WebviewView } from "vscode";
+import { ViewType } from "../enums";
 import {
   executorCommandHandler,
-  settingsCommandHandler,
   transactionHistoryCommandHandler,
   virtualizationUnitCommandHandler,
   walletCommandHandler,
 } from "../handlers";
 import {
   generateExecutorViewState,
-  generateSettingsViewState,
   generateTransactionHistoryViewState,
   generateVirtualizationUnitViewState,
   generateWalletViewState,
 } from "../helpers";
-import {
+import type {
   ViewMessage,
   ViewMessageHandler,
   ViewStateGenerator,
-  ViewType,
 } from "../types";
-import { Api } from "./Api";
-import { Client } from "./Client";
+import type { Api } from "./Api";
+import type { Client } from "./Client";
 
 export class Controller {
   private readonly _viewStateGenerators: Record<ViewType, ViewStateGenerator> =
     {
       [ViewType.EXECUTOR]: generateExecutorViewState,
-      [ViewType.SETTINGS]: generateSettingsViewState,
       [ViewType.TRANSACTION_HISTORY]: generateTransactionHistoryViewState,
       [ViewType.VIRTUALIZATION_UNIT]: generateVirtualizationUnitViewState,
       [ViewType.WALLET]: generateWalletViewState,
@@ -37,7 +34,6 @@ export class Controller {
     Record<string, ViewMessageHandler>
   > = {
     [ViewType.EXECUTOR]: executorCommandHandler,
-    [ViewType.SETTINGS]: settingsCommandHandler,
     [ViewType.TRANSACTION_HISTORY]: transactionHistoryCommandHandler,
     [ViewType.VIRTUALIZATION_UNIT]: virtualizationUnitCommandHandler,
     [ViewType.WALLET]: walletCommandHandler,

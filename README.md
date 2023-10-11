@@ -37,9 +37,21 @@ Once you have your credentials at hand, use them to login.
 
 ChainsAtlas GO uses [WalletConnect](https://walletconnect.com/) to sign transactions and [supports more than 300 crypto wallets](https://walletconnect.com/explorer?type=wallet).
 
-Once you are logged in, a QR code will be displayed. Scan it using one of the supported mobile wallets to connect your wallet.
+Once you are logged in, you will be prompted to add your chain data to enable WalletConnect to work properly with your wallet.
 
-You can switch chains by selecting an option in the Chain dropdown. Once a new chain is selected, the QR code will be updated and displayed again.
+![Chain Configuration](./assets/img/docs/chain-config.png)
+
+You need to fill the following data:
+
+- **Name**: only when adding a new chain configuration
+- **Namespace**: chain namespace for proper id mapping
+- **ID**: chain ID accordingly to the aforementioned namespace
+- **Transaction Explorer URL**: Remember to add the `{txHash}` placeholder where you want the transaction hash to be included.
+- **HTTP RPC URL**: Make sure to use a stable RPC. Unstable RPC might cause errors that affect your experience with the plugin.
+
+After saving your chain data, a QR code will be displayed. Scan it using one of the supported mobile wallets to connect your wallet.
+
+You can switch chains by selecting an option in the Chain dropdown. Once a new chain is selected, the QR code will be updated to reflect the selected chain info. You can always edit the current chain or decide to add a new one instead by clicking on the "Edit" or "Add" buttons on the right side of the chain dropdown.
 
 ![QR code WalletConnect](./assets/img/docs/qr-code-walletconnect.png)
 
@@ -91,7 +103,26 @@ If you have an active file in your editor that is from one of the Virtualization
 
 After selecting a file, you need to input the number of arguments required for your file code execution. You will be setting each argument value in the next step.
 
-Click on "Compile" to send your file content and number of arguments to the ChainsAtlas API to compile them to a Virtualization Unit supported bytecode structure.
+In our example, we're using a simple C sum function as follows:
+
+```c
+long sum(long x, long y) {
+    return x + y;
+}
+
+long main() {
+    long x, y, z;
+    x = __chainsatlas_evm_sload(1);
+    y = __chainsatlas_evm_sload(2);
+    z = sum(x, y);
+    __chainsatlas_evm_sstore(z)
+    return z;
+}
+```
+
+The `__chainsatlas_evm_sload` function loads the argument values passed to the virtualization unit in order to execute the code. The `__chainsatlas_evm_sstore` on the other hand, stores the result on-chain. For further details, check our [documentation](https://docs.chainsatlas.com/).
+
+Click on "Compile" to send your file content and number of arguments (in this case, 2 for the sum function) to the ChainsAtlas API to compile them to a Virtualization Unit supported bytecode structure.
 
 ![Executor Bytecode Compile](./assets/img/docs/executor-compile.png)
 
@@ -123,6 +154,7 @@ If you encounter issues:
 
 - Check the error message for guidance.
 - Ensure login credentials are correct.
+- Ensure you are using a stable RPC.
 - Try disconnecting your wallet and connecting again (could be a problem on your wallet).
 - Make sure you are not using a language feature that has not been added yet. [See our docs on available language features](https://docs.chainsatlas.com/).
 - Contact us at info@chainsatlas.com

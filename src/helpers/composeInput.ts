@@ -1,21 +1,26 @@
 import { ERROR_MESSAGE } from "../constants";
-import { BytecodeArg, BytecodeStructure } from "../types";
+import type { BytecodeArg, BytecodeStructure } from "../types";
 
 /**
- * Composes the final bytecode by replacing placeholders with the provided input arguments.
+ * Composes the final bytecode by replacing placeholders with the provided
+ * input arguments.
  *
- * This method takes the base bytecode structure and substitutes the placeholders with
- * the actual values provided in `inputArgs`. The placeholders are determined using the
- * `key` from the `bytecodeStructure` and the index of the argument in `inputArgs`.
+ * This method takes the base bytecode structure and replaces the placeholders
+ * with the actual values provided in `inputArgs`. The placeholders are
+ * determined using the `key` from the `bytecodeStructure` and the index of
+ * the argument in `inputArgs`.
  *
- * @param bytecodeStructure - The structure of the bytecode that contains placeholders for arguments.
- * @param inputArgs - An array of arguments to replace the placeholders in the bytecode.
+ * @param bytecodeStructure
+ * The structure of the bytecode that contains placeholders for arguments.
+ *
+ * @param inputArgs
+ * An array of arguments to replace the placeholders in the bytecode.
  *
  * @returns The final composed bytecode string, prefixed with "0x".
  *
  * @throws {Error}
- * - Throws an error if the number of arguments provided in `inputArgs` does not match the
- *   expected number of arguments (`nargs`) in `bytecodeStructure`.
+ * Throws an error if the number of arguments provided in `inputArgs` does not
+ * match the expected number of arguments (`nargs`) in `bytecodeStructure`.
  */
 export const composeInput = (
   bytecodeStructure: BytecodeStructure,

@@ -7,15 +7,11 @@ import {
   VSCodeRadioGroup,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import { JSX, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { TRANSACTION_STATUS_LABEL } from "../constants";
-import {
-  GasOption,
-  VirtualizationUnitCommand,
-  VirtualizationUnitViewState,
-  VsCodeApi,
-} from "../types";
+import { GasOption, VirtualizationUnitCommand } from "../enums";
+import type { VirtualizationUnitViewState, VsCodeApi } from "../types";
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 const vscodeApi = acquireVsCodeApi();
@@ -28,12 +24,13 @@ const vscodeApi = acquireVsCodeApi();
  * * - Deploying new virtualization units.
  * - Viewing and selecting available virtualization unit contracts.
  *
- * This component communicates with the extension environment using the `vscodeApi`
- * to fetch and update the virtualization unit view state.
+ * This component communicates with the extension environment using the
+ * `vscodeApi` to fetch and update the virtualization unit view state.
  *
- * @returns {JSX.Element} A React element that renders the virtualization unit view.
+ * @returns {JSX.Element}
+ * A React element that renders the virtualization unit view.
  */
-export const VirtualizationUnitView = (): JSX.Element => {
+export const VirtualizationUnitView = (): ReactElement => {
   const [_contracts, setContracts] = useState<
     VirtualizationUnitViewState["contracts"]
   >([]);
@@ -220,7 +217,7 @@ export const VirtualizationUnitView = (): JSX.Element => {
         </div>
       )}
       <VSCodeDivider className="width-constraint" />
-      <div className="dropdown-container">
+      <div className="field-container">
         <label htmlFor="contract">Contract</label>
         <VSCodeDropdown
           className="width-constraint"

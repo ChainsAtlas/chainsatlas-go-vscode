@@ -1,10 +1,11 @@
 import { ERROR_MESSAGE } from "../constants";
 import {
-  TelemetryType,
-  ViewMessageHandler,
+  TelemetryEventName,
   ViewType,
   VirtualizationUnitModelEvent,
-} from "../types";
+} from "../enums";
+import { reporter } from "../extension";
+import type { ViewMessageHandler } from "../types";
 import { withErrorHandling } from "../utils";
 
 export const changeContract: ViewMessageHandler = async (
@@ -73,8 +74,17 @@ export const estimateGas: ViewMessageHandler = async (
   })();
 };
 
-export const deploy: ViewMessageHandler = async (data, update, client, api) => {
+export const deploy: ViewMessageHandler = async (
+  data,
+  update,
+  client,
+  _api,
+) => {
   withErrorHandling(async () => {
+    if (!client.wallet.chain) {
+      throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
+    }
+
     if (!client.wallet.currentAccount) {
       throw new Error(ERROR_MESSAGE.INVALID_ACCOUNT);
     }
@@ -89,36 +99,26 @@ export const deploy: ViewMessageHandler = async (data, update, client, api) => {
 
     const gas = data;
 
-    if (client.settings.telemetry) {
-      const telemetryData = JSON.stringify({
-        type: TelemetryType.V_UNIT_DEPLOYMENT_ATTEMPT,
-        data: {
-          chain: {
-            id: client.wallet.chain?.id,
-            name: client.wallet.chain?.name,
-          },
-        },
-      });
-
-      await api.sendTelemetry(telemetryData);
-    }
+    reporter.sendTelemetryEvent(TelemetryEventName.DEPLOY_V_UNIT, {
+      name: client.wallet.chain.name,
+      namespace: client.wallet.chain.namespace,
+      id: client.wallet.chain.id.toString(),
+      status: "pending",
+    });
 
     client.virtualizationUnit.once(
       VirtualizationUnitModelEvent.TRANSACTION_CONFIRMED,
       () => {
-        if (client.settings.telemetry) {
-          const telemetryData = JSON.stringify({
-            type: TelemetryType.V_UNIT_DEPLOYMENT_CONFIRMATION,
-            data: {
-              chain: {
-                id: client.wallet.chain?.id,
-                name: client.wallet.chain?.name,
-              },
-            },
-          });
-
-          api.sendTelemetry(telemetryData);
+        if (!client.wallet.chain) {
+          throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
         }
+
+        reporter.sendTelemetryEvent(TelemetryEventName.DEPLOY_V_UNIT, {
+          name: client.wallet.chain.name,
+          namespace: client.wallet.chain.namespace,
+          id: client.wallet.chain.id.toString(),
+          status: "success",
+        });
 
         client.virtualizationUnit.removeAllListeners();
         update(

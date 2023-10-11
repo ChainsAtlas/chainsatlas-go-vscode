@@ -6,7 +6,7 @@
   width: 100%;
 }
 
-.dropdown-container {
+.field-container {
   box-sizing: border-box;
   display: flex;
   flex-flow: column nowrap;
@@ -14,7 +14,7 @@
   justify-content: flex-start;
 }
 
-.dropdown-container label {
+.field-container label {
   display: block;
   color: var(--vscode-foreground);
   cursor: pointer;
@@ -29,22 +29,40 @@
   justify-content: flex-end;
 }
 
+.chain-dropdown-container {
+  align-items: end;
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.chain-dropdown {
+  max-width: calc(380px - 10px - 60px - 10px - 60px);
+  min-width: calc(225px - 10px - 60px - 10px - 60px);
+  width: 100%;
+}
+
+.chain-action-button {
+  width: 60px;
+}
+
 .qrcode-container {
   aspect-ratio: 1 / 1;
   align-items: center;
   display: flex;
   justify-content: center;
   max-height: 380px;
-  min-height: 130px;
+  min-height: 225px;
   height: 100%;
   max-width: 380px;
-  min-width: 130px;
+  min-width: 225px;
   width: 100%;
+  z-index: -1;
 }
 
 .width-constraint {
   max-width: 380px;
-  min-width: 130px;
+  min-width: 225px;
   width: 100%;
 }
 
@@ -57,7 +75,7 @@
   display: flex;
   justify-content: center;
   max-width: 380px;
-  min-width: 130px;
+  min-width: 225px;
   width: 100%;
   height: 100vh;
 }
@@ -65,4 +83,15 @@
 vscode-button {
   box-sizing: border-box;
   padding: 1.5px;
+}
+
+.disabled-text {
+  color: var(--vscode-search-resultsInfoForeground);
+}
+
+.action-button-container {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
 }

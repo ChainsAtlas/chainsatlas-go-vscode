@@ -13,13 +13,19 @@ const extensionConfig = {
   entry: "./src/extension.ts",
   externals: [
     {
-      vscode: "commonjs vscode", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+      // the vscode-module is created on-the-fly and must be excluded.
+      // Add other modules that cannot be webpack'ed
+      // https://webpack.js.org/configuration/externals/
+      vscode: "commonjs vscode",
       // modules added here also need to be added in the .vscodeignore file
     },
   ],
   externalsPresets: { node: true },
-  infrastructureLogging: { level: "log" }, // enables logging required for problem matchers
-  mode: "none", // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
+  // enables logging required for problem matchers
+  infrastructureLogging: { level: "log" },
+  // this leaves the source code as close as possible to the original
+  // (when packaging we set this to 'production')
+  mode: "none",
   module: {
     rules: [
       {
@@ -42,17 +48,15 @@ const extensionConfig = {
     extensions: [".ts", ".js"],
     modules: [path.resolve(__dirname, "node_modules"), "node_modules"],
   },
-  target: "node", // VS Code extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
+  // VS Code extensions run in a Node.js-context
+  // https://webpack.js.org/configuration/node/
+  target: "node",
 };
 
 const viewsConfig = {
   entry: {
     executor: {
       import: "./src/views/ExecutorView.tsx",
-      dependOn: "vendors",
-    },
-    settings: {
-      import: "./src/views/SettingsView.tsx",
       dependOn: "vendors",
     },
     transactionHistory: {
@@ -64,7 +68,7 @@ const viewsConfig = {
       dependOn: "vendors",
     },
     wallet: {
-      import: "./src/views/WalletView.tsx",
+      import: "./src/views/Wallet/index.tsx",
       dependOn: "vendors",
     },
     vendors: ["react", "react-dom", "@vscode/webview-ui-toolkit"],
