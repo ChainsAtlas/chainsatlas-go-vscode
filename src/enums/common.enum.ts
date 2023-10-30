@@ -27,6 +27,8 @@ export enum TelemetryEventName {
   DEPLOY_V_UNIT = "deployVirtualizationUnit",
   EDIT_CHAIN = "editChain",
   EXECUTE_BYTECODE = "executeByecode",
+  EXTENSION_ACTIVATION = "extensionActivation",
+  EXTENSION_DEACTIVATION = "extensionDeactivation",
   LOGIN = "login",
   LOGOUT = "logout",
 }

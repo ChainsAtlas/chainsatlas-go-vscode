@@ -2,6 +2,7 @@ import TelemetryReporter from "@vscode/extension-telemetry";
 import { UniversalProvider } from "@walletconnect/universal-provider";
 import { ExtensionContext, window } from "vscode";
 import { PROVIDER_OPTIONS } from "./constants";
+import { TelemetryEventName } from "./enums";
 import { init } from "./helpers";
 import { Api, Client } from "./lib";
 import { withErrorHandling } from "./utils";
@@ -18,6 +19,7 @@ import { withErrorHandling } from "./utils";
  * Not sensitive.
  */
 const key = "c5d18b8f-b22a-4c26-a676-2e08ebe92d7a";
+
 /**
  * @instance {@link TelemetryReporter}
  *
@@ -55,6 +57,8 @@ export const reporter = new TelemetryReporter(key);
  */
 export const activate = async (context: ExtensionContext): Promise<void> => {
   withErrorHandling(async () => {
+    reporter.sendTelemetryEvent(TelemetryEventName.EXTENSION_ACTIVATION);
+
     const provider = await UniversalProvider.init(PROVIDER_OPTIONS);
     const client = new Client(provider);
     const api = new Api();
@@ -73,4 +77,13 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
 
     context.subscriptions.push(client, reporter);
   })();
+};
+
+/**
+ * Deactivates the ChainsAtlas GO extension.
+ *
+ * This asynchronous function is triggered when the extension is deactivated.
+ */
+export const deactivate = (): void => {
+  reporter.sendTelemetryEvent(TelemetryEventName.EXTENSION_DEACTIVATION);
 };
