@@ -11,6 +11,13 @@ All notable changes to this project will be documented in this file.
 - **Fixed** for any bug fixes.
 - **Security** in case of vulnerabilities.
 
+## 0.4.0 - 31 October 2023
+
+### Added
+
+- Local storage for chain configurations.
+- Default RPC's for listed chains.
+
 ---
 
 ## 0.3.0 - 10 October 2023
