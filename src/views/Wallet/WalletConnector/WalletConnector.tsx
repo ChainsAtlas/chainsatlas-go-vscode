@@ -10,13 +10,13 @@ import { ReactElement, useCallback, useEffect, useState } from "react";
 import { vscodeApi } from "..";
 import { WalletCommand } from "../../../enums";
 import { isValidChain } from "../../../typeguards";
-import type { Chain, ChainUpdateStatus, ValidChain } from "../../../types";
+import type { Chain, ChainUpdateStatus } from "../../../types";
 import { AddChainForm } from "./AddChainForm/AddChainForm";
 import { EditChainForm } from "./EditChainForm/EditChainForm";
 
 interface IWalletConnector {
   chainUpdateStatus?: ChainUpdateStatus;
-  chains?: (Chain | ValidChain)[];
+  chains?: Chain[];
   connected: boolean;
   showWalletDataCallback: (show: boolean) => void;
   uri?: string;
@@ -36,11 +36,9 @@ export const WalletConnector = ({
   const [displayQRCode, setDisplayQRCode] = useState<boolean>(false);
   const [isAddingChain, setIsAddingChain] = useState<boolean>(false);
   const [isEditingChain, setIsEditingChain] = useState<boolean>(false);
-  const [selectedChain, setSelectedChain] = useState<
-    Chain | ValidChain | undefined
-  >();
+  const [selectedChain, setSelectedChain] = useState<Chain | undefined>();
 
-  const chainSaveCallback = (chain: ValidChain) => {
+  const chainSaveCallback = (chain: Chain) => {
     setSelectedChain(chain);
     setAllowConnect(true);
     showWalletDataCallback(true);
@@ -170,8 +168,7 @@ export const WalletConnector = ({
           </div>
         ) : null}
       </div>
-      {(isEditingChain || (!isAddingChain && !isValidChain(selectedChain))) &&
-      selectedChain ? (
+      {isEditingChain && isValidChain(selectedChain) ? (
         <EditChainForm
           chain={selectedChain}
           loading={chainUpdateStatus === "updating" ? true : false}

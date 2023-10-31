@@ -60,7 +60,7 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
     reporter.sendTelemetryEvent(TelemetryEventName.EXTENSION_ACTIVATION);
 
     const provider = await UniversalProvider.init(PROVIDER_OPTIONS);
-    const client = new Client(provider);
+    const client = new Client(provider, context.globalState);
     const api = new Api();
 
     init(client, api, context);

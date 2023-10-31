@@ -6,13 +6,13 @@ import { ReactElement, useEffect, useState } from "react";
 import { vscodeApi } from "../..";
 import { WalletCommand } from "../../../../enums";
 import { isValidChain } from "../../../../typeguards";
-import type { Chain, ValidChain } from "../../../../types";
+import type { Chain } from "../../../../types";
 
 interface IEditChainForm {
-  chain: Chain | ValidChain;
+  chain: Chain;
   loading: boolean;
   onCancel?: () => void;
-  saveCallback: (chain: ValidChain) => void;
+  saveCallback: (chain: Chain) => void;
 }
 
 export const EditChainForm = ({
@@ -21,15 +21,13 @@ export const EditChainForm = ({
   onCancel,
   saveCallback,
 }: IEditChainForm): ReactElement => {
-  const [namespace, setNamespace] = useState<
-    ValidChain["namespace"] | undefined
-  >();
-  const [id, setId] = useState<ValidChain["id"] | undefined>();
+  const [namespace, setNamespace] = useState<Chain["namespace"] | undefined>();
+  const [id, setId] = useState<Chain["id"] | undefined>();
   const [transactionExplorerUrl, setTransactionExplorerUrl] = useState<
-    ValidChain["transactionExplorerUrl"] | undefined
+    Chain["transactionExplorerUrl"] | undefined
   >();
   const [httpRpcUrl, setHttpRpcUrl] = useState<
-    ValidChain["httpRpcUrl"] | undefined
+    Chain["httpRpcUrl"] | undefined
   >();
 
   const isValid = (): boolean => {
@@ -39,12 +37,12 @@ export const EditChainForm = ({
       id,
       transactionExplorerUrl,
       httpRpcUrl,
-    } as ValidChain;
+    } as Chain;
 
     return isValidChain(newChain);
   };
 
-  const onSave = (chain: ValidChain): void => {
+  const onSave = (chain: Chain): void => {
     vscodeApi.postMessage({
       command: WalletCommand.EDIT_CHAIN,
       data: JSON.stringify(chain),
@@ -56,7 +54,7 @@ export const EditChainForm = ({
     setNamespace(chain.namespace);
     setId(chain.id);
     setTransactionExplorerUrl(chain.transactionExplorerUrl);
-    setHttpRpcUrl((chain as ValidChain).httpRpcUrl || undefined);
+    setHttpRpcUrl((chain as Chain).httpRpcUrl || undefined);
   }, [chain]);
 
   return (
@@ -129,7 +127,7 @@ export const EditChainForm = ({
               name: chain.name,
               transactionExplorerUrl,
               httpRpcUrl,
-            } as ValidChain)
+            } as Chain)
           }
         >
           {loading ? "Loading..." : "Save"}

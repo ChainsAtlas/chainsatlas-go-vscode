@@ -1,6 +1,6 @@
-import type { ValidChain } from "../types";
+import type { Chain } from "../types";
 
-export const isValidChain = (obj: any): obj is ValidChain => {
+export const isValidChain = (obj: any): obj is Chain => {
   return (
     typeof obj === "object" &&
     obj !== null &&

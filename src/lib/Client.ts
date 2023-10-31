@@ -1,5 +1,6 @@
 import UniversalProvider from "@walletconnect/universal-provider";
 import EventEmitter from "events";
+import { ExtensionContext } from "vscode";
 import type Web3 from "web3";
 import {
   ExecutorModel,
@@ -9,32 +10,14 @@ import {
 } from "../models";
 
 /**
- * `ChainsAtlasGO` is the primary class for the ChainsAtlas GO extension.
- *
- * This class manages the core functionalities of the extension, including:
- * - Models: Represents the application's state and logic for different
- *   components like the executor, transaction history, virtualization units,
- *   and the user's wallet.
- * - Controllers: Provides the logic to interact with the corresponding models,
- *   facilitating operations and user interactions.
- * - Views: Manages different views within the extension, including rendering
- *   and handling interactions.
- * - Provider: Facilitates blockchain interactions, transactions, and other
- *   related operations using the UniversalProvider.
- * - ViewStateGenerator: Utility for generating the state of views based on
- *   model data.
- *
- * The class also provides methods to initialize the components, add views,
- * dispose of resources, and synchronize views. The constructor takes an
- * extension context as its only argument, ensuring that the instance has the
- * necessary context to operate within the VS Code environment.
+ * `Client` is the high order class that initializes all models and disposes
+ * of them correctly on deactivation.
  *
  * @class
  *
  * @example
- * const client = new ChainsAtlasGOClient(extensionContext);
- * await client.init();
- * client.addView(someView);
+ * const provider = await UniversalProvider.init(PROVIDER_OPTIONS);
+ * const client = new Client(provider, extensionContext.globalState);
  */
 export class Client extends EventEmitter {
   public executor: ExecutorModel;
@@ -47,13 +30,16 @@ export class Client extends EventEmitter {
 
   public web3?: Web3;
 
-  constructor(public provider: UniversalProvider) {
+  constructor(
+    public provider: UniversalProvider,
+    private readonly _globalState: ExtensionContext["globalState"],
+  ) {
     super();
 
     this.executor = new ExecutorModel();
     this.transactionHistory = new TransactionHistoryModel();
     this.virtualizationUnit = new VirtualizationUnitModel();
-    this.wallet = new WalletModel(provider);
+    this.wallet = new WalletModel(provider, this._globalState);
 
     provider.on("display_uri", (uri: string) => {
       this.wallet.uri = uri;

@@ -3,7 +3,7 @@ import { ERROR_MESSAGE } from "../constants";
 import { TelemetryEventName, ViewType } from "../enums";
 import { reporter } from "../extension";
 import { isValidChain } from "../typeguards";
-import type { ValidChain, ViewMessageHandler } from "../types";
+import type { Chain, ViewMessageHandler } from "../types";
 import { withErrorHandling } from "../utils";
 
 export const addChain: ViewMessageHandler = async (
@@ -25,7 +25,7 @@ export const addChain: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
-    const addedChain = JSON.parse(data) as ValidChain;
+    const addedChain = JSON.parse(data) as Chain;
 
     if (!isValidChain(addedChain)) {
       client.wallet.chainUpdateStatus = undefined;
@@ -35,16 +35,12 @@ export const addChain: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
-    client.wallet.chain = addedChain;
-    client.wallet.chains.push(addedChain);
-    client.wallet.chains.sort((a, b) => a.name.localeCompare(b.name));
-    client.wallet.chainUpdateStatus = "done";
-    client.wallet.uri = undefined;
+    client.wallet.addChain(addedChain);
 
     reporter.sendTelemetryEvent(TelemetryEventName.ADD_CHAIN, {
-      name: client.wallet.chain.name,
-      namespace: client.wallet.chain.namespace,
-      id: client.wallet.chain.id.toString(),
+      name: addedChain.name,
+      namespace: addedChain.namespace,
+      id: addedChain.id.toString(),
     });
 
     await update(ViewType.WALLET);
@@ -174,7 +170,7 @@ export const editChain: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
-    const updatedChain = JSON.parse(data) as ValidChain;
+    const updatedChain = JSON.parse(data) as Chain;
 
     if (!isValidChain(updatedChain)) {
       client.wallet.chainUpdateStatus = undefined;
@@ -196,15 +192,12 @@ export const editChain: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.CHAIN_NOT_FOUND);
     }
 
-    client.wallet.chain = updatedChain;
-    client.wallet.chains[chainIndex] = updatedChain;
-    client.wallet.chainUpdateStatus = "done";
-    client.wallet.uri = undefined;
+    client.wallet.editChain(updatedChain, chainIndex);
 
     reporter.sendTelemetryEvent(TelemetryEventName.EDIT_CHAIN, {
-      name: client.wallet.chain.name,
-      namespace: client.wallet.chain.namespace,
-      id: client.wallet.chain.id.toString(),
+      name: updatedChain.name,
+      namespace: updatedChain.namespace,
+      id: updatedChain.id.toString(),
     });
 
     await update(ViewType.WALLET);

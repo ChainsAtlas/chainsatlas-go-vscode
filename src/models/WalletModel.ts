@@ -1,10 +1,12 @@
 import type { ProviderAccounts } from "@walletconnect/universal-provider";
 // eslint-disable-next-line max-len
 import type { UniversalProvider } from "@walletconnect/universal-provider/dist/types/UniversalProvider";
+import { ExtensionContext } from "vscode";
 import * as chains from "../chains";
 import { EIP155_EVENTS, EIP155_METHODS, ERROR_MESSAGE } from "../constants";
 import { ChainNamespace } from "../enums";
-import type { Chain, ChainUpdateStatus, ValidChain } from "../types";
+import { isValidChain } from "../typeguards";
+import type { Chain, ChainUpdateStatus } from "../types";
 
 /**
  * Represents a model for managing the wallet connection, including chain and
@@ -21,7 +23,7 @@ export class WalletModel {
   /**
    * The list of supported chains.
    */
-  public chains: (Chain | ValidChain)[];
+  public chains: Chain[];
 
   /**
    * The list of accounts available in the connected wallet provider.
@@ -31,10 +33,10 @@ export class WalletModel {
   /**
    * Represents the current chain or network the wallet is connected to.
    */
-  public chain?: ValidChain;
+  public chain?: Chain;
 
   /**
-   * The address of the currently selected account in the connected wallet.
+   * The address of the selected account in the connected wallet.
    */
   public currentAccount?: string;
 
@@ -59,8 +61,11 @@ export class WalletModel {
    * @param _provider
    * An instance of UniversalProvider.
    */
-  constructor(private readonly _provider: UniversalProvider) {
-    this.chains = Object.values(chains);
+  constructor(
+    private readonly _provider: UniversalProvider,
+    private readonly _globalState: ExtensionContext["globalState"],
+  ) {
+    this.chains = this._loadChains();
     this.connected = false;
   }
 
@@ -77,14 +82,10 @@ export class WalletModel {
    * Throws an error if the chain ID is invalid or the connection fails.
    */
   public async connect(id: number): Promise<void> {
-    const chain = this.chains.find((c) => c.id === id) as ValidChain;
+    const chain = this.chains.find((c) => c.id === id);
 
     if (!chain) {
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN_ID);
-    }
-
-    if (!chain.httpRpcUrl) {
-      throw new Error(ERROR_MESSAGE.INVALID_CHAIN_RPC);
     }
 
     // important to sync correct state when provider emits uri
@@ -133,5 +134,74 @@ export class WalletModel {
     this.currentAccount = undefined;
     this.connected = false;
     this.uri = undefined;
+  }
+
+  /**
+   * Adds a new chain to the chain list and sets the new chain as the
+   * active chain.
+   *
+   * @param chain
+   * The new chain object to be added.
+   */
+  public addChain(chain: Chain): void {
+    this.chain = chain;
+    this.chains.push(chain);
+    this.chains.sort((a, b) => a.name.localeCompare(b.name));
+    this.chainUpdateStatus = "done";
+    this.uri = undefined;
+    this._globalState.update("chains", this.chains);
+  }
+
+  /**
+   * Updates chain and chain list and sets the updated chain as the
+   * active chain.
+   *
+   * @param chain
+   * The updated chain object to be added.
+   *
+   * @param index
+   * The index of the chain to update.
+   */
+  public editChain(chain: Chain, index: number): void {
+    this.chain = chain;
+    this.chains[index] = chain;
+    this.chains.sort((a, b) => a.name.localeCompare(b.name));
+    this.chainUpdateStatus = "done";
+    this.uri = undefined;
+    this._globalState.update("chains", this.chains);
+  }
+
+  /**
+   * Loads chains saved in global state if any, then adds default chains
+   * that aren't duplicates of the chains saved in state before returning
+   * the loaded chains.
+   *
+   * @returns
+   * Array with combination of unique global state and default chains.
+   */
+  private _loadChains(): Chain[] {
+    const loadedChains: Chain[] = [];
+
+    const stateChains = this._globalState.get("chains", []);
+
+    for (const chain of stateChains) {
+      if (isValidChain(chain)) {
+        loadedChains.push(chain);
+      }
+    }
+
+    for (const chain of Object.values(chains)) {
+      const found = loadedChains.find(
+        (c) => c.namespace === chain.namespace && c.id === chain.id,
+      );
+
+      if (!found) {
+        loadedChains.push(chain);
+      }
+    }
+
+    loadedChains.sort((a, b) => a.name.localeCompare(b.name));
+
+    return loadedChains;
   }
 }

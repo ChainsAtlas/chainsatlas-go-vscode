@@ -6,12 +6,12 @@ import { ReactElement, useState } from "react";
 import { vscodeApi } from "../..";
 import { WalletCommand } from "../../../../enums";
 import { isValidChain } from "../../../../typeguards";
-import type { ValidChain } from "../../../../types";
+import type { Chain } from "../../../../types";
 
 interface IAddChainForm {
   loading: boolean;
   onCancel: () => void;
-  saveCallback: (chain: ValidChain) => void;
+  saveCallback: (chain: Chain) => void;
 }
 
 export const AddChainForm = ({
@@ -19,16 +19,16 @@ export const AddChainForm = ({
   onCancel,
   saveCallback,
 }: IAddChainForm): ReactElement => {
-  const [namespace, setNamespace] = useState<
-    ValidChain["namespace"] | undefined
-  >("eip155");
-  const [id, setId] = useState<ValidChain["id"] | undefined>();
-  const [name, setName] = useState<ValidChain["name"] | undefined>();
+  const [namespace, setNamespace] = useState<Chain["namespace"] | undefined>(
+    "eip155",
+  );
+  const [id, setId] = useState<Chain["id"] | undefined>();
+  const [name, setName] = useState<Chain["name"] | undefined>();
   const [transactionExplorerUrl, setTransactionExplorerUrl] = useState<
-    ValidChain["transactionExplorerUrl"] | undefined
+    Chain["transactionExplorerUrl"] | undefined
   >();
   const [httpRpcUrl, setHttpRpcUrl] = useState<
-    ValidChain["httpRpcUrl"] | undefined
+    Chain["httpRpcUrl"] | undefined
   >();
 
   const isValid = (): boolean => {
@@ -38,12 +38,12 @@ export const AddChainForm = ({
       name,
       transactionExplorerUrl,
       httpRpcUrl,
-    } as ValidChain;
+    } as Chain;
 
     return isValidChain(newChain);
   };
 
-  const onSave = (chain: ValidChain): void => {
+  const onSave = (chain: Chain): void => {
     vscodeApi.postMessage({
       command: WalletCommand.ADD_CHAIN,
       data: JSON.stringify(chain),
@@ -127,7 +127,7 @@ export const AddChainForm = ({
               name,
               transactionExplorerUrl,
               httpRpcUrl,
-            } as ValidChain)
+            } as Chain)
           }
         >
           {loading ? "Loading..." : "Save"}
