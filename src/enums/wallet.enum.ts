@@ -13,7 +13,6 @@ export enum ChainNamespace {
  */
 export enum WalletCommand {
   ADD_CHAIN = "addChain",
-  CHANGE_ACCOUNT = "changeAccount",
   CONNECT = "connect",
   DISCONNECT = "disconnect",
   EDIT_CHAIN = "editChain",

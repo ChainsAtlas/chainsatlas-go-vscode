@@ -26,7 +26,7 @@ export type Chain = {
   id: number;
   name: string;
   httpRpcUrl: string;
-  transactionExplorerUrl: string;
+  blockExplorerUrl: string;
 };
 
 /**
@@ -36,13 +36,7 @@ export type Chain = {
  * The status is emitted to their respective controllers so they can update
  * their respective views accordingly.
  */
-export type ContractTransactionStatus =
-  | "confirmation"
-  | "error"
-  | "receipt"
-  | "sending"
-  | "sent"
-  | "transactionHash";
+export type ContractTransactionStatus = "error" | "sending" | "sent";
 
 /**
  * Represents all command enums to facilitate the {@link Controller} management

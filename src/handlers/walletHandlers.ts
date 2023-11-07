@@ -1,8 +1,8 @@
-import Web3 from "web3";
+import { BrowserProvider } from "ethers";
 import { ERROR_MESSAGE } from "../constants";
 import { TelemetryEventName, ViewType } from "../enums";
 import { reporter } from "../extension";
-import { isValidChain } from "../typeguards";
+import { isChain } from "../typeguards";
 import type { Chain, ViewMessageHandler } from "../types";
 import { withErrorHandling } from "../utils";
 
@@ -27,7 +27,7 @@ export const addChain: ViewMessageHandler = async (
 
     const addedChain = JSON.parse(data) as Chain;
 
-    if (!isValidChain(addedChain)) {
+    if (!isChain(addedChain)) {
       client.wallet.chainUpdateStatus = undefined;
 
       await update(ViewType.WALLET);
@@ -51,35 +51,6 @@ export const addChain: ViewMessageHandler = async (
   })();
 };
 
-export const changeAccount: ViewMessageHandler = (
-  data,
-  update,
-  client,
-  _api,
-) => {
-  withErrorHandling(() => {
-    if (!data) {
-      throw new Error(ERROR_MESSAGE.INVALID_ACCOUNT);
-    }
-
-    const account = data;
-
-    if (account && client.wallet.accounts?.includes(account)) {
-      client.wallet.currentAccount = account;
-      client.transactionHistory.rows = [];
-
-      update(
-        ViewType.WALLET,
-        ViewType.VIRTUALIZATION_UNIT,
-        ViewType.EXECUTOR,
-        ViewType.TRANSACTION_HISTORY,
-      );
-    } else {
-      throw new Error(ERROR_MESSAGE.INVALID_ACCOUNT);
-    }
-  })();
-};
-
 export const connect: ViewMessageHandler = async (
   data,
   update,
@@ -99,7 +70,12 @@ export const connect: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
-    client.web3 = new Web3(client.provider);
+    if (!client.wallet.connected) {
+      throw new Error(ERROR_MESSAGE.ERROR_CONNECTING_WALLET);
+    }
+
+    client.provider = new BrowserProvider(client.walletConnectProvider);
+    client.wallet.account = (await client.provider.getSigner()).address;
     client.virtualizationUnit.contractTransactionStatus = undefined;
     client.virtualizationUnit.contracts = [];
     client.virtualizationUnit.currentContract = undefined;
@@ -128,8 +104,8 @@ export const disconnect: ViewMessageHandler = async (
   _api,
 ) => {
   withErrorHandling(async () => {
-    if (client.web3) {
-      client.web3.currentProvider?.disconnect();
+    if (client.provider) {
+      client.provider.destroy();
     }
 
     if (client.wallet.connected) {
@@ -172,7 +148,7 @@ export const editChain: ViewMessageHandler = async (
 
     const updatedChain = JSON.parse(data) as Chain;
 
-    if (!isValidChain(updatedChain)) {
+    if (!isChain(updatedChain)) {
       client.wallet.chainUpdateStatus = undefined;
 
       await update(ViewType.WALLET);

@@ -1,4 +1,3 @@
-import type { ProviderAccounts } from "@walletconnect/universal-provider";
 import type { WalletModel } from "../models";
 import type { WalletView } from "../views/Wallet";
 import type { AuthStatus } from "./auth.type";
@@ -14,12 +13,12 @@ export type ChainUpdateStatus = "done" | "updating";
  * Represents the state of the {@link WalletView}
  */
 export type WalletViewState = {
-  accounts?: ProviderAccounts;
+  account?: string;
   authStatus?: AuthStatus;
   balance: string;
+  chain: Chain;
   chainUpdateStatus?: ChainUpdateStatus;
   chains: Chain[];
-  currentAccount?: string;
   connected: boolean;
   uri?: string;
 };

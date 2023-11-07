@@ -9,12 +9,13 @@ import { QRCodeSVG } from "qrcode.react";
 import { ReactElement, useCallback, useEffect, useState } from "react";
 import { vscodeApi } from "..";
 import { WalletCommand } from "../../../enums";
-import { isValidChain } from "../../../typeguards";
+import { isChain } from "../../../typeguards";
 import type { Chain, ChainUpdateStatus } from "../../../types";
 import { AddChainForm } from "./AddChainForm/AddChainForm";
 import { EditChainForm } from "./EditChainForm/EditChainForm";
 
 interface IWalletConnector {
+  chain?: Chain;
   chainUpdateStatus?: ChainUpdateStatus;
   chains?: Chain[];
   connected: boolean;
@@ -23,20 +24,21 @@ interface IWalletConnector {
 }
 
 export const WalletConnector = ({
+  chain,
   chainUpdateStatus,
   chains,
   connected,
   showWalletDataCallback,
   uri,
 }: IWalletConnector): ReactElement => {
-  const [allowConnect, setAllowConnect] = useState<boolean>(false);
+  const [allowConnect, setAllowConnect] = useState<boolean>(true);
   const [selectedChainUri, setSelectedChainUri] = useState<string | undefined>(
     uri,
   );
   const [displayQRCode, setDisplayQRCode] = useState<boolean>(false);
   const [isAddingChain, setIsAddingChain] = useState<boolean>(false);
   const [isEditingChain, setIsEditingChain] = useState<boolean>(false);
-  const [selectedChain, setSelectedChain] = useState<Chain | undefined>();
+  const [selectedChain, setSelectedChain] = useState<Chain | undefined>(chain);
 
   const chainSaveCallback = (chain: Chain) => {
     setSelectedChain(chain);
@@ -89,10 +91,8 @@ export const WalletConnector = ({
   };
 
   useEffect(() => {
-    if (!selectedChain && chains && chains.length > 0) {
-      const defaultChain = chains.find((c) => c.id === 11_155_111) || chains[0];
-
-      setSelectedChain(defaultChain);
+    if (uri) {
+      setSelectedChainUri(uri);
     }
 
     if (chainUpdateStatus === "done") {
@@ -100,31 +100,30 @@ export const WalletConnector = ({
       setIsEditingChain(false);
     }
 
-    if (isValidChain(selectedChain)) {
-      if (allowConnect && chainUpdateStatus !== "updating") {
-        connect(selectedChain.id);
-        setAllowConnect(false);
-        setDisplayQRCode(true);
-      }
-    }
-
-    if (
-      !isValidChain(selectedChain) ||
-      (isValidChain(selectedChain) && connected)
-    ) {
+    if (connected) {
       setDisplayQRCode(false);
-    }
 
-    if (uri) {
-      setSelectedChainUri(uri);
+      if (!isAddingChain && !isEditingChain) {
+        showWalletDataCallback(true);
+      }
+    } else if (
+      isChain(selectedChain) &&
+      allowConnect &&
+      chainUpdateStatus !== "updating"
+    ) {
+      connect(selectedChain.id);
+      setAllowConnect(false);
+      setDisplayQRCode(true);
     }
   }, [
     allowConnect,
     chainUpdateStatus,
-    chains,
     connect,
     connected,
+    isAddingChain,
+    isEditingChain,
     selectedChain,
+    showWalletDataCallback,
     uri,
   ]);
 
@@ -149,7 +148,7 @@ export const WalletConnector = ({
                 </VSCodeOption>
               ))}
             </VSCodeDropdown>
-            {isValidChain(selectedChain) ? (
+            {isChain(selectedChain) ? (
               <VSCodeButton
                 appearance="secondary"
                 className="chain-action-button"
@@ -168,11 +167,11 @@ export const WalletConnector = ({
           </div>
         ) : null}
       </div>
-      {isEditingChain && isValidChain(selectedChain) ? (
+      {isEditingChain && isChain(selectedChain) ? (
         <EditChainForm
           chain={selectedChain}
           loading={chainUpdateStatus === "updating" ? true : false}
-          onCancel={isValidChain(selectedChain) ? onFormCancel : undefined}
+          onCancel={isChain(selectedChain) ? onFormCancel : undefined}
           saveCallback={chainSaveCallback}
         />
       ) : null}
@@ -183,7 +182,7 @@ export const WalletConnector = ({
           saveCallback={chainSaveCallback}
         />
       ) : null}
-      {displayQRCode ? (
+      {displayQRCode && !isEditingChain && !isAddingChain ? (
         <>
           <div className="qrcode-container">
             {selectedChainUri ? (

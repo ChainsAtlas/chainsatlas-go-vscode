@@ -1,9 +1,8 @@
+import { BrowserProvider, Contract } from "ethers";
 import EventEmitter from "events";
-import type Web3 from "web3";
-import type { AbiFragment, AbiParameter, Contract, Transaction } from "web3";
 import { ERROR_MESSAGE, V_UNIT_ABI } from "../constants";
 import { ExecutorModelEvent } from "../enums";
-import {
+import type {
   BytecodeCompilerStatus,
   BytecodeStructure,
   ContractTransactionStatus,
@@ -15,64 +14,45 @@ import {
  * execute bytecode contracts. It encapsulates the logic to handle bytecode
  * compilation, gas estimation, and contract execution.
  *
- * This model primarily interacts with Ethereum-based operations using Web3.js
+ * This model primarily interacts with Ethereum-based operations using ethers.js
  * and emits events to signal different stages or statuses of these operations.
  *
  * @emits
- * {ExecutorModelEvent.WAITING_BYTECODE_STRUCTURE} Emitted when waiting for a
- * bytecode structure.
- *
- * @emits
- * {ExecutorModelEvent.SYNC} Emitted to synchronize or update any listeners of
+ * {ExecutorModelEvent.UPDATE} Emitted to synchronize or update any listeners of
  * state changes.
  *
  * @emits
- * {ExecutorModelEvent.WAITING_GAS} Emitted when waiting for gas estimation.
+ * {ExecutorModelEvent.TRANSACTION_OUTPUT} Emitted when bytecode execution
+ * output is received.
  *
  * @emits
- * {ExecutorModelEvent.BYTECODE_STRUCTURE_RECEIVED} Emitted when a bytecode
- * structure is received.
- *
- * @emits
- * {ExecutorModelEvent.GAS_RECEIVED} Emitted when gas amount is received.
- *
- * @property {BytecodeCompilerStatus | undefined} compilerStatus
- * Status of the bytecode compiler.
- *
- * @property {ContractTransactionStatus | undefined} contractTransactionStatus
- * Status of the contract transaction.
- *
- * @property {ExecutorFile | undefined} currentFile
- * Current file being processed.
- *
- * @property {boolean} estimating
- * Flag indicating if gas estimation is in progress.
- *
- * @property {string | undefined} gasEstimate
- * Estimated gas required for execution.
- *
- * @property {number | undefined} nargs
- * Number of arguments expected by the bytecode.
- *
- * @property {Bytes | undefined} output
- * The output data after executing the bytecode.
- *
- * @property {Bytes | undefined} transactionHash
- * Hash of the transaction on the Ethereum network.
- *
- * @property {ExecutorFile | undefined} userFile
- * User provided file for execution.
- *
- * @property {BytecodeStructure | undefined} _bytecodeStructure
- * Internal representation of the bytecode structure.
+ * {ExecutorModelEvent.TRANSACTION_ERROR} Emitted when bytecode
+ * execution throws an error.
  *
  * @example
  * const executor = new ExecutorModel();
- * executor.on(ExecutorModelEvent.SYNC, () => {
+ * executor.on(ExecutorModelEvent.UPDATE, () => {
  *     // state synchronization logic
  * });
  */
 export class ExecutorModel extends EventEmitter {
+  /**
+   * Bytecode input to be passed to the virtualization unit
+   */
+  public bytecodeInput?: string;
+
+  /**
+   * Holds the structure of the bytecode to be executed.
+   *
+   * The structure includes information required to correctly compile and
+   * execute the bytecode.
+   *
+   * - `undefined` means the bytecode structure has not been determined yet.
+   * - Otherwise, it's based on the {@link BytecodeStructure} type, which may
+   *   include fields like `key`, `nargs`, and the actual `bytecode`.
+   */
+  public bytecodeStructure?: BytecodeStructure;
+
   /**
    * Represents the current status of the bytecode compiler.
    *
@@ -92,7 +72,13 @@ export class ExecutorModel extends EventEmitter {
    */
   public contractTransactionStatus?: ContractTransactionStatus;
 
-  public currentContractInstance?: Contract<typeof V_UNIT_ABI>;
+  /**
+   * Represents the current virtualization unit contract instance.
+   *
+   * - `undefined` indicates that there is no contract instance.
+   * - Otherwise the value will be a {@link Contract} object.
+   */
+  public currentContractInstance?: Contract;
 
   /**
    * Holds the current file being processed for bytecode compilation and
@@ -104,8 +90,6 @@ export class ExecutorModel extends EventEmitter {
    *   on the {@link ExecutorFile} type.
    */
   public currentFile?: ExecutorFile;
-
-  public currentTransaction?: Transaction;
 
   /**
    * A boolean flag indicating if the gas estimation process is ongoing.
@@ -141,18 +125,6 @@ export class ExecutorModel extends EventEmitter {
   public userFile?: ExecutorFile;
 
   /**
-   * Holds the structure of the bytecode to be executed.
-   *
-   * The structure includes information required to correctly compile and
-   * execute the bytecode.
-   *
-   * - `undefined` means the bytecode structure has not been determined yet.
-   * - Otherwise, it's based on the {@link BytecodeStructure} type, which may
-   *   include fields like `key`, `nargs`, and the actual `bytecode`.
-   */
-  public bytecodeStructure?: BytecodeStructure;
-
-  /**
    * Constructs a new instance of the ExecutorModel class.
    *
    * Initializes the base EventEmitter class.
@@ -161,26 +133,43 @@ export class ExecutorModel extends EventEmitter {
     super();
   }
 
+  /**
+   * Estimates the gas required for executing the bytecode with the provided
+   * input.
+   *
+   * This method calculates the estimated gas required to execute the bytecode
+   * on the current blockchain using the specified input data and virtualization
+   * unit contract.
+   *
+   * @param {string} input
+   * The input data representing the bytecode.
+   *
+   * @param {string} vUnitAddress
+   * The address of the virtualization unit contract.
+   *
+   * @param {BrowserProvider} provider
+   * The ethers.js provider for interacting with the current blockchain.
+   *
+   * @returns {Promise<void>}
+   * A Promise that resolves when the gas estimation is complete.
+   *
+   * @emits {@link ExecutorModelEvent.UPDATE}
+   * Emitted to synchronize or update any listeners of state changes.
+   */
   public async estimateGas(
     input: string,
-    from: string,
     vUnitAddress: string,
-    web3: Web3,
+    provider: BrowserProvider,
   ): Promise<void> {
-    this.currentContractInstance = new web3.eth.Contract(
-      V_UNIT_ABI,
+    this.currentContractInstance = new Contract(
       vUnitAddress,
+      V_UNIT_ABI,
+      await provider.getSigner(),
     );
-
-    const call = this.currentContractInstance.methods.runBytecode(input);
-
-    this.gasEstimate = (await call.estimateGas({ from })).toString();
-
-    this.currentTransaction = {
-      from,
-      to: this.currentContractInstance.options.address,
-      data: call.encodeABI(),
-    };
+    this.gasEstimate = (
+      await this.currentContractInstance.runBytecode.estimateGas(input)
+    ).toString();
+    this.bytecodeInput = input;
   }
 
   /**
@@ -191,17 +180,8 @@ export class ExecutorModel extends EventEmitter {
    * transaction. It also handles various transaction events like sending,
    * confirmation, and errors.
    *
-   * @param args
-   * An array of arguments required by the bytecode.
-   *
-   * @param from
-   * The Ethereum address from which the transaction is sent.
-   *
-   * @param vUnitAddress
-   * The Ethereum address of the virtual unit contract.
-   *
-   * @param web3
-   * An instance of the Web3 library to interact with the Ethereum blockchain.
+   * @param gasLimit
+   * The gas limit in wei to be used to deploy the contract transaction.
    *
    * @returns
    * A promise that resolves once the bytecode has been executed.
@@ -211,22 +191,20 @@ export class ExecutorModel extends EventEmitter {
    * - Throws an error if there is any issue with the transaction or the
    *   returned data is invalid.
    *
-   * @emits ExecutorModelEvent.SYNC
+   * @emits {@link ExecutorModelEvent.UPDATE}
    * Emitted to indicate synchronization with the current state.
    *
-   * @emits ExecutorModelEvent.WAITING_GAS
-   * Emitted when the system is waiting for the gas estimate.
+   * @emits {@link ExecutorModelEvent.TRANSACTION_OUTPUT}
+   * Emitted when the bytecode execution output is received.
+   *
+   * @emits {@link ExecutorModelEvent.TRANSACTION_ERROR}
+   * Emitted when there is an error with the contract transaction.
    *
    * @example
-   * executorModel.runBytecode(
-   *  args,
-   *  fromAddress,
-   *  contractAddress,
-   *  web3Instance
-   * );
+   * executorModel.runBytecode(gasLimit);
    */
-  public async runBytecode(gas: string, web3: Web3): Promise<void> {
-    if (!this.currentTransaction) {
+  public async runBytecode(gasLimit: string): Promise<void> {
+    if (!this.bytecodeInput) {
       throw new Error(ERROR_MESSAGE.INVALID_ARGUMENTS);
     }
 
@@ -234,65 +212,57 @@ export class ExecutorModel extends EventEmitter {
       throw new Error(ERROR_MESSAGE.INVALID_VIRTUALIZATION_UNIT_CONTRACT);
     }
 
-    await web3.eth
-      .sendTransaction({ ...this.currentTransaction, gas })
-      .on("sending", () => {
-        this.contractTransactionStatus = "sending";
-        this.emit(ExecutorModelEvent.UPDATE);
-      })
-      .on("sent", () => {
-        this.contractTransactionStatus = "sent";
-        this.emit(ExecutorModelEvent.UPDATE);
-      })
-      .on("confirmation", async ({ receipt }) => {
-        this.contractTransactionStatus = undefined;
-        this.emit(ExecutorModelEvent.UPDATE);
+    try {
+      this.contractTransactionStatus = "sending";
+      this.emit(ExecutorModelEvent.UPDATE);
 
-        const { logs, transactionHash } = receipt;
+      const txResponse = await this.currentContractInstance.runBytecode(
+        this.bytecodeInput,
+        { gasLimit },
+      );
 
-        const eventAbi =
-          this.currentContractInstance?.options.jsonInterface.find(
-            (jsonInterface) =>
-              jsonInterface.type === "event" &&
-              (
-                jsonInterface as AbiFragment & {
-                  name: string;
-                  signature: string;
-                }
-              ).name === "ContractDeployed",
-          );
+      this.contractTransactionStatus = "sent";
+      this.emit(ExecutorModelEvent.UPDATE);
 
-        const decodedLogs = logs.map((log) => {
-          if (eventAbi && eventAbi.inputs && log.topics) {
-            const decodedLog = web3.eth.abi.decodeLog(
-              eventAbi.inputs as AbiParameter[],
-              log.data as string,
-              log.topics.slice(1) as string | string[],
-            );
-            return decodedLog;
-          }
-          return undefined;
-        });
+      const receipt = await txResponse.wait();
 
-        const bytecodeAddress = decodedLogs[0]?.bytecodeAddress;
+      this.contractTransactionStatus = undefined;
+      this.emit(ExecutorModelEvent.UPDATE);
 
-        const output = await this.currentContractInstance?.methods
-          .getRuntimeReturn(bytecodeAddress as string)
-          .call();
+      const eventFilter =
+        this.currentContractInstance.filters.ContractDeployed();
+      const eventTopicArray = await eventFilter.getTopicFilter();
 
-        if (output && transactionHash) {
-          this.emit(
-            ExecutorModelEvent.TRANSACTION_OUTPUT,
-            output,
-            transactionHash,
-          );
-        } else {
-          throw new Error(ERROR_MESSAGE.INVALID_TRANSACTION_DATA);
-        }
-      })
-      .on("error", (error) => {
-        this.contractTransactionStatus = "error";
-        this.emit(ExecutorModelEvent.TRANSACTION_ERROR, error);
-      });
+      if (!eventTopicArray || !eventTopicArray.length) {
+        throw Error("Could not find event topic.");
+      }
+
+      const logs = receipt.logs.filter((log: any) =>
+        log.topics.includes(eventTopicArray[0]),
+      );
+
+      const decodedLogs = logs.map(
+        (log: any) => this.currentContractInstance?.interface.parseLog(log),
+      );
+
+      const bytecodeAddress = decodedLogs[0]?.args?.bytecodeAddress;
+
+      if (!bytecodeAddress) {
+        throw new Error("bytecodeAddress is null or undefined");
+      }
+
+      const output = await this.currentContractInstance.getRuntimeReturn(
+        bytecodeAddress,
+      );
+
+      if (output && receipt.hash) {
+        this.emit(ExecutorModelEvent.TRANSACTION_OUTPUT, output, receipt.hash);
+      } else {
+        throw new Error(ERROR_MESSAGE.INVALID_TRANSACTION_DATA);
+      }
+    } catch (error) {
+      this.contractTransactionStatus = "error";
+      this.emit(ExecutorModelEvent.TRANSACTION_ERROR, error);
+    }
   }
 }

@@ -72,10 +72,10 @@ export const TransactionHistoryView = (): ReactElement => {
               </VSCodeDataGridCell>
             </VSCodeDataGridRow>
             {_rows.map((row) => (
-              <VSCodeDataGridRow key={row.transactionHash.toString()}>
+              <VSCodeDataGridRow key={row.txHash.toString()}>
                 <VSCodeDataGridCell grid-column="1">
-                  <VSCodeLink href={row.transactionUrl}>
-                    {row.transactionHash.toString()}
+                  <VSCodeLink href={row.txUrl}>
+                    {row.txHash.toString()}
                   </VSCodeLink>
                 </VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="2">

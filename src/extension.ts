@@ -57,10 +57,20 @@ export const reporter = new TelemetryReporter(key);
  */
 export const activate = async (context: ExtensionContext): Promise<void> => {
   withErrorHandling(async () => {
+    process.on("unhandledException", (reason) => {
+      window.showErrorMessage(`Error: ${JSON.stringify(reason)}`);
+    });
+
+    process.on("unhandledRejection", (reason) => {
+      window.showErrorMessage(`Error: ${JSON.stringify(reason)}`);
+    });
+
     reporter.sendTelemetryEvent(TelemetryEventName.EXTENSION_ACTIVATION);
 
-    const provider = await UniversalProvider.init(PROVIDER_OPTIONS);
-    const client = new Client(provider, context.globalState);
+    const walletConnectProvider = await UniversalProvider.init(
+      PROVIDER_OPTIONS,
+    );
+    const client = new Client(walletConnectProvider, context.globalState);
     const api = new Api();
 
     init(client, api, context);
@@ -86,4 +96,5 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
  */
 export const deactivate = (): void => {
   reporter.sendTelemetryEvent(TelemetryEventName.EXTENSION_DEACTIVATION);
+  process.removeAllListeners();
 };

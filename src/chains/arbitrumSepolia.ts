@@ -4,6 +4,6 @@ export const arbitrumSepolia: Chain = {
   namespace: "eip155",
   id: 421_614,
   name: "Arbitrum Sepolia",
-  httpRpcUrl: "https://arbitrum-sepolia.rpc.thirdweb.com",
-  transactionExplorerUrl: "https://sepolia-explorer.arbiscan.io/tx/{txHash}",
+  httpRpcUrl: "https://sepolia-rollup.arbitrum.io/rpc",
+  blockExplorerUrl: "https://sepolia.arbiscan.io",
 };

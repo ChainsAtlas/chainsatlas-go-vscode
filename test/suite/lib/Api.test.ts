@@ -26,7 +26,7 @@ suite("Api", () => {
     language: mockExecutorFile.extension,
     source_code: mockExecutorFile.content,
   };
-  const mockHttpError = "HTTP error! [401]: Unauthorized";
+  const mockHttpError = "Invalid username and/or password.";
 
   setup(() => {
     fetchStub = stub();

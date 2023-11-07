@@ -5,7 +5,7 @@ import {
 import { ReactElement, useEffect, useState } from "react";
 import { vscodeApi } from "../..";
 import { WalletCommand } from "../../../../enums";
-import { isValidChain } from "../../../../typeguards";
+import { isChain } from "../../../../typeguards";
 import type { Chain } from "../../../../types";
 
 interface IEditChainForm {
@@ -23,8 +23,8 @@ export const EditChainForm = ({
 }: IEditChainForm): ReactElement => {
   const [namespace, setNamespace] = useState<Chain["namespace"] | undefined>();
   const [id, setId] = useState<Chain["id"] | undefined>();
-  const [transactionExplorerUrl, setTransactionExplorerUrl] = useState<
-    Chain["transactionExplorerUrl"] | undefined
+  const [blockExplorerUrl, setBlockExplorerUrl] = useState<
+    Chain["blockExplorerUrl"] | undefined
   >();
   const [httpRpcUrl, setHttpRpcUrl] = useState<
     Chain["httpRpcUrl"] | undefined
@@ -35,11 +35,11 @@ export const EditChainForm = ({
       name: chain.name,
       namespace,
       id,
-      transactionExplorerUrl,
+      blockExplorerUrl,
       httpRpcUrl,
     } as Chain;
 
-    return isValidChain(newChain);
+    return isChain(newChain);
   };
 
   const onSave = (chain: Chain): void => {
@@ -53,7 +53,7 @@ export const EditChainForm = ({
   useEffect(() => {
     setNamespace(chain.namespace);
     setId(chain.id);
-    setTransactionExplorerUrl(chain.transactionExplorerUrl);
+    setBlockExplorerUrl(chain.blockExplorerUrl);
     setHttpRpcUrl((chain as Chain).httpRpcUrl || undefined);
   }, [chain]);
 
@@ -83,16 +83,12 @@ export const EditChainForm = ({
         <VSCodeTextField
           className="width-constraint"
           onInput={(e) =>
-            setTransactionExplorerUrl((e.target as HTMLInputElement).value)
+            setBlockExplorerUrl((e.target as HTMLInputElement).value)
           }
-          value={transactionExplorerUrl || ""}
+          value={blockExplorerUrl || ""}
         >
-          Transaction Explorer URL
+          Block Explorer URL
         </VSCodeTextField>
-        <span className="disabled-text width-constraint">
-          Required: add the {"{txHash}"} placeholder where you want the
-          transaction hash to be included.
-        </span>
       </div>
       <div className="field-container">
         <VSCodeTextField
@@ -102,10 +98,6 @@ export const EditChainForm = ({
         >
           HTTP RPC URL
         </VSCodeTextField>
-        <span className="disabled-text width-constraint">
-          Unstable RPC might cause errors. Please, use a stable RPC for a smooth
-          experience.
-        </span>
       </div>
       <div className="width-constraint action-button-container">
         {onCancel ? (
@@ -125,7 +117,7 @@ export const EditChainForm = ({
               namespace,
               id,
               name: chain.name,
-              transactionExplorerUrl,
+              blockExplorerUrl,
               httpRpcUrl,
             } as Chain)
           }

@@ -5,7 +5,7 @@ import {
 import { ReactElement, useState } from "react";
 import { vscodeApi } from "../..";
 import { WalletCommand } from "../../../../enums";
-import { isValidChain } from "../../../../typeguards";
+import { isChain } from "../../../../typeguards";
 import type { Chain } from "../../../../types";
 
 interface IAddChainForm {
@@ -24,8 +24,8 @@ export const AddChainForm = ({
   );
   const [id, setId] = useState<Chain["id"] | undefined>();
   const [name, setName] = useState<Chain["name"] | undefined>();
-  const [transactionExplorerUrl, setTransactionExplorerUrl] = useState<
-    Chain["transactionExplorerUrl"] | undefined
+  const [blockExplorerUrl, setBlockExplorerUrl] = useState<
+    Chain["blockExplorerUrl"] | undefined
   >();
   const [httpRpcUrl, setHttpRpcUrl] = useState<
     Chain["httpRpcUrl"] | undefined
@@ -36,11 +36,11 @@ export const AddChainForm = ({
       namespace,
       id,
       name,
-      transactionExplorerUrl,
+      blockExplorerUrl,
       httpRpcUrl,
     } as Chain;
 
-    return isValidChain(newChain);
+    return isChain(newChain);
   };
 
   const onSave = (chain: Chain): void => {
@@ -85,16 +85,12 @@ export const AddChainForm = ({
         <VSCodeTextField
           className="width-constraint"
           onInput={(e) =>
-            setTransactionExplorerUrl((e.target as HTMLInputElement).value)
+            setBlockExplorerUrl((e.target as HTMLInputElement).value)
           }
-          value={transactionExplorerUrl || ""}
+          value={blockExplorerUrl || ""}
         >
-          Transaction Explorer URL
+          Block Explorer URL
         </VSCodeTextField>
-        <span className="disabled-text width-constraint">
-          Required: add the {"{txHash}"} placeholder where you want the
-          transaction hash to be included.
-        </span>
       </div>
       <div className="field-container">
         <VSCodeTextField
@@ -104,10 +100,6 @@ export const AddChainForm = ({
         >
           HTTP RPC URL
         </VSCodeTextField>
-        <span className="disabled-text width-constraint">
-          Unstable RPC might cause errors. Please, use a stable RPC for a smooth
-          experience.
-        </span>
       </div>
       <div className="width-constraint action-button-container">
         <VSCodeButton
@@ -125,7 +117,7 @@ export const AddChainForm = ({
               namespace,
               id,
               name,
-              transactionExplorerUrl,
+              blockExplorerUrl,
               httpRpcUrl,
             } as Chain)
           }

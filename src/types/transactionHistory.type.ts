@@ -1,4 +1,3 @@
-import type { Bytes } from "web3";
 import type { TransactionHistoryModel } from "../models";
 import type { TransactionHistoryView } from "../views";
 
@@ -6,9 +5,9 @@ import type { TransactionHistoryView } from "../views";
  * Represents a row of the {@link TransactionHistoryModel}.
  */
 export type TransactionHistoryRow = {
-  output: Bytes;
-  transactionHash: Bytes;
-  transactionUrl: string;
+  output: string;
+  txHash: string;
+  txUrl: string;
 };
 
 /**

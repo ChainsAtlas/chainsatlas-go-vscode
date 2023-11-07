@@ -1,11 +1,10 @@
-import type { ProviderAccounts } from "@walletconnect/universal-provider";
 // eslint-disable-next-line max-len
 import type { UniversalProvider } from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import { ExtensionContext } from "vscode";
 import * as chains from "../chains";
 import { EIP155_EVENTS, EIP155_METHODS, ERROR_MESSAGE } from "../constants";
 import { ChainNamespace } from "../enums";
-import { isValidChain } from "../typeguards";
+import { isChain } from "../typeguards";
 import type { Chain, ChainUpdateStatus } from "../types";
 
 /**
@@ -21,24 +20,19 @@ import type { Chain, ChainUpdateStatus } from "../types";
  */
 export class WalletModel {
   /**
+   * The address of the selected account in the connected wallet.
+   */
+  public account?: string;
+
+  /**
    * The list of supported chains.
    */
   public chains: Chain[];
 
   /**
-   * The list of accounts available in the connected wallet provider.
-   */
-  public accounts?: ProviderAccounts;
-
-  /**
    * Represents the current chain or network the wallet is connected to.
    */
-  public chain?: Chain;
-
-  /**
-   * The address of the selected account in the connected wallet.
-   */
-  public currentAccount?: string;
+  public chain: Chain;
 
   /**
    * Indicates whether the wallet is currently connected to the provider.
@@ -58,14 +52,17 @@ export class WalletModel {
   /**
    * Initializes a new instance of the `WalletModel` class.
    *
-   * @param _provider
-   * An instance of UniversalProvider.
+   * @param _walletConnectProvider
+   * An instance of WalletConnect's UniversalProvider.
    */
   constructor(
-    private readonly _provider: UniversalProvider,
+    private readonly _walletConnectProvider: UniversalProvider,
     private readonly _globalState: ExtensionContext["globalState"],
   ) {
     this.chains = this._loadChains();
+    this.chain =
+      this.chains.find((c) => c.id === chains.ethereumSepolia.id) ||
+      chains.ethereumSepolia;
     this.connected = false;
   }
 
@@ -91,26 +88,26 @@ export class WalletModel {
     // important to sync correct state when provider emits uri
     this.chain = chain;
 
-    await this._provider.connect({
-      namespaces: {
-        [chain.namespace]: {
-          methods:
-            chain.namespace === ChainNamespace.EIP155 ? EIP155_METHODS : [],
-          chains: [`${chain.namespace}:${chain.id}`],
-          events:
-            chain.namespace === ChainNamespace.EIP155 ? EIP155_EVENTS : [],
-          rpcMap: { [chain.id]: chain.httpRpcUrl },
+    try {
+      await this._walletConnectProvider.connect({
+        namespaces: {
+          [chain.namespace]: {
+            methods:
+              chain.namespace === ChainNamespace.EIP155 ? EIP155_METHODS : [],
+            chains: [`${chain.namespace}:${chain.id}`],
+            events:
+              chain.namespace === ChainNamespace.EIP155 ? EIP155_EVENTS : [],
+            rpcMap: { [chain.id]: chain.httpRpcUrl },
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      throw error;
+    }
 
-    this.accounts = await this._provider.enable();
+    await this._walletConnectProvider.enable();
     this.chain = chain;
     this.connected = true;
-
-    if (this.accounts.length > 0) {
-      this.currentAccount = this.accounts[0];
-    }
   }
 
   /**
@@ -123,15 +120,16 @@ export class WalletModel {
    * Throws an error if the disconnection process encounters any issues.
    */
   public async disconnect(): Promise<void> {
-    if (this._provider.session?.topic) {
-      await this._provider.disconnect();
+    if (this._walletConnectProvider.session?.topic) {
+      await this._walletConnectProvider.disconnect();
     }
 
-    this._provider.abortPairingAttempt();
-    this._provider.cleanupPendingPairings({ deletePairings: true });
+    this._walletConnectProvider.abortPairingAttempt();
+    this._walletConnectProvider.cleanupPendingPairings({
+      deletePairings: true,
+    });
 
-    this.accounts = undefined;
-    this.currentAccount = undefined;
+    this.account = undefined;
     this.connected = false;
     this.uri = undefined;
   }
@@ -185,7 +183,7 @@ export class WalletModel {
     const stateChains = this._globalState.get("chains", []);
 
     for (const chain of stateChains) {
-      if (isValidChain(chain)) {
+      if (isChain(chain)) {
         loadedChains.push(chain);
       }
     }

@@ -27,19 +27,18 @@ export const vscodeApi = acquireVsCodeApi();
  * A React element that renders the wallet view.
  */
 export const WalletView = (): ReactElement => {
-  const [_accounts, setAccounts] = useState<WalletViewState["accounts"]>();
+  const [_account, setAccount] = useState<WalletViewState["account"]>();
   const [_authStatus, setAuthStatus] =
     useState<WalletViewState["authStatus"]>(undefined);
   const [_balance, setBalance] = useState<WalletViewState["balance"]>("0");
+  const [_chain, setChain] = useState<WalletViewState["chain"]>();
   const [_chainUpdateStatus, setChainUpdateStatus] =
     useState<WalletViewState["chainUpdateStatus"]>();
   const [_chains, setChains] = useState<WalletViewState["chains"]>();
   const [_connected, setConnected] =
     useState<WalletViewState["connected"]>(false);
-  const [_currentAccount, setCurrentAccount] =
-    useState<WalletViewState["currentAccount"]>();
   const [_uri, setUri] = useState<WalletViewState["uri"]>();
-  const [showWalletData, setShowWalletData] = useState<boolean>(false);
+  const [showWalletData, setShowWalletData] = useState<boolean>(true);
 
   const showWalletDataCallback = (show: boolean): void => {
     setShowWalletData(show);
@@ -47,23 +46,23 @@ export const WalletView = (): ReactElement => {
 
   const updateState = useCallback((data: WalletViewState): void => {
     const {
-      accounts,
+      account,
       authStatus,
       balance,
+      chain,
       chainUpdateStatus,
       chains,
       connected,
-      currentAccount,
       uri,
     } = data;
 
-    setAccounts(accounts);
+    setAccount(account);
     setAuthStatus(authStatus);
     setBalance(balance);
+    setChain(chain);
     setChainUpdateStatus(chainUpdateStatus);
     setChains(chains);
     setConnected(connected);
-    setCurrentAccount(currentAccount);
     setUri(uri);
   }, []);
 
@@ -82,6 +81,7 @@ export const WalletView = (): ReactElement => {
       {_authStatus === "authenticated" ? (
         <>
           <WalletConnector
+            chain={_chain}
             chainUpdateStatus={_chainUpdateStatus}
             chains={_chains}
             connected={_connected}
@@ -89,11 +89,7 @@ export const WalletView = (): ReactElement => {
             uri={_uri}
           />
           {_connected && showWalletData ? (
-            <WalletData
-              accounts={_accounts}
-              balance={_balance}
-              currentAccount={_currentAccount}
-            />
+            <WalletData account={_account} balance={_balance} />
           ) : null}
         </>
       ) : null}
