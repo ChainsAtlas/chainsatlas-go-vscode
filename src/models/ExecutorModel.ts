@@ -261,7 +261,7 @@ export class ExecutorModel extends EventEmitter {
         throw new Error(ERROR_MESSAGE.INVALID_TRANSACTION_DATA);
       }
     } catch (error) {
-      this.contractTransactionStatus = "error";
+      this.contractTransactionStatus = undefined;
       this.emit(ExecutorModelEvent.TRANSACTION_ERROR, error);
     }
   }

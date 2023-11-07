@@ -58,11 +58,11 @@ export const reporter = new TelemetryReporter(key);
 export const activate = async (context: ExtensionContext): Promise<void> => {
   withErrorHandling(async () => {
     process.on("unhandledException", (reason) => {
-      window.showErrorMessage(`Error: ${JSON.stringify(reason)}`);
+      window.showErrorMessage(`Exception: ${JSON.stringify(reason)}`);
     });
 
     process.on("unhandledRejection", (reason) => {
-      window.showErrorMessage(`Error: ${JSON.stringify(reason)}`);
+      window.showErrorMessage(`Rejection test: ${JSON.stringify(reason)}`);
     });
 
     reporter.sendTelemetryEvent(TelemetryEventName.EXTENSION_ACTIVATION);

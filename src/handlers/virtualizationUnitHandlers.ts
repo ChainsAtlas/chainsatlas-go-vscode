@@ -121,15 +121,21 @@ export const deploy: ViewMessageHandler = async (
     client.virtualizationUnit.once(
       VirtualizationUnitModelEvent.TRANSACTION_ERROR,
       async (error) => {
-        client.virtualizationUnit.removeAllListeners();
+        withErrorHandling(async () => {
+          client.virtualizationUnit.removeAllListeners();
 
-        await update(ViewType.VIRTUALIZATION_UNIT);
+          await update(ViewType.VIRTUALIZATION_UNIT);
 
-        if (error instanceof Error) {
-          throw error;
-        } else {
-          throw new Error(JSON.stringify(error));
-        }
+          const parsedError = JSON.parse(JSON.stringify(error));
+
+          if (parsedError instanceof Error) {
+            throw error;
+          } else if (parsedError.error.message) {
+            throw new Error(parsedError.error.message);
+          } else {
+            throw new Error(JSON.stringify(error));
+          }
+        })();
       },
     );
 

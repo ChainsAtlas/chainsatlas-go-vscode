@@ -210,15 +210,21 @@ export const executeBytecode: ViewMessageHandler = async (
     client.executor.once(
       ExecutorModelEvent.TRANSACTION_ERROR,
       async (error) => {
-        client.executor.removeAllListeners();
+        withErrorHandling(async () => {
+          client.executor.removeAllListeners();
 
-        await update(ViewType.EXECUTOR);
+          await update(ViewType.EXECUTOR);
 
-        if (error instanceof Error) {
-          throw error;
-        } else {
-          throw new Error(JSON.stringify(error));
-        }
+          const parsedError = JSON.parse(JSON.stringify(error));
+
+          if (parsedError instanceof Error) {
+            throw error;
+          } else if (parsedError.error.message) {
+            throw new Error(parsedError.error.message);
+          } else {
+            throw new Error(JSON.stringify(error));
+          }
+        })();
       },
     );
 

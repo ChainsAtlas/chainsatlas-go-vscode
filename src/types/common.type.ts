@@ -36,7 +36,7 @@ export type Chain = {
  * The status is emitted to their respective controllers so they can update
  * their respective views accordingly.
  */
-export type ContractTransactionStatus = "error" | "sending" | "sent";
+export type ContractTransactionStatus = "sending" | "sent";
 
 /**
  * Represents all command enums to facilitate the {@link Controller} management

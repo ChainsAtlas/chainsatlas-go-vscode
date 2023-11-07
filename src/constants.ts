@@ -65,7 +65,6 @@ export const TRANSACTION_STATUS_LABEL: Record<
   ContractTransactionStatus,
   string
 > = {
-  error: "Error",
   sending: "Waiting Approval...",
   sent: "Waiting Confirmation...",
 };

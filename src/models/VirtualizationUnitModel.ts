@@ -124,7 +124,7 @@ export class VirtualizationUnitModel extends EventEmitter {
 
       this.emit(VirtualizationUnitModelEvent.TRANSACTION_CONFIRMED);
     } catch (error) {
-      this.contractTransactionStatus = "error";
+      this.contractTransactionStatus = undefined;
       this.emit(VirtualizationUnitModelEvent.TRANSACTION_ERROR, error);
     }
   }
