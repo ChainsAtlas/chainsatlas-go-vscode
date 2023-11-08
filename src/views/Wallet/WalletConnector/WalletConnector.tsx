@@ -147,7 +147,7 @@ export const WalletConnector = ({
                 </VSCodeOption>
               ))}
             </VSCodeDropdown>
-            {isChain(selectedChain) ? (
+            {isChain(selectedChain) && !isAddingChain && !isEditingChain ? (
               <VSCodeButton
                 appearance="secondary"
                 className="chain-action-button"
@@ -156,13 +156,15 @@ export const WalletConnector = ({
                 Edit
               </VSCodeButton>
             ) : null}
-            <VSCodeButton
-              appearance="primary"
-              className="chain-action-button"
-              onClick={() => onChainAction("add")}
-            >
-              Add
-            </VSCodeButton>
+            {!isAddingChain && !isEditingChain ? (
+              <VSCodeButton
+                appearance="primary"
+                className="chain-action-button"
+                onClick={() => onChainAction("add")}
+              >
+                Add
+              </VSCodeButton>
+            ) : null}
           </div>
         ) : null}
       </div>
