@@ -5,14 +5,14 @@ import {
 import { ReactElement, useEffect, useState } from "react";
 import { vscodeApi } from "../..";
 import { WalletCommand } from "../../../../enums";
-import { isValidChain } from "../../../../typeguards";
-import type { Chain, ValidChain } from "../../../../types";
+import { isChain } from "../../../../typeguards";
+import type { Chain } from "../../../../types";
 
-interface IEditChainForm {
-  chain: Chain | ValidChain;
+export interface IEditChainForm {
+  chain: Chain;
   loading: boolean;
   onCancel?: () => void;
-  saveCallback: (chain: ValidChain) => void;
+  saveCallback: (chain: Chain) => void;
 }
 
 export const EditChainForm = ({
@@ -21,15 +21,13 @@ export const EditChainForm = ({
   onCancel,
   saveCallback,
 }: IEditChainForm): ReactElement => {
-  const [namespace, setNamespace] = useState<
-    ValidChain["namespace"] | undefined
-  >();
-  const [id, setId] = useState<ValidChain["id"] | undefined>();
-  const [transactionExplorerUrl, setTransactionExplorerUrl] = useState<
-    ValidChain["transactionExplorerUrl"] | undefined
+  const [namespace, setNamespace] = useState<Chain["namespace"] | undefined>();
+  const [id, setId] = useState<Chain["id"] | undefined>();
+  const [blockExplorerUrl, setBlockExplorerUrl] = useState<
+    Chain["blockExplorerUrl"] | undefined
   >();
   const [httpRpcUrl, setHttpRpcUrl] = useState<
-    ValidChain["httpRpcUrl"] | undefined
+    Chain["httpRpcUrl"] | undefined
   >();
 
   const isValid = (): boolean => {
@@ -37,14 +35,14 @@ export const EditChainForm = ({
       name: chain.name,
       namespace,
       id,
-      transactionExplorerUrl,
+      blockExplorerUrl,
       httpRpcUrl,
-    } as ValidChain;
+    } as Chain;
 
-    return isValidChain(newChain);
+    return isChain(newChain);
   };
 
-  const onSave = (chain: ValidChain): void => {
+  const onSave = (chain: Chain): void => {
     vscodeApi.postMessage({
       command: WalletCommand.EDIT_CHAIN,
       data: JSON.stringify(chain),
@@ -55,8 +53,8 @@ export const EditChainForm = ({
   useEffect(() => {
     setNamespace(chain.namespace);
     setId(chain.id);
-    setTransactionExplorerUrl(chain.transactionExplorerUrl);
-    setHttpRpcUrl((chain as ValidChain).httpRpcUrl || undefined);
+    setBlockExplorerUrl(chain.blockExplorerUrl);
+    setHttpRpcUrl((chain as Chain).httpRpcUrl || undefined);
   }, [chain]);
 
   return (
@@ -85,16 +83,12 @@ export const EditChainForm = ({
         <VSCodeTextField
           className="width-constraint"
           onInput={(e) =>
-            setTransactionExplorerUrl((e.target as HTMLInputElement).value)
+            setBlockExplorerUrl((e.target as HTMLInputElement).value)
           }
-          value={transactionExplorerUrl || ""}
+          value={blockExplorerUrl || ""}
         >
-          Transaction Explorer URL
+          Block Explorer URL
         </VSCodeTextField>
-        <span className="disabled-text width-constraint">
-          Required: add the {"{txHash}"} placeholder where you want the
-          transaction hash to be included.
-        </span>
       </div>
       <div className="field-container">
         <VSCodeTextField
@@ -104,10 +98,6 @@ export const EditChainForm = ({
         >
           HTTP RPC URL
         </VSCodeTextField>
-        <span className="disabled-text width-constraint">
-          Unstable RPC might cause errors. Please, use a stable RPC for a smooth
-          experience.
-        </span>
       </div>
       <div className="width-constraint action-button-container">
         {onCancel ? (
@@ -127,9 +117,9 @@ export const EditChainForm = ({
               namespace,
               id,
               name: chain.name,
-              transactionExplorerUrl,
+              blockExplorerUrl,
               httpRpcUrl,
-            } as ValidChain)
+            } as Chain)
           }
         >
           {loading ? "Loading..." : "Save"}

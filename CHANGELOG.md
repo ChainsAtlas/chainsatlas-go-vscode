@@ -11,6 +11,30 @@ All notable changes to this project will be documented in this file.
 - **Fixed** for any bug fixes.
 - **Security** in case of vulnerabilities.
 
+## 0.4.0 - 8 November 2023
+
+### Added
+
+- Local storage for chain configurations.
+- Default RPC's for listed chains.
+- Replace web3.js for ethers.js for a smaller bundle size and performance.
+
+### Fixed
+
+- Wallet QRCode bug that prevented the QRCode from being refreshed when changing chains or disconnecting from the current active chain.
+
+---
+
+## 0.3.0 - 10 October 2023
+
+### Added
+
+- Custom chain configuration (name, namespace, ID, Transaction Explorer URL and HTTP RPC URL).
+
+### Fixed
+
+- Telemetry now complies with vscode guidelines and uses the [@vscode/extension-telemetry](https://github.com/microsoft/vscode-extension-telemetry).
+
 ---
 
 ## 0.2.0 - 13 September 2023

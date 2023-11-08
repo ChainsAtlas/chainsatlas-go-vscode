@@ -37,7 +37,6 @@
 }
 
 .chain-dropdown {
-  max-width: calc(380px - 10px - 60px - 10px - 60px);
   min-width: calc(225px - 10px - 60px - 10px - 60px);
   width: 100%;
 }

@@ -23,6 +23,7 @@ export const ERROR_MESSAGE = {
   ARGS_MISMATCH: `The number of argument is a constant.
   Generate a new BytecodeStructure through the API to update it.`,
   CHAIN_NOT_FOUND: "Chain not found",
+  ERROR_CONNECTING_WALLET: "An error occurred when connecting the wallet.",
   INVALID_ACCOUNT: "Invalid account.",
   INVALID_ARGUMENTS: "Invalid arguments.",
   INVALID_BYTECODE_STRUCTURE: "Invalid bytecode structure.",
@@ -34,11 +35,11 @@ export const ERROR_MESSAGE = {
   INVALID_FILE: "Invalid file.",
   INVALID_GAS: "Invalid gas",
   INVALID_NARGS: "Invalid number of arguments.",
+  INVALID_PROVIDER: "Invalid Web3 provider.",
   INVALID_TRANSACTION_DATA: "Invalid transaction data.",
   INVALID_VALUE: "Invalid value",
   INVALID_VIEW_TYPE: "Invalid view type.",
   INVALID_VIRTUALIZATION_UNIT_CONTRACT: "Invalid virtualization unit contract.",
-  INVALID_WEB3: "Invalid Web3 provider.",
   NO_FILE_SELECTED: "No file selected.",
 };
 
@@ -64,12 +65,8 @@ export const TRANSACTION_STATUS_LABEL: Record<
   ContractTransactionStatus,
   string
 > = {
-  error: "Error",
   sending: "Waiting Approval...",
   sent: "Waiting Confirmation...",
-  confirmation: "...",
-  receipt: "...",
-  transactionHash: "...",
 };
 
 /**

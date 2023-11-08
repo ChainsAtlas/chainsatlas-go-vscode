@@ -21,13 +21,13 @@ export const generateExecutorViewState = (
     userFile,
   } = client.executor;
   const { currentContract } = client.virtualizationUnit;
-  const { currentAccount } = client.wallet;
+  const { account } = client.wallet;
 
   return {
     compilerStatus,
     contractTransactionStatus,
     currentFile,
-    disabled: !Boolean(currentAccount && currentContract),
+    disabled: !Boolean(account && currentContract),
     estimating,
     gasEstimate,
     nargs,
@@ -40,10 +40,10 @@ export const generateTransactionHistoryViewState = (
   _api: Api,
 ): TransactionHistoryViewState => {
   const { rows } = client.transactionHistory;
-  const { currentAccount } = client.wallet;
+  const { account } = client.wallet;
 
   return {
-    disabled: !Boolean(currentAccount),
+    disabled: !Boolean(account),
     rows,
   };
 };
@@ -59,13 +59,13 @@ export const generateVirtualizationUnitViewState = (
     estimating,
     gasEstimate,
   } = client.virtualizationUnit;
-  const { currentAccount } = client.wallet;
+  const { account } = client.wallet;
 
   return {
     contracts,
     contractTransactionStatus,
     currentContract,
-    disabled: !Boolean(currentAccount),
+    disabled: !Boolean(account),
     estimating,
     gasEstimate,
   };
@@ -75,28 +75,21 @@ export const generateWalletViewState = async (
   client: Client,
   api: Api,
 ): Promise<WalletViewState> => {
-  const {
-    accounts,
-    currentAccount,
-    chain,
-    chainUpdateStatus,
-    chains,
-    connected,
-    uri,
-  } = client.wallet;
+  const { account, chain, chainUpdateStatus, chains, connectionStatus, uri } =
+    client.wallet;
   const { authStatus } = api;
 
   return {
-    accounts,
+    account,
     authStatus,
     balance:
-      chain && currentAccount && client.web3
-        ? await getBalance(currentAccount, chain.id, client.web3)
-        : "0",
+      account && client.provider
+        ? await getBalance(account, client.provider)
+        : "Loading...",
+    chain,
     chainUpdateStatus,
     chains,
-    currentAccount,
-    connected,
+    connectionStatus,
     uri,
   };
 };

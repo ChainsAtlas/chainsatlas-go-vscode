@@ -18,13 +18,15 @@ import type { VirtualizationUnitViewState } from "./virtualizationUnit.type";
 import type { WalletViewState } from "./wallet.type";
 
 /**
- * Represents default chain data available in the {@link WalletModel}.
+ * Represents valid chain data to enable the {@link WalletModel} to connect
+ * correctly.
  */
 export type Chain = {
   namespace: string;
   id: number;
   name: string;
-  transactionExplorerUrl: string;
+  httpRpcUrl: string;
+  blockExplorerUrl: string;
 };
 
 /**
@@ -34,19 +36,7 @@ export type Chain = {
  * The status is emitted to their respective controllers so they can update
  * their respective views accordingly.
  */
-export type ContractTransactionStatus =
-  | "confirmation"
-  | "error"
-  | "receipt"
-  | "sending"
-  | "sent"
-  | "transactionHash";
-
-/**
- * Represents valid chain data to enable the {@link WalletModel} to connect
- * correctly.
- */
-export type ValidChain = Chain & { httpRpcUrl: string };
+export type ContractTransactionStatus = "sending" | "sent";
 
 /**
  * Represents all command enums to facilitate the {@link Controller} management

@@ -1,6 +1,5 @@
 import { extname } from "path";
 import { window, workspace } from "vscode";
-import type { Bytes } from "web3";
 import { ERROR_MESSAGE } from "../constants";
 import {
   ExecutorModelEvent,
@@ -36,7 +35,7 @@ export const cancelExecution: ViewMessageHandler = (
     client.executor.compilerStatus = undefined;
     client.executor.contractTransactionStatus = undefined;
     client.executor.currentContractInstance = undefined;
-    client.executor.currentTransaction = undefined;
+    client.executor.bytecodeInput = undefined;
     client.executor.gasEstimate = undefined;
 
     update(ViewType.EXECUTOR);
@@ -126,12 +125,8 @@ export const estimateGas: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_VIRTUALIZATION_UNIT_CONTRACT);
     }
 
-    if (!client.wallet.currentAccount) {
-      throw new Error(ERROR_MESSAGE.INVALID_ACCOUNT);
-    }
-
-    if (!client.web3) {
-      throw new Error(ERROR_MESSAGE.INVALID_WEB3);
+    if (!client.provider) {
+      throw new Error(ERROR_MESSAGE.INVALID_PROVIDER);
     }
 
     const args = JSON.parse(data) as BytecodeArg[];
@@ -144,9 +139,8 @@ export const estimateGas: ViewMessageHandler = async (
 
     await client.executor.estimateGas(
       input,
-      client.wallet.currentAccount,
       client.virtualizationUnit.currentContract,
-      client.web3,
+      client.provider,
     );
 
     client.executor.estimating = false;
@@ -166,15 +160,11 @@ export const executeBytecode: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
-    if (!client.web3) {
-      throw new Error(ERROR_MESSAGE.INVALID_WEB3);
-    }
-
     if (!data) {
       throw new Error(ERROR_MESSAGE.INVALID_GAS);
     }
 
-    const gas = data;
+    const gasLimit = data;
 
     reporter.sendTelemetryEvent(TelemetryEventName.EXECUTE_BYTECODE, {
       name: client.wallet.chain.name,
@@ -185,7 +175,7 @@ export const executeBytecode: ViewMessageHandler = async (
 
     client.executor.once(
       ExecutorModelEvent.TRANSACTION_OUTPUT,
-      async (output: Bytes, transactionHash: Bytes) => {
+      async (output: string, txHash: string) => {
         if (!client.wallet.chain) {
           throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
         }
@@ -200,11 +190,8 @@ export const executeBytecode: ViewMessageHandler = async (
         if (client.wallet.chain) {
           client.transactionHistory.rows.unshift({
             output,
-            transactionHash,
-            transactionUrl: client.wallet.chain.transactionExplorerUrl.replace(
-              "{txHash}",
-              transactionHash.toString(),
-            ),
+            txHash,
+            txUrl: `${client.wallet.chain.blockExplorerUrl}/tx/${txHash}`,
           });
 
           update(
@@ -223,15 +210,21 @@ export const executeBytecode: ViewMessageHandler = async (
     client.executor.once(
       ExecutorModelEvent.TRANSACTION_ERROR,
       async (error) => {
-        client.executor.removeAllListeners();
+        withErrorHandling(async () => {
+          client.executor.removeAllListeners();
 
-        await update(ViewType.EXECUTOR);
+          await update(ViewType.EXECUTOR);
 
-        if (error instanceof Error) {
-          throw error;
-        } else {
-          throw new Error(JSON.stringify(error));
-        }
+          const parsedError = JSON.parse(JSON.stringify(error));
+
+          if (parsedError instanceof Error) {
+            throw error;
+          } else if (parsedError.error.message) {
+            throw new Error(parsedError.error.message);
+          } else {
+            throw new Error(JSON.stringify(error));
+          }
+        })();
       },
     );
 
@@ -239,7 +232,7 @@ export const executeBytecode: ViewMessageHandler = async (
       update(ViewType.EXECUTOR),
     );
 
-    client.executor.runBytecode(gas, client.web3);
+    client.executor.runBytecode(gasLimit);
   })();
 };
 

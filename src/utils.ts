@@ -35,8 +35,8 @@ export const withErrorHandling = <T extends (...args: any[]) => any>(
     try {
       return await func(...args);
     } catch (error) {
-      if (error instanceof Error) {
-        window.showErrorMessage(error.message);
+      if (error instanceof Error || (error as unknown as Error).message) {
+        window.showErrorMessage((error as Error).message);
       } else {
         window.showErrorMessage(JSON.stringify(error));
       }

@@ -52,11 +52,13 @@ export class Api {
     });
 
     if (!response.ok) {
+      this.authStatus = undefined;
+
       if (response.status === 401) {
         this._authToken = "";
-      }
 
-      this.authStatus = undefined;
+        throw new Error("Invalid username and/or password.");
+      }
 
       throw new Error(
         `HTTP error! [${response.status}]: ${response.statusText}`,
@@ -107,6 +109,8 @@ export class Api {
     if (!response.ok) {
       if (response.status === 401) {
         this._authToken = "";
+
+        throw new Error("Invalid username and/or password.");
       }
 
       throw new Error(

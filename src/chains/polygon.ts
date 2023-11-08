@@ -4,5 +4,6 @@ export const polygon: Chain = {
   namespace: "eip155",
   id: 137,
   name: "Polygon",
-  transactionExplorerUrl: "https://polygonscan.com/tx/{txHash}",
+  httpRpcUrl: "https://polygon-rpc.com",
+  blockExplorerUrl: "https://polygonscan.com",
 };

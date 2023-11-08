@@ -12,7 +12,7 @@
 <div class="col-content">
 <div class="tsd-page-title">
 <h2>chainsatlas-go</h2></div>
-<div class="tsd-panel tsd-typography"><a id="md:chainsatlas-go-vscode" class="tsd-anchor"></a><h1><a href="#md:chainsatlas-go-vscode"><strong>ChainsAtlas GO VSCode</strong></a></h1><p>Bring your favorite programming languages to any blockchain.</p>
+<div class="tsd-panel tsd-typography"><a id="md:chainsatlas-go-vscode-v040" class="tsd-anchor"></a><h1><a href="#md:chainsatlas-go-vscode-v040"><strong>ChainsAtlas GO VSCode v0.4.0</strong></a></h1><p>Bring your favorite programming languages to any blockchain.</p>
 <a id="md:beta-version-disclaimer" class="tsd-anchor"></a><h2><a href="#md:beta-version-disclaimer">Beta version disclaimer</a></h2><p>By using the beta version of ChainsAtlas GO, you acknowledge and understand the potential risks and the unfinished state of the product.</p>
 <p>While we strive to offer a seamless experience, unexpected issues might occur. We highly recommend not using the beta version for critical tasks and always maintaining backups of your data.</p>
 <a id="md:table-of-contents" class="tsd-anchor"></a><h2><a href="#md:table-of-contents"><strong>Table of Contents</strong></a></h2><ul>
@@ -27,30 +27,31 @@
 <li><a href="#troubleshooting">Troubleshooting</a></li>
 <li><a href="#contributing">Contributing</a></li>
 </ul>
-<a id="md:usage" class="tsd-anchor"></a><h2><a href="#md:usage"><strong>Usage</strong></a></h2><a id="md:1-login" class="tsd-anchor"></a><h3><a href="#md:1-login"><strong>1. Login</strong></a></h3><p>You should have received your credentials in your email if you subscribed to the ChainsAtlas GO Early Access list.</p>
+<a id="md:usage" class="tsd-anchor"></a><h2><a href="#md:usage">Usage</a></h2><a id="md:1-login" class="tsd-anchor"></a><h3><a href="#md:1-login">1. Login</a></h3><p>You should have received your credentials in your email if you subscribed to the ChainsAtlas GO Early Access list.</p>
 <p>If you are not subscribed, <a href="https://chainsatlas.com">subscribe here</a>.</p>
 <p>If you are subscribed but did not receive your credentials yet, please wait. We are releasing the early access in batches.</p>
 <p>Once you have your credentials at hand, use them to login.</p>
 <p><img src="./assets/img/docs/login.png" alt="Login"></p>
-<a id="md:2-connecting-crypto-wallet" class="tsd-anchor"></a><h3><a href="#md:2-connecting-crypto-wallet"><strong>2. Connecting crypto wallet</strong></a></h3><p>ChainsAtlas GO uses <a href="https://walletconnect.com/">WalletConnect</a> to sign transactions and <a href="https://walletconnect.com/explorer?type=wallet">supports more than 300 crypto wallets</a>.</p>
-<p>Once you are logged in, you will be prompted to add your chain data to enable WalletConnect to work properly with your wallet.</p>
-<p><img src="./assets/img/docs/chain-config.png" alt="Chain Configuration"></p>
-<p>You need to fill the following data:</p>
-<ul>
-<li><strong>Name</strong>: only when adding a new chain configuration</li>
-<li><strong>Namespace</strong>: chain namespace for proper id mapping</li>
-<li><strong>ID</strong>: chain ID accordingly to the aforementioned namespace</li>
-<li><strong>Transaction Explorer URL</strong>: Remember to add the <code>{txHash}</code> placeholder where you want the transaction hash to be included.</li>
-<li><strong>HTTP RPC URL</strong>: Make sure to use a stable RPC. Unstable RPC might cause errors that affect your experience with the plugin.</li>
-</ul>
-<p>After saving your chain data, a QR code will be displayed. Scan it using one of the supported mobile wallets to connect your wallet.</p>
-<p>You can switch chains by selecting an option in the Chain dropdown. Once a new chain is selected, the QR code will be updated to reflect the selected chain info. You can always edit the current chain or decide to add a new one instead by clicking on the &quot;Edit&quot; or &quot;Add&quot; buttons on the right side of the chain dropdown.</p>
+<a id="md:2-connecting-crypto-wallet" class="tsd-anchor"></a><h3><a href="#md:2-connecting-crypto-wallet">2. Connecting crypto wallet</a></h3><p>ChainsAtlas GO uses <a href="https://walletconnect.com/">WalletConnect</a> to sign transactions and <a href="https://walletconnect.com/explorer?type=wallet">supports more than 300 crypto wallets</a>.</p>
+<a id="md:21-scanning-qrcode-to-connect-wallet" class="tsd-anchor"></a><h4><a href="#md:21-scanning-qrcode-to-connect-wallet">2.1 Scanning QRCode to connect wallet</a></h4><p>Once you are logged in, a QR code will be displayed. Scan it using one of the supported mobile wallets to connect your wallet.</p>
+<p>You can switch chains by selecting an option in the Chain dropdown. Once a new chain is selected, the QR code will be updated to reflect the selected chain info. You can always <a href="#2.2-editing-chain-settings">edit the current chain or decide to add a new one</a> instead by clicking on the &quot;Edit&quot; or &quot;Add&quot; buttons on the right side of the chain dropdown.</p>
 <p><img src="./assets/img/docs/qr-code-walletconnect.png" alt="QR code WalletConnect"></p>
 <p>When you scan the QR code with your mobile wallet, you will be prompted for a confirmation of the wallet connection. Below is an example of a <a href="https://metamask.io/">Metamask</a> prompt.</p>
 <p><img src="./assets/img/docs/walletconnect-metamask.jpeg" alt="WalletConnect Metamask"></p>
 <p>After confirming the connection, you will be able to see your wallet accounts and balance in wei.</p>
 <p><img src="./assets/img/docs/wallet-data.png" alt="Wallet data"></p>
-<a id="md:3-deploying-a-virtualization-unit" class="tsd-anchor"></a><h3><a href="#md:3-deploying-a-virtualization-unit"><strong>3. Deploying a Virtualization Unit</strong></a></h3><p>After connecting your wallet, you are enabled to deploy a ChainsAtlas Virtualzation Unit.</p>
+<a id="md:22-editing-chain-settings" class="tsd-anchor"></a><h4><a href="#md:22-editing-chain-settings">2.2 Editing chain settings</a></h4><p>To edit or add a new chain with custom settings, click the &quot;Edit&quot; or &quot;Add&quot; button next to the chain options dropdown to open the chain settings form.</p>
+<p><img src="./assets/img/docs/chain-config.jpg" alt="Chain Configuration"></p>
+<p>You need to fill the following data:</p>
+<ul>
+<li><strong>Name</strong>: only when adding a new chain configuration</li>
+<li><strong>Namespace</strong>: chain namespace for proper id mapping (disabled when editing existing chain)</li>
+<li><strong>ID</strong>: chain ID accordingly to the aforementioned namespace (disabled when editing existing chain)</li>
+<li><strong>Block Explorer URL</strong>: Used to generate the transaction URLs.</li>
+<li><strong>HTTP RPC URL</strong>: Make sure to use a stable RPC. Unstable RPC might cause errors that affect your experience with the plugin.</li>
+</ul>
+<p>After saving your chain data, the chain will show up as the current selected chain in the chain dropdown and its QRCode will be displayed for scanning.</p>
+<a id="md:3-deploying-a-virtualization-unit" class="tsd-anchor"></a><h3><a href="#md:3-deploying-a-virtualization-unit">3. Deploying a Virtualization Unit</a></h3><p>After connecting your wallet, you are enabled to deploy a ChainsAtlas Virtualzation Unit.</p>
 <p>Virtualization Units are smart contracts with an integrated virtual machine capable of executing web2 code on any blockchain.</p>
 <p><img src="./assets/img/docs/virtualization-unit-view.png" alt="Virtualization Unit View"></p>
 <p>Click on the deploy button to initiate the deployment process.</p>
@@ -62,7 +63,7 @@
 <p><img src="./assets/img/docs/virtualization-unit-waiting-confirmation.png" alt="Virtualization Unit Waiting Confirmation"></p>
 <p>Once confirmed, your newly deployed Virtualization Unit will be selected by default.</p>
 <p><img src="./assets/img/docs/virtualization-unit-contract-selected.png" alt="Virtualization Unit Contract Selected"></p>
-<a id="md:4-compiling-web2-code" class="tsd-anchor"></a><h3><a href="#md:4-compiling-web2-code"><strong>4. Compiling web2 code</strong></a></h3><p>Now, you will need to compile your web2 code to a specific bytecode structure to send it as input to the Virtualization Unit to execute it.</p>
+<a id="md:4-compiling-web2-code" class="tsd-anchor"></a><h3><a href="#md:4-compiling-web2-code">4. Compiling web2 code</a></h3><p>Now, you will need to compile your web2 code to a specific bytecode structure to send it as input to the Virtualization Unit to execute it.</p>
 <blockquote>
 <p><strong>Important</strong>: ChainsAtlas GO is in beta. We are continuously supporting more language features and blockchains to improve user experience. Please <a href="https://docs.chainsatlas.com/">check our documentation</a> to see currently available language features. Using unsupported language features will cause the compiling process to fail.</p>
 </blockquote>
@@ -76,7 +77,7 @@
 <p>The <code>__chainsatlas_evm_sload</code> function loads the argument values passed to the virtualization unit in order to execute the code. The <code>__chainsatlas_evm_sstore</code> on the other hand, stores the result on-chain. For further details, check our <a href="https://docs.chainsatlas.com/">documentation</a>.</p>
 <p>Click on &quot;Compile&quot; to send your file content and number of arguments (in this case, 2 for the sum function) to the ChainsAtlas API to compile them to a Virtualization Unit supported bytecode structure.</p>
 <p><img src="./assets/img/docs/executor-compile.png" alt="Executor Bytecode Compile"></p>
-<a id="md:5-executing-web2-code" class="tsd-anchor"></a><h3><a href="#md:5-executing-web2-code"><strong>5. Executing web2 code</strong></a></h3><p>If you have done all the previous steps correctly, you will see a new form with your uploaded file path and text inputs for your arguments values. Fill them and click on &quot;Estimate Gas&quot; to move forward.</p>
+<a id="md:5-executing-web2-code" class="tsd-anchor"></a><h3><a href="#md:5-executing-web2-code">5. Executing web2 code</a></h3><p>If you have done all the previous steps correctly, you will see a new form with your uploaded file path and text inputs for your arguments values. Fill them and click on &quot;Estimate Gas&quot; to move forward.</p>
 <p><img src="./assets/img/docs/executor-estimated-gas.png" alt="Executor Estimate Gas"></p>
 <p>You will be prompted to choose a gas option. You can choose one of the estimated ones, or enter your custom gas amount. <strong>Remember that the gas amount is measured in wei</strong>.</p>
 <p>After choosing an option, click &quot;Execute&quot; and confirm the smart contract interaction through your mobile crypto wallet.</p>
@@ -86,7 +87,7 @@
 <p><img src="./assets/img/docs/executor-waiting-confirmation.png" alt="Executor Waiting Confirmation"></p>
 <p>Once your transaction is confirmed, the transaction hash and output will be displayed in the Transaction History View. Clicking on the transaction hash value will forward you the selected chain block explorer to visualize the transaction details.</p>
 <p><img src="./assets/img/docs/transaction-history-view.png" alt="Transaction History View"></p>
-<a id="md:troubleshooting" class="tsd-anchor"></a><h2><a href="#md:troubleshooting"><strong>Troubleshooting</strong></a></h2><p>If you encounter issues:</p>
+<a id="md:troubleshooting" class="tsd-anchor"></a><h2><a href="#md:troubleshooting">Troubleshooting</a></h2><p>If you encounter issues:</p>
 <ul>
 <li>Check the error message for guidance.</li>
 <li>Ensure login credentials are correct.</li>
@@ -95,7 +96,7 @@
 <li>Make sure you are not using a language feature that has not been added yet. <a href="https://docs.chainsatlas.com/">See our docs on available language features</a>.</li>
 <li>Contact us at <a href="mailto:info@chainsatlas.com">info@chainsatlas.com</a></li>
 </ul>
-<a id="md:contributing" class="tsd-anchor"></a><h2><a href="#md:contributing"><strong>Contributing</strong></a></h2><p>We welcome contributions! If you have suggestions, bug reports, or feature requests, please open an issue on our GitHub repository.</p>
+<a id="md:contributing" class="tsd-anchor"></a><h2><a href="#md:contributing">Contributing</a></h2><p>We welcome contributions! If you have suggestions, bug reports, or feature requests, please open an issue on our GitHub repository.</p>
 <hr>
 </div></div>
 <div class="col-sidebar">
@@ -118,7 +119,7 @@
 <ul>
 <li>
 <ul>
-<li><a href="#md:chainsatlas-go-vscode"><span>Chains<wbr/>Atlas GO VSCode</span></a></li>
+<li><a href="#md:chainsatlas-go-vscode-v040"><span>Chains<wbr/>Atlas GO VSCode v0.4.0</span></a></li>
 <li>
 <ul>
 <li><a href="#md:beta-version-disclaimer"><span>Beta version disclaimer</span></a></li>
@@ -128,6 +129,10 @@
 <ul>
 <li><a href="#md:1-login"><span>1. <wbr/>Login</span></a></li>
 <li><a href="#md:2-connecting-crypto-wallet"><span>2. <wbr/>Connecting crypto wallet</span></a></li>
+<li>
+<ul>
+<li><a href="#md:21-scanning-qrcode-to-connect-wallet"><span>2.1 <wbr/>Scanning QRCode to connect wallet</span></a></li>
+<li><a href="#md:22-editing-chain-settings"><span>2.2 <wbr/>Editing chain settings</span></a></li></ul></li>
 <li><a href="#md:3-deploying-a-virtualization-unit"><span>3. <wbr/>Deploying a <wbr/>Virtualization <wbr/>Unit</span></a></li>
 <li><a href="#md:4-compiling-web2-code"><span>4. <wbr/>Compiling web2 code</span></a></li>
 <li><a href="#md:5-executing-web2-code"><span>5. <wbr/>Executing web2 code</span></a></li></ul></li>
@@ -138,12 +143,14 @@
 <ul class="tsd-small-nested-navigation">
 <li><a href="modules/chains.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains</span></a></li>
 <li><a href="modules/chains_arbitrum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/arbitrum</span></a></li>
+<li><a href="modules/chains_arbitrumSepolia.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/arbitrum<wbr/>Sepolia</span></a></li>
 <li><a href="modules/chains_bsc.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/bsc</span></a></li>
 <li><a href="modules/chains_bscTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/bsc<wbr/>Testnet</span></a></li>
-<li><a href="modules/chains_celo.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/celo</span></a></li>
+<li><a href="modules/chains_conflux.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/conflux</span></a></li>
+<li><a href="modules/chains_confluxTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/conflux<wbr/>Testnet</span></a></li>
 <li><a href="modules/chains_ethereum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/ethereum</span></a></li>
 <li><a href="modules/chains_ethereumSepolia.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/ethereum<wbr/>Sepolia</span></a></li>
-<li><a href="modules/chains_klaytn.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/klaytn</span></a></li>
+<li><a href="modules/chains_helaTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/hela<wbr/>Testnet</span></a></li>
 <li><a href="modules/chains_polygon.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/polygon</span></a></li>
 <li><a href="modules/chains_polygonMumbai.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/polygon<wbr/>Mumbai</span></a></li>
 <li><a href="modules/constants.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>constants</span></a></li>
@@ -175,7 +182,7 @@
 <li><a href="modules/models_VirtualizationUnitModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Virtualization<wbr/>Unit<wbr/>Model</span></a></li>
 <li><a href="modules/models_WalletModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Wallet<wbr/>Model</span></a></li>
 <li><a href="modules/typeguards.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards</span></a></li>
-<li><a href="modules/typeguards_isValidChain.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards/is<wbr/>Valid<wbr/>Chain</span></a></li>
+<li><a href="modules/typeguards_isChain.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards/is<wbr/>Chain</span></a></li>
 <li><a href="modules/types.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types</span></a></li>
 <li><a href="modules/types_auth_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/auth.type</span></a></li>
 <li><a href="modules/types_bytecode_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/bytecode.type</span></a></li>

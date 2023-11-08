@@ -1,8 +1,7 @@
-import type { ProviderAccounts } from "@walletconnect/universal-provider";
 import type { WalletModel } from "../models";
 import type { WalletView } from "../views/Wallet";
 import type { AuthStatus } from "./auth.type";
-import type { Chain, ValidChain } from "./common.type";
+import type { Chain } from "./common.type";
 
 /**
  * Represents the chain update status for {@link WalletModel}
@@ -11,15 +10,21 @@ import type { Chain, ValidChain } from "./common.type";
 export type ChainUpdateStatus = "done" | "updating";
 
 /**
+ * Represents the chain update status for {@link WalletModel}
+ * required to manage the state of the Wallet view.
+ */
+export type ConnectionStatus = "connected" | "connecting" | "disconnected";
+
+/**
  * Represents the state of the {@link WalletView}
  */
 export type WalletViewState = {
-  accounts?: ProviderAccounts;
+  account?: string;
   authStatus?: AuthStatus;
   balance: string;
+  chain: Chain;
   chainUpdateStatus?: ChainUpdateStatus;
-  chains: (Chain | ValidChain)[];
-  currentAccount?: string;
-  connected: boolean;
+  chains: Chain[];
+  connectionStatus: ConnectionStatus;
   uri?: string;
 };

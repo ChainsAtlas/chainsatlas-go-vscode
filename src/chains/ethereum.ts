@@ -4,5 +4,6 @@ export const ethereum: Chain = {
   namespace: "eip155",
   id: 1,
   name: "Ethereum",
-  transactionExplorerUrl: "https://etherscan.io/tx/{txHash}",
+  httpRpcUrl: "https://eth.public-rpc.com",
+  blockExplorerUrl: "https://etherscan.io",
 };

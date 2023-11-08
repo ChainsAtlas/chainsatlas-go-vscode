@@ -9,40 +9,42 @@ import { QRCodeSVG } from "qrcode.react";
 import { ReactElement, useCallback, useEffect, useState } from "react";
 import { vscodeApi } from "..";
 import { WalletCommand } from "../../../enums";
-import { isValidChain } from "../../../typeguards";
-import type { Chain, ChainUpdateStatus, ValidChain } from "../../../types";
+import { isChain } from "../../../typeguards";
+import type {
+  Chain,
+  ChainUpdateStatus,
+  ConnectionStatus,
+} from "../../../types";
 import { AddChainForm } from "./AddChainForm/AddChainForm";
 import { EditChainForm } from "./EditChainForm/EditChainForm";
 
-interface IWalletConnector {
+export interface IWalletConnector {
+  chain?: Chain;
   chainUpdateStatus?: ChainUpdateStatus;
-  chains?: (Chain | ValidChain)[];
-  connected: boolean;
+  chains?: Chain[];
+  connectionStatus: ConnectionStatus;
   showWalletDataCallback: (show: boolean) => void;
   uri?: string;
 }
 
 export const WalletConnector = ({
+  chain,
   chainUpdateStatus,
   chains,
-  connected,
+  connectionStatus,
   showWalletDataCallback,
   uri,
 }: IWalletConnector): ReactElement => {
-  const [allowConnect, setAllowConnect] = useState<boolean>(false);
-  const [selectedChainUri, setSelectedChainUri] = useState<string | undefined>(
-    uri,
-  );
   const [displayQRCode, setDisplayQRCode] = useState<boolean>(false);
   const [isAddingChain, setIsAddingChain] = useState<boolean>(false);
   const [isEditingChain, setIsEditingChain] = useState<boolean>(false);
-  const [selectedChain, setSelectedChain] = useState<
-    Chain | ValidChain | undefined
-  >();
+  const [selectedChain, setSelectedChain] = useState<Chain | undefined>(chain);
+  const [selectedChainUri, setSelectedChainUri] = useState<string | undefined>(
+    uri,
+  );
 
-  const chainSaveCallback = (chain: ValidChain) => {
+  const chainSaveCallback = (chain: Chain) => {
     setSelectedChain(chain);
-    setAllowConnect(true);
     showWalletDataCallback(true);
     vscodeApi.postMessage({ command: WalletCommand.DISCONNECT });
   };
@@ -72,7 +74,6 @@ export const WalletConnector = ({
         const chain = chains?.find((c) => c.id.toString() === chainId);
 
         if (chain) {
-          setAllowConnect(true);
           setSelectedChain(chain);
           setSelectedChainUri(undefined);
           showWalletDataCallback(false);
@@ -91,10 +92,8 @@ export const WalletConnector = ({
   };
 
   useEffect(() => {
-    if (!selectedChain && chains && chains.length > 0) {
-      const defaultChain = chains.find((c) => c.id === 11_155_111) || chains[0];
-
-      setSelectedChain(defaultChain);
+    if (uri) {
+      setSelectedChainUri(uri);
     }
 
     if (chainUpdateStatus === "done") {
@@ -102,31 +101,28 @@ export const WalletConnector = ({
       setIsEditingChain(false);
     }
 
-    if (isValidChain(selectedChain)) {
-      if (allowConnect && chainUpdateStatus !== "updating") {
-        connect(selectedChain.id);
-        setAllowConnect(false);
-        setDisplayQRCode(true);
-      }
-    }
-
-    if (
-      !isValidChain(selectedChain) ||
-      (isValidChain(selectedChain) && connected)
-    ) {
+    if (connectionStatus === "connected") {
       setDisplayQRCode(false);
-    }
 
-    if (uri) {
-      setSelectedChainUri(uri);
+      if (!isAddingChain && !isEditingChain) {
+        showWalletDataCallback(true);
+      }
+    } else if (
+      connectionStatus === "disconnected" &&
+      isChain(selectedChain) &&
+      chainUpdateStatus !== "updating"
+    ) {
+      connect(selectedChain.id);
+      setDisplayQRCode(true);
     }
   }, [
-    allowConnect,
     chainUpdateStatus,
-    chains,
     connect,
-    connected,
+    connectionStatus,
+    isAddingChain,
+    isEditingChain,
     selectedChain,
+    showWalletDataCallback,
     uri,
   ]);
 
@@ -151,7 +147,7 @@ export const WalletConnector = ({
                 </VSCodeOption>
               ))}
             </VSCodeDropdown>
-            {isValidChain(selectedChain) ? (
+            {isChain(selectedChain) && !isAddingChain && !isEditingChain ? (
               <VSCodeButton
                 appearance="secondary"
                 className="chain-action-button"
@@ -160,22 +156,23 @@ export const WalletConnector = ({
                 Edit
               </VSCodeButton>
             ) : null}
-            <VSCodeButton
-              appearance="primary"
-              className="chain-action-button"
-              onClick={() => onChainAction("add")}
-            >
-              Add
-            </VSCodeButton>
+            {!isAddingChain && !isEditingChain ? (
+              <VSCodeButton
+                appearance="primary"
+                className="chain-action-button"
+                onClick={() => onChainAction("add")}
+              >
+                Add
+              </VSCodeButton>
+            ) : null}
           </div>
         ) : null}
       </div>
-      {(isEditingChain || (!isAddingChain && !isValidChain(selectedChain))) &&
-      selectedChain ? (
+      {isEditingChain && isChain(selectedChain) ? (
         <EditChainForm
           chain={selectedChain}
           loading={chainUpdateStatus === "updating" ? true : false}
-          onCancel={isValidChain(selectedChain) ? onFormCancel : undefined}
+          onCancel={isChain(selectedChain) ? onFormCancel : undefined}
           saveCallback={chainSaveCallback}
         />
       ) : null}
@@ -186,7 +183,7 @@ export const WalletConnector = ({
           saveCallback={chainSaveCallback}
         />
       ) : null}
-      {displayQRCode ? (
+      {displayQRCode && !isEditingChain && !isAddingChain ? (
         <>
           <div className="qrcode-container">
             {selectedChainUri ? (

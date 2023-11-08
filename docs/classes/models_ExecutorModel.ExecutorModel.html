@@ -20,24 +20,20 @@
 <div class="tsd-comment tsd-typography"><p>The <code>ExecutorModel</code> class provides a comprehensive model to manage and
 execute bytecode contracts. It encapsulates the logic to handle bytecode
 compilation, gas estimation, and contract execution.</p>
-<p>This model primarily interacts with Ethereum-based operations using Web3.js
+<p>This model primarily interacts with Ethereum-based operations using ethers.js
 and emits events to signal different stages or statuses of these operations.</p>
 </div>
 <div class="tsd-comment tsd-typography">
-<h4>Emits</h4><p>Emitted when waiting for a
-bytecode structure.</p>
-
 <h4>Emits</h4><p>Emitted to synchronize or update any listeners of
 state changes.</p>
 
-<h4>Emits</h4><p>Emitted when waiting for gas estimation.</p>
+<h4>Emits</h4><p>Emitted when bytecode execution
+output is received.</p>
 
-<h4>Emits</h4><p>Emitted when a bytecode
-structure is received.</p>
+<h4>Emits</h4><p>Emitted when bytecode
+execution throws an error.</p>
 
-<h4>Emits</h4><p>Emitted when gas amount is received.</p>
-
-<h4>Example</h4><pre><code class="language-ts"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-7">executor</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-2">ExecutorModel</span><span class="hl-1">();</span><br/><span class="hl-3">executor</span><span class="hl-1">.</span><span class="hl-2">on</span><span class="hl-1">(</span><span class="hl-3">ExecutorModelEvent</span><span class="hl-1">.</span><span class="hl-7">SYNC</span><span class="hl-1">, () </span><span class="hl-0">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-8">// state synchronization logic</span><br/><span class="hl-1">});</span>
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-7">executor</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-2">ExecutorModel</span><span class="hl-1">();</span><br/><span class="hl-3">executor</span><span class="hl-1">.</span><span class="hl-2">on</span><span class="hl-1">(</span><span class="hl-3">ExecutorModelEvent</span><span class="hl-1">.</span><span class="hl-7">UPDATE</span><span class="hl-1">, () </span><span class="hl-0">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-8">// state synchronization logic</span><br/><span class="hl-1">});</span>
 </code><button>Copy</button></pre>
 </div></section>
 <section class="tsd-panel tsd-hierarchy">
@@ -47,7 +43,7 @@ structure is received.</p>
 <ul class="tsd-hierarchy">
 <li><span class="target">ExecutorModel</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L75">src/models/ExecutorModel.ts:75</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L38">src/models/ExecutorModel.ts:38</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -59,12 +55,12 @@ structure is received.</p>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Properties</h3>
-<div class="tsd-index-list"><a href="models_ExecutorModel.ExecutorModel.html#bytecodeStructure" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-1024"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)"></path></g></svg><span>bytecode<wbr/>Structure?</span></a>
+<div class="tsd-index-list"><a href="models_ExecutorModel.ExecutorModel.html#bytecodeInput" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-1024"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)"></path></g></svg><span>bytecode<wbr/>Input?</span></a>
+<a href="models_ExecutorModel.ExecutorModel.html#bytecodeStructure" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>bytecode<wbr/>Structure?</span></a>
 <a href="models_ExecutorModel.ExecutorModel.html#compilerStatus" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>compiler<wbr/>Status?</span></a>
 <a href="models_ExecutorModel.ExecutorModel.html#contractTransactionStatus" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>contract<wbr/>Transaction<wbr/>Status?</span></a>
 <a href="models_ExecutorModel.ExecutorModel.html#currentContractInstance" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>current<wbr/>Contract<wbr/>Instance?</span></a>
 <a href="models_ExecutorModel.ExecutorModel.html#currentFile" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>current<wbr/>File?</span></a>
-<a href="models_ExecutorModel.ExecutorModel.html#currentTransaction" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>current<wbr/>Transaction?</span></a>
 <a href="models_ExecutorModel.ExecutorModel.html#estimating" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>estimating</span></a>
 <a href="models_ExecutorModel.ExecutorModel.html#gasEstimate" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>gas<wbr/>Estimate?</span></a>
 <a href="models_ExecutorModel.ExecutorModel.html#nargs" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>nargs?</span></a>
@@ -89,9 +85,17 @@ structure is received.</p>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides EventEmitter.constructor</p>
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L160">src/models/ExecutorModel.ts:160</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L132">src/models/ExecutorModel.ts:132</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
+<section class="tsd-panel tsd-member"><a id="bytecodeInput" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>bytecode<wbr/>Input</span><a href="#bytecodeInput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">bytecode<wbr/>Input</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>Bytecode input to be passed to the virtualization unit</p>
+</div>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L42">src/models/ExecutorModel.ts:42</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="bytecodeStructure" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>bytecode<wbr/>Structure</span><a href="#bytecodeStructure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">bytecode<wbr/>Structure</span><span class="tsd-signature-symbol">?:</span> <a href="../types/types_bytecode_type.BytecodeStructure.html" class="tsd-signature-type tsd-kind-type-alias">BytecodeStructure</a></div>
@@ -106,98 +110,153 @@ include fields like <code>key</code>, <code>nargs</code>, and the actual <code>b
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L153">src/models/ExecutorModel.ts:153</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L54">src/models/ExecutorModel.ts:54</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="compilerStatus" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>compiler<wbr/>Status</span><a href="#compilerStatus" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">compiler<wbr/>Status</span><span class="tsd-signature-symbol">?:</span> <a href="../types/types_bytecode_type.BytecodeCompilerStatus.html" class="tsd-signature-type tsd-kind-type-alias">BytecodeCompilerStatus</a></div>
-<div class="tsd-comment tsd-typography"><p>Status of the bytecode compiler.</p>
+<div class="tsd-comment tsd-typography"><p>Represents the current status of the bytecode compiler.</p>
+<ul>
+<li><code>undefined</code> indicates that no compilation process has started.</li>
+<li>Other possible values are based on the <a href="../types/types_bytecode_type.BytecodeCompilerStatus.html" class="tsd-kind-type-alias">BytecodeCompilerStatus</a>
+enum, which may include statuses like &quot;compiling&quot;, &quot;failed&quot;, or
+&quot;completed&quot;.</li>
+</ul>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L84">src/models/ExecutorModel.ts:84</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L64">src/models/ExecutorModel.ts:64</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="contractTransactionStatus" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>contract<wbr/>Transaction<wbr/>Status</span><a href="#contractTransactionStatus" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">contract<wbr/>Transaction<wbr/>Status</span><span class="tsd-signature-symbol">?:</span> <a href="../types/types_common_type.ContractTransactionStatus.html" class="tsd-signature-type tsd-kind-type-alias">ContractTransactionStatus</a></div>
-<div class="tsd-comment tsd-typography"><p>Status of the contract transaction.</p>
+<div class="tsd-comment tsd-typography"><p>Represents the current status of the contract transaction.</p>
+<ul>
+<li><code>undefined</code> indicates that no transaction process has started.</li>
+<li>Other possible values are based on the <a href="../types/types_common_type.ContractTransactionStatus.html" class="tsd-kind-type-alias">ContractTransactionStatus</a>
+enum, which may include statuses like &quot;sending&quot;, &quot;sent&quot;, or &quot;error&quot;.</li>
+</ul>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L93">src/models/ExecutorModel.ts:93</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L73">src/models/ExecutorModel.ts:73</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="currentContractInstance" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>current<wbr/>Contract<wbr/>Instance</span><a href="#currentContractInstance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">current<wbr/>Contract<wbr/>Instance</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type ">Contract</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">anonymous</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">inputs</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-symbol">{ </span><br/><span>        </span><span class="tsd-kind-property">indexed</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">internalType</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;address&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;bytecodeAddress&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;address&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;ContractDeployed&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;event&quot;</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">inputs</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-symbol">{ </span><br/><span>        </span><span class="tsd-kind-property">internalType</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;address&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;_contract&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;address&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;getRuntimeReturn&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">outputs</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-symbol">{ </span><br/><span>        </span><span class="tsd-kind-property">internalType</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;bytes&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;bytes&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">stateMutability</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;view&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;function&quot;</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">inputs</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-symbol">{ </span><br/><span>        </span><span class="tsd-kind-property">internalType</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;bytes&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;bytecode&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;bytes&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;runBytecode&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">outputs</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-symbol">{ </span><br/><span>        </span><span class="tsd-kind-property">internalType</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;address&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>        </span><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;address&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">stateMutability</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;nonpayable&quot;</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;function&quot;</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-kind-property">current<wbr/>Contract<wbr/>Instance</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type ">Contract</span></div>
+<div class="tsd-comment tsd-typography"><p>Represents the current virtualization unit contract instance.</p>
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L95">src/models/ExecutorModel.ts:95</a></li></ul></aside></section>
+<li><code>undefined</code> indicates that there is no contract instance.</li>
+<li>Otherwise the value will be a Contract object.</li>
+</ul>
+</div>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L81">src/models/ExecutorModel.ts:81</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="currentFile" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>current<wbr/>File</span><a href="#currentFile" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">current<wbr/>File</span><span class="tsd-signature-symbol">?:</span> <a href="../types/types_executor_type.ExecutorFile.html" class="tsd-signature-type tsd-kind-type-alias">ExecutorFile</a></div>
-<div class="tsd-comment tsd-typography"><p>Current file being processed.</p>
+<div class="tsd-comment tsd-typography"><p>Holds the current file being processed for bytecode compilation and
+execution.</p>
+<ul>
+<li><code>undefined</code> indicates that there&#39;s no file currently selected or being
+processed.</li>
+<li>Otherwise, the value will be an object representation of the file, based
+on the <a href="../types/types_executor_type.ExecutorFile.html" class="tsd-kind-type-alias">ExecutorFile</a> type.</li>
+</ul>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L106">src/models/ExecutorModel.ts:106</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member"><a id="currentTransaction" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>current<wbr/>Transaction</span><a href="#currentTransaction" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">current<wbr/>Transaction</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type ">Transaction</span></div><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L108">src/models/ExecutorModel.ts:108</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L92">src/models/ExecutorModel.ts:92</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="estimating" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>estimating</span><a href="#estimating" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">estimating</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
-<div class="tsd-comment tsd-typography"><p>Flag indicating if gas estimation is in progress.</p>
+<div class="tsd-comment tsd-typography"><p>A boolean flag indicating if the gas estimation process is ongoing.</p>
+<ul>
+<li><code>true</code> means the gas estimation is in progress.</li>
+<li><code>false</code> means no estimation is currently happening.</li>
+</ul>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L116">src/models/ExecutorModel.ts:116</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L100">src/models/ExecutorModel.ts:100</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="gasEstimate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>gas<wbr/>Estimate</span><a href="#gasEstimate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">gas<wbr/>Estimate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
-<div class="tsd-comment tsd-typography"><p>Estimated gas required for execution.</p>
+<div class="tsd-comment tsd-typography"><p>Represents the estimated amount of gas required to execute the bytecode.</p>
+<ul>
+<li><code>undefined</code> indicates that no gas estimation has been computed yet.</li>
+<li>Otherwise, it&#39;s a string representation of the estimated gas in wei.</li>
+</ul>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L124">src/models/ExecutorModel.ts:124</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L108">src/models/ExecutorModel.ts:108</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="nargs" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>nargs</span><a href="#nargs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">nargs</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>Number of arguments expected by the bytecode.</p>
+<div class="tsd-comment tsd-typography"><p>Specifies the number of arguments expected by the bytecode.</p>
+<ul>
+<li><code>undefined</code> means the number of arguments has not been determined yet.</li>
+<li>Otherwise, it indicates the exact number of arguments required.</li>
+</ul>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L132">src/models/ExecutorModel.ts:132</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L116">src/models/ExecutorModel.ts:116</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="userFile" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>user<wbr/>File</span><a href="#userFile" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">user<wbr/>File</span><span class="tsd-signature-symbol">?:</span> <a href="../types/types_executor_type.ExecutorFile.html" class="tsd-signature-type tsd-kind-type-alias">ExecutorFile</a></div>
-<div class="tsd-comment tsd-typography"><p>User provided file for execution.</p>
+<div class="tsd-comment tsd-typography"><p>Represents the user-provided file for bytecode execution.</p>
+<ul>
+<li><code>undefined</code> indicates that the user hasn&#39;t provided any file yet.</li>
+<li>Otherwise, the value will be an object representation of the user&#39;s file,
+based on the <a href="../types/types_executor_type.ExecutorFile.html" class="tsd-kind-type-alias">ExecutorFile</a> type.</li>
+</ul>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L141">src/models/ExecutorModel.ts:141</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L125">src/models/ExecutorModel.ts:125</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="estimateGas" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>estimate<wbr/>Gas</span><a href="#estimateGas" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="estimateGas.estimateGas-1"><span class="tsd-kind-call-signature">estimate<wbr/>Gas</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">input</span>, <span class="tsd-kind-parameter">from</span>, <span class="tsd-kind-parameter">vUnitAddress</span>, <span class="tsd-kind-parameter">web3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#estimateGas.estimateGas-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="estimateGas.estimateGas-1"><span class="tsd-kind-call-signature">estimate<wbr/>Gas</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">input</span>, <span class="tsd-kind-parameter">vUnitAddress</span>, <span class="tsd-kind-parameter">provider</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#estimateGas.estimateGas-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Estimates the gas required for executing the bytecode with the provided
+input.</p>
+<p>This method calculates the estimated gas required to execute the bytecode
+on the current blockchain using the specified input data and virtualization
+unit contract.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">input</span>: <span class="tsd-signature-type">string</span></h5></li>
+<h5><span class="tsd-kind-parameter">input</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The input data representing the bytecode.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li>
 <li>
-<h5><span class="tsd-kind-parameter">from</span>: <span class="tsd-signature-type">string</span></h5></li>
+<h5><span class="tsd-kind-parameter">vUnitAddress</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The address of the virtualization unit contract.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li>
 <li>
-<h5><span class="tsd-kind-parameter">vUnitAddress</span>: <span class="tsd-signature-type">string</span></h5></li>
-<li>
-<h5><span class="tsd-kind-parameter">web3</span>: <span class="tsd-signature-type ">Web3</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">provider</span>: <span class="tsd-signature-type ">BrowserProvider</span></h5>
+<div class="tsd-comment tsd-typography"><p>The ethers.js provider for interacting with the current blockchain.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A Promise that resolves when the gas estimation is complete.</p>
+
+<div class="tsd-comment tsd-typography">
+<h4>Emits</h4><p><a href="../enums/enums_executor_enum.ExecutorModelEvent.html#UPDATE" class="tsd-kind-enum-member">UPDATE</a>
+Emitted to synchronize or update any listeners of state changes.</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L164">src/models/ExecutorModel.ts:164</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L159">src/models/ExecutorModel.ts:159</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="runBytecode" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>run<wbr/>Bytecode</span><a href="#runBytecode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="runBytecode.runBytecode-1"><span class="tsd-kind-call-signature">run<wbr/>Bytecode</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">gas</span>, <span class="tsd-kind-parameter">web3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#runBytecode.runBytecode-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="runBytecode.runBytecode-1"><span class="tsd-kind-call-signature">run<wbr/>Bytecode</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">gasLimit</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#runBytecode.runBytecode-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Runs the bytecode by invoking the appropriate contract method.</p>
 <p>After validating the bytecode structure, it composes the input for the
@@ -209,10 +268,8 @@ confirmation, and errors.</p>
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">gas</span>: <span class="tsd-signature-type">string</span></h5></li>
-<li>
-<h5><span class="tsd-kind-parameter">web3</span>: <span class="tsd-signature-type ">Web3</span></h5>
-<div class="tsd-comment tsd-typography"><p>An instance of the Web3 library to interact with the Ethereum blockchain.</p>
+<h5><span class="tsd-kind-parameter">gasLimit</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The gas limit in wei to be used to deploy the contract transaction.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves once the bytecode has been executed.</p>
@@ -224,17 +281,20 @@ confirmation, and errors.</p>
 returned data is invalid.</li>
 </ul>
 
-<h4>Emits</h4><p>ExecutorModelEvent.SYNC
+<h4>Emits</h4><p><a href="../enums/enums_executor_enum.ExecutorModelEvent.html#UPDATE" class="tsd-kind-enum-member">UPDATE</a>
 Emitted to indicate synchronization with the current state.</p>
 
-<h4>Emits</h4><p>ExecutorModelEvent.WAITING_GAS
-Emitted when the system is waiting for the gas estimate.</p>
+<h4>Emits</h4><p><a href="../enums/enums_executor_enum.ExecutorModelEvent.html#TRANSACTION_OUTPUT" class="tsd-kind-enum-member">TRANSACTION_OUTPUT</a>
+Emitted when the bytecode execution output is received.</p>
 
-<h4>Example</h4><pre><code class="language-ts"><span class="hl-3">executorModel</span><span class="hl-1">.</span><span class="hl-2">runBytecode</span><span class="hl-1">(</span><br/><span class="hl-1"> </span><span class="hl-3">args</span><span class="hl-1">,</span><br/><span class="hl-1"> </span><span class="hl-3">fromAddress</span><span class="hl-1">,</span><br/><span class="hl-1"> </span><span class="hl-3">contractAddress</span><span class="hl-1">,</span><br/><span class="hl-1"> </span><span class="hl-3">web3Instance</span><br/><span class="hl-1">);</span>
+<h4>Emits</h4><p><a href="../enums/enums_executor_enum.ExecutorModelEvent.html#TRANSACTION_ERROR" class="tsd-kind-enum-member">TRANSACTION_ERROR</a>
+Emitted when there is an error with the contract transaction.</p>
+
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-3">executorModel</span><span class="hl-1">.</span><span class="hl-2">runBytecode</span><span class="hl-1">(</span><span class="hl-3">gasLimit</span><span class="hl-1">);</span>
 </code><button>Copy</button></pre>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/ExecutorModel.ts#L228">src/models/ExecutorModel.ts:228</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/ExecutorModel.ts#L206">src/models/ExecutorModel.ts:206</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -254,12 +314,12 @@ Emitted when the system is waiting for the gas estimate.</p>
 <div class="tsd-accordion-details">
 <ul>
 <li><a href="#constructor" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
+<li><a href="#bytecodeInput" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>bytecode<wbr/>Input</span></a></li>
 <li><a href="#bytecodeStructure" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>bytecode<wbr/>Structure</span></a></li>
 <li><a href="#compilerStatus" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>compiler<wbr/>Status</span></a></li>
 <li><a href="#contractTransactionStatus" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>contract<wbr/>Transaction<wbr/>Status</span></a></li>
 <li><a href="#currentContractInstance" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>current<wbr/>Contract<wbr/>Instance</span></a></li>
 <li><a href="#currentFile" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>current<wbr/>File</span></a></li>
-<li><a href="#currentTransaction" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>current<wbr/>Transaction</span></a></li>
 <li><a href="#estimating" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>estimating</span></a></li>
 <li><a href="#gasEstimate" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>gas<wbr/>Estimate</span></a></li>
 <li><a href="#nargs" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>nargs</span></a></li>
@@ -271,12 +331,14 @@ Emitted when the system is waiting for the gas estimate.</p>
 <ul class="tsd-small-nested-navigation">
 <li><a href="../modules/chains.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains</span></a></li>
 <li><a href="../modules/chains_arbitrum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/arbitrum</span></a></li>
+<li><a href="../modules/chains_arbitrumSepolia.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/arbitrum<wbr/>Sepolia</span></a></li>
 <li><a href="../modules/chains_bsc.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/bsc</span></a></li>
 <li><a href="../modules/chains_bscTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/bsc<wbr/>Testnet</span></a></li>
-<li><a href="../modules/chains_celo.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/celo</span></a></li>
+<li><a href="../modules/chains_conflux.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/conflux</span></a></li>
+<li><a href="../modules/chains_confluxTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/conflux<wbr/>Testnet</span></a></li>
 <li><a href="../modules/chains_ethereum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/ethereum</span></a></li>
 <li><a href="../modules/chains_ethereumSepolia.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/ethereum<wbr/>Sepolia</span></a></li>
-<li><a href="../modules/chains_klaytn.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/klaytn</span></a></li>
+<li><a href="../modules/chains_helaTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/hela<wbr/>Testnet</span></a></li>
 <li><a href="../modules/chains_polygon.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/polygon</span></a></li>
 <li><a href="../modules/chains_polygonMumbai.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/polygon<wbr/>Mumbai</span></a></li>
 <li><a href="../modules/constants.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>constants</span></a></li>
@@ -312,7 +374,7 @@ Emitted when the system is waiting for the gas estimate.</p>
 <li><a href="../modules/models_VirtualizationUnitModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Virtualization<wbr/>Unit<wbr/>Model</span></a></li>
 <li><a href="../modules/models_WalletModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Wallet<wbr/>Model</span></a></li>
 <li><a href="../modules/typeguards.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards</span></a></li>
-<li><a href="../modules/typeguards_isValidChain.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards/is<wbr/>Valid<wbr/>Chain</span></a></li>
+<li><a href="../modules/typeguards_isChain.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards/is<wbr/>Chain</span></a></li>
 <li><a href="../modules/types.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types</span></a></li>
 <li><a href="../modules/types_auth_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/auth.type</span></a></li>
 <li><a href="../modules/types_bytecode_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/bytecode.type</span></a></li>

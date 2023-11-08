@@ -51,22 +51,15 @@ export const estimateGas: ViewMessageHandler = async (
   _api,
 ) => {
   withErrorHandling(async () => {
-    if (!client.wallet.currentAccount) {
-      throw new Error(ERROR_MESSAGE.INVALID_ACCOUNT);
-    }
-
-    if (!client.web3) {
-      throw new Error(ERROR_MESSAGE.INVALID_WEB3);
+    if (!client.provider) {
+      throw new Error(ERROR_MESSAGE.INVALID_PROVIDER);
     }
 
     client.virtualizationUnit.estimating = true;
 
     await update(ViewType.VIRTUALIZATION_UNIT);
 
-    await client.virtualizationUnit.estimateGas(
-      client.wallet.currentAccount,
-      client.web3,
-    );
+    await client.virtualizationUnit.estimateGas(client.provider);
 
     client.virtualizationUnit.estimating = false;
 
@@ -85,19 +78,15 @@ export const deploy: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
-    if (!client.wallet.currentAccount) {
-      throw new Error(ERROR_MESSAGE.INVALID_ACCOUNT);
-    }
-
-    if (!client.web3) {
-      throw new Error(ERROR_MESSAGE.INVALID_WEB3);
+    if (!client.provider) {
+      throw new Error(ERROR_MESSAGE.INVALID_PROVIDER);
     }
 
     if (!data) {
       throw new Error(ERROR_MESSAGE.INVALID_GAS);
     }
 
-    const gas = data;
+    const gasLimit = data;
 
     reporter.sendTelemetryEvent(TelemetryEventName.DEPLOY_V_UNIT, {
       name: client.wallet.chain.name,
@@ -132,15 +121,21 @@ export const deploy: ViewMessageHandler = async (
     client.virtualizationUnit.once(
       VirtualizationUnitModelEvent.TRANSACTION_ERROR,
       async (error) => {
-        client.virtualizationUnit.removeAllListeners();
+        withErrorHandling(async () => {
+          client.virtualizationUnit.removeAllListeners();
 
-        await update(ViewType.VIRTUALIZATION_UNIT);
+          await update(ViewType.VIRTUALIZATION_UNIT);
 
-        if (error instanceof Error) {
-          throw error;
-        } else {
-          throw new Error(JSON.stringify(error));
-        }
+          const parsedError = JSON.parse(JSON.stringify(error));
+
+          if (parsedError instanceof Error) {
+            throw error;
+          } else if (parsedError.error.message) {
+            throw new Error(parsedError.error.message);
+          } else {
+            throw new Error(JSON.stringify(error));
+          }
+        })();
       },
     );
 
@@ -148,11 +143,7 @@ export const deploy: ViewMessageHandler = async (
       update(ViewType.VIRTUALIZATION_UNIT),
     );
 
-    client.virtualizationUnit.deploy(
-      client.wallet.currentAccount,
-      gas,
-      client.web3,
-    );
+    client.virtualizationUnit.deploy(gasLimit, client.provider);
   })();
 };
 

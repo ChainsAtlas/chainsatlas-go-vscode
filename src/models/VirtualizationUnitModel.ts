@@ -1,24 +1,24 @@
+import { BrowserProvider, ContractFactory } from "ethers";
 import EventEmitter from "events";
-import { FMT_BYTES, FMT_NUMBER, type Web3 } from "web3";
-import { ERROR_MESSAGE, V_UNIT_ABI, V_UNIT_BYTECODE } from "../constants";
+import { V_UNIT_ABI, V_UNIT_BYTECODE } from "../constants";
 import { VirtualizationUnitModelEvent } from "../enums";
 import type { ContractTransactionStatus } from "../types";
 
 /**
  * Represents the model for managing the deployment and interaction with
- * Ethereum smart contracts, specifically the virtualization unit.
+ * virtualization unit smart contracts.
  *
  * This class provides functionalities for deploying a smart contract, managing
  * its transaction status, and tracking the deployed contracts' addresses.
  *
  * @example
  * const virtualizationUnit = new VirtualizationUnitModel();
- * virtualizationUnit.deploy('0xYourAddress', web3Instance);
+ * virtualizationUnit.deploy(gasLimit, provider);
  */
 export class VirtualizationUnitModel extends EventEmitter {
   /**
-   * An array containing the Ethereum addresses of the deployed contracts.
-   * Each address is expected to be a valid Ethereum address string.
+   * An array containing the addresses of the deployed contracts.
+   * Each address is expected to be a valid address string.
    */
   public contracts: string[] = [];
 
@@ -29,7 +29,7 @@ export class VirtualizationUnitModel extends EventEmitter {
   public contractTransactionStatus?: ContractTransactionStatus;
 
   /**
-   * The Ethereum address of the current active or recently deployed contract.
+   * The address of the current active deployed contract.
    */
   public currentContract?: string;
 
@@ -52,15 +52,24 @@ export class VirtualizationUnitModel extends EventEmitter {
     super();
   }
 
-  public async estimateGas(from: string, web3: Web3): Promise<void> {
-    const contract = new web3.eth.Contract(V_UNIT_ABI);
+  /**
+   * Estimates the gas required for deploying the virtualization unit contract.
+   *
+   * @param {BrowserProvider} provider
+   * An instance of an ethers provider to interact with the active chain.
+   *
+   * @returns {Promise<void>}
+   * A Promise that resolves when the gas estimation is complete.
+   */
+  public async estimateGas(provider: BrowserProvider): Promise<void> {
+    const data = (
+      await new ContractFactory(
+        V_UNIT_ABI,
+        V_UNIT_BYTECODE,
+      ).getDeployTransaction()
+    ).data;
 
-    const deployment = contract.deploy({ data: V_UNIT_BYTECODE });
-
-    this.gasEstimate = await deployment.estimateGas(
-      { from },
-      { number: FMT_NUMBER.STR, bytes: FMT_BYTES.HEX },
-    );
+    this.gasEstimate = (await provider.estimateGas({ data })).toString();
   }
 
   /**
@@ -70,52 +79,53 @@ export class VirtualizationUnitModel extends EventEmitter {
    * the transaction. It emits various events during the process to provide
    * real-time feedback.
    *
-   * @param from
-   * The account address from which the deployment transaction will be sent.
+   * @param gasLimit
+   * The gas limit in wei to be used to deploy the contract.
    *
-   * @param web3
-   * An instance of web3.js library to interact with the active chain.
+   * @param provider
+   * An instance of an ethers provider to interact with the active chain.
+   *
+   *  @emits {@link VirtualizationUnitModelEvent.UPDATE}
+   * Emitted to indicate synchronization with the current state.
+   *
+   * @emits {@link VirtualizationUnitModelEvent.TRANSACTION_CONFIRMED}
+   * Emitted when the deployment of the contract is confirmed.
+   *
+   * @emits {@link VirtualizationUnitModelEvent.TRANSACTION_ERROR}
+   * Emitted when there is an error with the contract deployment.
    */
-  public async deploy(from: string, gas: string, web3: Web3): Promise<void> {
-    const contract = new web3.eth.Contract(V_UNIT_ABI);
+  public async deploy(
+    gasLimit: string,
+    provider: BrowserProvider,
+  ): Promise<void> {
+    try {
+      const factory = new ContractFactory(
+        V_UNIT_ABI,
+        V_UNIT_BYTECODE,
+        await provider.getSigner(),
+      );
 
-    const deployment = contract.deploy({ data: V_UNIT_BYTECODE });
+      this.contractTransactionStatus = "sending";
+      this.emit(VirtualizationUnitModelEvent.UPDATE);
 
-    deployment
-      .send({ from, gas })
-      .on("sending", () => {
-        this.contractTransactionStatus = "sending";
+      const contract = await factory.deploy({ gasLimit });
 
-        this.emit(VirtualizationUnitModelEvent.UPDATE);
-      })
-      .on("sent", () => {
-        this.contractTransactionStatus = "sent";
+      this.contractTransactionStatus = "sent";
+      this.emit(VirtualizationUnitModelEvent.UPDATE);
 
-        this.emit(VirtualizationUnitModelEvent.UPDATE);
-      })
-      .on("confirmation", ({ receipt }) => {
-        const { contractAddress } = receipt;
+      await contract.waitForDeployment();
 
-        if (!contractAddress) {
-          this.contractTransactionStatus = "error";
+      const contractAddress = await contract.getAddress();
 
-          this.emit(
-            VirtualizationUnitModelEvent.TRANSACTION_ERROR,
-            new Error(ERROR_MESSAGE.INVALID_CONTRACT_ADDRESS),
-          );
-        } else {
-          this.contractTransactionStatus = undefined;
-          this.gasEstimate = undefined;
-          this.contracts.push(contractAddress);
-          this.currentContract = contractAddress;
+      this.contractTransactionStatus = undefined;
+      this.gasEstimate = undefined;
+      this.contracts.push(contractAddress);
+      this.currentContract = contractAddress;
 
-          this.emit(VirtualizationUnitModelEvent.TRANSACTION_CONFIRMED);
-        }
-      })
-      .on("error", (error) => {
-        this.contractTransactionStatus = "error";
-
-        this.emit(VirtualizationUnitModelEvent.TRANSACTION_ERROR, error);
-      });
+      this.emit(VirtualizationUnitModelEvent.TRANSACTION_CONFIRMED);
+    } catch (error) {
+      this.contractTransactionStatus = undefined;
+      this.emit(VirtualizationUnitModelEvent.TRANSACTION_ERROR, error);
+    }
   }
 }

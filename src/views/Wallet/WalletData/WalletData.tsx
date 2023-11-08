@@ -1,79 +1,40 @@
 import {
   VSCodeButton,
-  VSCodeDropdown,
-  VSCodeOption,
   VSCodeProgressRing,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import type { ProviderAccounts } from "@walletconnect/universal-provider";
-import { ReactElement, useCallback, useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { vscodeApi } from "..";
 import { WalletCommand } from "../../../enums";
 
-interface IWalletData {
-  accounts?: ProviderAccounts;
+export interface IWalletData {
+  account?: string;
   balance: string;
-  currentAccount?: string;
 }
 
-export const WalletData = ({
-  accounts,
-  balance,
-  currentAccount,
-}: IWalletData): ReactElement => {
-  const [loading, setLoading] = useState<boolean>(false);
+export const WalletData = ({ account, balance }: IWalletData): ReactElement => {
+  const [loading, setLoading] = useState<boolean>(true);
 
   const disconnect = (): void => {
     vscodeApi.postMessage({ command: WalletCommand.DISCONNECT });
   };
 
-  const onAccountChange = useCallback(
-    (account: string): void => {
-      if (account !== currentAccount) {
-        setLoading(true);
-
-        vscodeApi.postMessage({
-          command: WalletCommand.CHANGE_ACCOUNT,
-          data: account,
-        });
-      }
-    },
-    [currentAccount],
-  );
-
   useEffect(() => {
-    if (accounts || balance || currentAccount) {
+    if (account && balance) {
       setLoading(false);
     }
-  }, [accounts, balance, currentAccount]);
+  }, [account, balance]);
 
   return (
     <>
       <div className="field-container">
-        <label htmlFor="account">Account</label>
-        {loading ? (
-          <VSCodeProgressRing />
-        ) : (
-          <VSCodeDropdown
-            className="width-constraint"
-            disabled={!accounts?.length}
-            id="account"
-            onChange={(e) =>
-              onAccountChange((e.target as HTMLSelectElement).value)
-            }
-            value={accounts?.length ? currentAccount : "empty"}
-          >
-            {accounts && accounts.length > 0 ? (
-              accounts.map((acc) => (
-                <VSCodeOption key={acc} value={acc}>
-                  {acc}
-                </VSCodeOption>
-              ))
-            ) : (
-              <VSCodeOption value="empty">No accounts available.</VSCodeOption>
-            )}
-          </VSCodeDropdown>
-        )}
+        <VSCodeTextField
+          className="width-constraint"
+          readOnly
+          value={account || "Loading..."}
+        >
+          Account
+        </VSCodeTextField>
       </div>
       <div className="field-container">
         {loading ? (
