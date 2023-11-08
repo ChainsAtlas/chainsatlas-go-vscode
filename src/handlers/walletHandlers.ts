@@ -62,16 +62,25 @@ export const connect: ViewMessageHandler = async (
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
     }
 
+    client.wallet.connectionStatus = "connecting";
+
+    await update(ViewType.WALLET);
+
     const chainId = Number(data);
 
-    await client.wallet.connect(chainId);
+    try {
+      await client.wallet.connect(chainId);
+    } catch (error) {
+      client.wallet.connectionStatus = "disconnected";
+      client.wallet.uri = undefined;
+
+      await update(ViewType.WALLET);
+
+      throw error;
+    }
 
     if (!client.wallet.chain) {
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN);
-    }
-
-    if (!client.wallet.connected) {
-      throw new Error(ERROR_MESSAGE.ERROR_CONNECTING_WALLET);
     }
 
     client.provider = new BrowserProvider(client.walletConnectProvider);
@@ -108,9 +117,7 @@ export const disconnect: ViewMessageHandler = async (
       client.provider.destroy();
     }
 
-    if (client.wallet.connected) {
-      await client.wallet.disconnect();
-    }
+    await client.wallet.disconnect();
 
     client.virtualizationUnit.contractTransactionStatus = undefined;
     client.virtualizationUnit.contracts = [];

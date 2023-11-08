@@ -75,7 +75,7 @@ export const generateWalletViewState = async (
   client: Client,
   api: Api,
 ): Promise<WalletViewState> => {
-  const { account, chain, chainUpdateStatus, chains, connected, uri } =
+  const { account, chain, chainUpdateStatus, chains, connectionStatus, uri } =
     client.wallet;
   const { authStatus } = api;
 
@@ -89,7 +89,7 @@ export const generateWalletViewState = async (
     chain,
     chainUpdateStatus,
     chains,
-    connected,
+    connectionStatus,
     uri,
   };
 };

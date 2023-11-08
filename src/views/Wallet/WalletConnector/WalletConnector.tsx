@@ -10,7 +10,11 @@ import { ReactElement, useCallback, useEffect, useState } from "react";
 import { vscodeApi } from "..";
 import { WalletCommand } from "../../../enums";
 import { isChain } from "../../../typeguards";
-import type { Chain, ChainUpdateStatus } from "../../../types";
+import type {
+  Chain,
+  ChainUpdateStatus,
+  ConnectionStatus,
+} from "../../../types";
 import { AddChainForm } from "./AddChainForm/AddChainForm";
 import { EditChainForm } from "./EditChainForm/EditChainForm";
 
@@ -18,7 +22,7 @@ interface IWalletConnector {
   chain?: Chain;
   chainUpdateStatus?: ChainUpdateStatus;
   chains?: Chain[];
-  connected: boolean;
+  connectionStatus: ConnectionStatus;
   showWalletDataCallback: (show: boolean) => void;
   uri?: string;
 }
@@ -27,22 +31,20 @@ export const WalletConnector = ({
   chain,
   chainUpdateStatus,
   chains,
-  connected,
+  connectionStatus,
   showWalletDataCallback,
   uri,
 }: IWalletConnector): ReactElement => {
-  const [allowConnect, setAllowConnect] = useState<boolean>(true);
-  const [selectedChainUri, setSelectedChainUri] = useState<string | undefined>(
-    uri,
-  );
   const [displayQRCode, setDisplayQRCode] = useState<boolean>(false);
   const [isAddingChain, setIsAddingChain] = useState<boolean>(false);
   const [isEditingChain, setIsEditingChain] = useState<boolean>(false);
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>(chain);
+  const [selectedChainUri, setSelectedChainUri] = useState<string | undefined>(
+    uri,
+  );
 
   const chainSaveCallback = (chain: Chain) => {
     setSelectedChain(chain);
-    setAllowConnect(true);
     showWalletDataCallback(true);
     vscodeApi.postMessage({ command: WalletCommand.DISCONNECT });
   };
@@ -72,7 +74,6 @@ export const WalletConnector = ({
         const chain = chains?.find((c) => c.id.toString() === chainId);
 
         if (chain) {
-          setAllowConnect(true);
           setSelectedChain(chain);
           setSelectedChainUri(undefined);
           showWalletDataCallback(false);
@@ -100,26 +101,24 @@ export const WalletConnector = ({
       setIsEditingChain(false);
     }
 
-    if (connected) {
+    if (connectionStatus === "connected") {
       setDisplayQRCode(false);
 
       if (!isAddingChain && !isEditingChain) {
         showWalletDataCallback(true);
       }
     } else if (
+      connectionStatus === "disconnected" &&
       isChain(selectedChain) &&
-      allowConnect &&
       chainUpdateStatus !== "updating"
     ) {
       connect(selectedChain.id);
-      setAllowConnect(false);
       setDisplayQRCode(true);
     }
   }, [
-    allowConnect,
     chainUpdateStatus,
     connect,
-    connected,
+    connectionStatus,
     isAddingChain,
     isEditingChain,
     selectedChain,

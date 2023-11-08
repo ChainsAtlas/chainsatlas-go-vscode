@@ -10,6 +10,12 @@ import type { Chain } from "./common.type";
 export type ChainUpdateStatus = "done" | "updating";
 
 /**
+ * Represents the chain update status for {@link WalletModel}
+ * required to manage the state of the Wallet view.
+ */
+export type ConnectionStatus = "connected" | "connecting" | "disconnected";
+
+/**
  * Represents the state of the {@link WalletView}
  */
 export type WalletViewState = {
@@ -19,6 +25,6 @@ export type WalletViewState = {
   chain: Chain;
   chainUpdateStatus?: ChainUpdateStatus;
   chains: Chain[];
-  connected: boolean;
+  connectionStatus: ConnectionStatus;
   uri?: string;
 };

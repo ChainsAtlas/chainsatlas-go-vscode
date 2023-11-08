@@ -5,7 +5,7 @@ import * as chains from "../chains";
 import { EIP155_EVENTS, EIP155_METHODS, ERROR_MESSAGE } from "../constants";
 import { ChainNamespace } from "../enums";
 import { isChain } from "../typeguards";
-import type { Chain, ChainUpdateStatus } from "../types";
+import type { Chain, ChainUpdateStatus, ConnectionStatus } from "../types";
 
 /**
  * Represents a model for managing the wallet connection, including chain and
@@ -35,9 +35,9 @@ export class WalletModel {
   public chain: Chain;
 
   /**
-   * Indicates whether the wallet is currently connected to the provider.
+   * Indicates the wallet connection status.
    */
-  public connected: boolean;
+  public connectionStatus: ConnectionStatus;
 
   /**
    * Indicates whether the chain list is being updated.
@@ -63,7 +63,7 @@ export class WalletModel {
     this.chain =
       this.chains.find((c) => c.id === chains.ethereumSepolia.id) ||
       chains.ethereumSepolia;
-    this.connected = false;
+    this.connectionStatus = "disconnected";
   }
 
   /**
@@ -106,8 +106,8 @@ export class WalletModel {
     }
 
     await this._walletConnectProvider.enable();
-    this.chain = chain;
-    this.connected = true;
+    this.connectionStatus = "connected";
+    this.uri = undefined;
   }
 
   /**
@@ -120,17 +120,16 @@ export class WalletModel {
    * Throws an error if the disconnection process encounters any issues.
    */
   public async disconnect(): Promise<void> {
+    this._walletConnectProvider.abortPairingAttempt();
+
     if (this._walletConnectProvider.session?.topic) {
       await this._walletConnectProvider.disconnect();
+    } else {
+      await this._walletConnectProvider.cleanupPendingPairings();
     }
 
-    this._walletConnectProvider.abortPairingAttempt();
-    this._walletConnectProvider.cleanupPendingPairings({
-      deletePairings: true,
-    });
-
     this.account = undefined;
-    this.connected = false;
+    this.connectionStatus = "disconnected";
     this.uri = undefined;
   }
 

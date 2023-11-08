@@ -35,8 +35,8 @@ export const WalletView = (): ReactElement => {
   const [_chainUpdateStatus, setChainUpdateStatus] =
     useState<WalletViewState["chainUpdateStatus"]>();
   const [_chains, setChains] = useState<WalletViewState["chains"]>();
-  const [_connected, setConnected] =
-    useState<WalletViewState["connected"]>(false);
+  const [_connectionStatus, setConnectionStatus] =
+    useState<WalletViewState["connectionStatus"]>("disconnected");
   const [_uri, setUri] = useState<WalletViewState["uri"]>();
   const [showWalletData, setShowWalletData] = useState<boolean>(true);
 
@@ -52,7 +52,7 @@ export const WalletView = (): ReactElement => {
       chain,
       chainUpdateStatus,
       chains,
-      connected,
+      connectionStatus,
       uri,
     } = data;
 
@@ -62,7 +62,7 @@ export const WalletView = (): ReactElement => {
     setChain(chain);
     setChainUpdateStatus(chainUpdateStatus);
     setChains(chains);
-    setConnected(connected);
+    setConnectionStatus(connectionStatus);
     setUri(uri);
   }, []);
 
@@ -84,11 +84,11 @@ export const WalletView = (): ReactElement => {
             chain={_chain}
             chainUpdateStatus={_chainUpdateStatus}
             chains={_chains}
-            connected={_connected}
+            connectionStatus={_connectionStatus}
             showWalletDataCallback={showWalletDataCallback}
             uri={_uri}
           />
-          {_connected && showWalletData ? (
+          {_connectionStatus === "connected" && showWalletData ? (
             <WalletData account={_account} balance={_balance} />
           ) : null}
         </>
