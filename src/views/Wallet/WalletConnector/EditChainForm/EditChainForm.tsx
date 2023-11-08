@@ -8,7 +8,7 @@ import { WalletCommand } from "../../../../enums";
 import { isChain } from "../../../../typeguards";
 import type { Chain } from "../../../../types";
 
-interface IEditChainForm {
+export interface IEditChainForm {
   chain: Chain;
   loading: boolean;
   onCancel?: () => void;

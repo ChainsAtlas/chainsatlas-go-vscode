@@ -7,7 +7,7 @@ import { ReactElement, useEffect, useState } from "react";
 import { vscodeApi } from "..";
 import { WalletCommand } from "../../../enums";
 
-interface IWalletData {
+export interface IWalletData {
   account?: string;
   balance: string;
 }

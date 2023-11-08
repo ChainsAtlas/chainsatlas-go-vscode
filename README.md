@@ -1,4 +1,4 @@
-# **ChainsAtlas GO VSCode**
+# **ChainsAtlas GO VSCode v0.4.0**
 
 Bring your favorite programming languages to any blockchain.
 
@@ -19,9 +19,9 @@ While we strive to offer a seamless experience, unexpected issues might occur. W
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 
-## **Usage**
+## Usage
 
-### **1. Login**
+### 1. Login
 
 You should have received your credentials in your email if you subscribed to the ChainsAtlas GO Early Access list.
 
@@ -33,25 +33,15 @@ Once you have your credentials at hand, use them to login.
 
 ![Login](./assets/img/docs/login.png)
 
-### **2. Connecting crypto wallet**
+### 2. Connecting crypto wallet
 
 ChainsAtlas GO uses [WalletConnect](https://walletconnect.com/) to sign transactions and [supports more than 300 crypto wallets](https://walletconnect.com/explorer?type=wallet).
 
-Once you are logged in, you will be prompted to add your chain data to enable WalletConnect to work properly with your wallet.
+#### 2.1 Scanning QRCode to connect wallet
 
-![Chain Configuration](./assets/img/docs/chain-config.png)
+Once you are logged in, a QR code will be displayed. Scan it using one of the supported mobile wallets to connect your wallet.
 
-You need to fill the following data:
-
-- **Name**: only when adding a new chain configuration
-- **Namespace**: chain namespace for proper id mapping
-- **ID**: chain ID accordingly to the aforementioned namespace
-- **Transaction Explorer URL**: Remember to add the `{txHash}` placeholder where you want the transaction hash to be included.
-- **HTTP RPC URL**: Make sure to use a stable RPC. Unstable RPC might cause errors that affect your experience with the plugin.
-
-After saving your chain data, a QR code will be displayed. Scan it using one of the supported mobile wallets to connect your wallet.
-
-You can switch chains by selecting an option in the Chain dropdown. Once a new chain is selected, the QR code will be updated to reflect the selected chain info. You can always edit the current chain or decide to add a new one instead by clicking on the "Edit" or "Add" buttons on the right side of the chain dropdown.
+You can switch chains by selecting an option in the Chain dropdown. Once a new chain is selected, the QR code will be updated to reflect the selected chain info. You can always [edit the current chain or decide to add a new one](#2.2-editing-chain-settings) instead by clicking on the "Edit" or "Add" buttons on the right side of the chain dropdown.
 
 ![QR code WalletConnect](./assets/img/docs/qr-code-walletconnect.png)
 
@@ -63,7 +53,23 @@ After confirming the connection, you will be able to see your wallet accounts an
 
 ![Wallet data](./assets/img/docs/wallet-data.png)
 
-### **3. Deploying a Virtualization Unit**
+#### 2.2 Editing chain settings
+
+To edit or add a new chain with custom settings, click the "Edit" or "Add" button next to the chain options dropdown to open the chain settings form.
+
+![Chain Configuration](./assets/img/docs/chain-config.jpg)
+
+You need to fill the following data:
+
+- **Name**: only when adding a new chain configuration
+- **Namespace**: chain namespace for proper id mapping (disabled when editing existing chain)
+- **ID**: chain ID accordingly to the aforementioned namespace (disabled when editing existing chain)
+- **Block Explorer URL**: Used to generate the transaction URLs.
+- **HTTP RPC URL**: Make sure to use a stable RPC. Unstable RPC might cause errors that affect your experience with the plugin.
+
+After saving your chain data, the chain will show up as the current selected chain in the chain dropdown and its QRCode will be displayed for scanning.
+
+### 3. Deploying a Virtualization Unit
 
 After connecting your wallet, you are enabled to deploy a ChainsAtlas Virtualzation Unit.
 
@@ -89,7 +95,7 @@ Once confirmed, your newly deployed Virtualization Unit will be selected by defa
 
 ![Virtualization Unit Contract Selected](./assets/img/docs/virtualization-unit-contract-selected.png)
 
-### **4. Compiling web2 code**
+### 4. Compiling web2 code
 
 Now, you will need to compile your web2 code to a specific bytecode structure to send it as input to the Virtualization Unit to execute it.
 
@@ -126,7 +132,7 @@ Click on "Compile" to send your file content and number of arguments (in this ca
 
 ![Executor Bytecode Compile](./assets/img/docs/executor-compile.png)
 
-### **5. Executing web2 code**
+### 5. Executing web2 code
 
 If you have done all the previous steps correctly, you will see a new form with your uploaded file path and text inputs for your arguments values. Fill them and click on "Estimate Gas" to move forward.
 
@@ -148,7 +154,7 @@ Once your transaction is confirmed, the transaction hash and output will be disp
 
 ![Transaction History View](./assets/img/docs/transaction-history-view.png)
 
-## **Troubleshooting**
+## Troubleshooting
 
 If you encounter issues:
 
@@ -159,7 +165,7 @@ If you encounter issues:
 - Make sure you are not using a language feature that has not been added yet. [See our docs on available language features](https://docs.chainsatlas.com/).
 - Contact us at info@chainsatlas.com
 
-## **Contributing**
+## Contributing
 
 We welcome contributions! If you have suggestions, bug reports, or feature requests, please open an issue on our GitHub repository.
 

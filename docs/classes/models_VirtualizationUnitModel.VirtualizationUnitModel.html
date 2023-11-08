@@ -18,12 +18,12 @@
 <h1>Class VirtualizationUnitModel</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>Represents the model for managing the deployment and interaction with
-Ethereum smart contracts, specifically the virtualization unit.</p>
+virtualization unit smart contracts.</p>
 <p>This class provides functionalities for deploying a smart contract, managing
 its transaction status, and tracking the deployed contracts&#39; addresses.</p>
 </div>
 <div class="tsd-comment tsd-typography">
-<h4>Example</h4><pre><code class="language-ts"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-7">virtualizationUnit</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-2">VirtualizationUnitModel</span><span class="hl-1">();</span><br/><span class="hl-3">virtualizationUnit</span><span class="hl-1">.</span><span class="hl-2">deploy</span><span class="hl-1">(</span><span class="hl-6">&#39;0xYourAddress&#39;</span><span class="hl-1">, </span><span class="hl-3">web3Instance</span><span class="hl-1">);</span>
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-7">virtualizationUnit</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-2">VirtualizationUnitModel</span><span class="hl-1">();</span><br/><span class="hl-3">virtualizationUnit</span><span class="hl-1">.</span><span class="hl-2">deploy</span><span class="hl-1">(</span><span class="hl-3">gasLimit</span><span class="hl-1">, </span><span class="hl-3">provider</span><span class="hl-1">);</span>
 </code><button>Copy</button></pre>
 </div></section>
 <section class="tsd-panel tsd-hierarchy">
@@ -33,7 +33,7 @@ its transaction status, and tracking the deployed contracts&#39; addresses.</p>
 <ul class="tsd-hierarchy">
 <li><span class="target">VirtualizationUnitModel</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/VirtualizationUnitModel.ts#L18">src/models/VirtualizationUnitModel.ts:18</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/VirtualizationUnitModel.ts#L18">src/models/VirtualizationUnitModel.ts:18</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -69,7 +69,7 @@ its transaction status, and tracking the deployed contracts&#39; addresses.</p>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides EventEmitter.constructor</p>
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/VirtualizationUnitModel.ts#L51">src/models/VirtualizationUnitModel.ts:51</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/VirtualizationUnitModel.ts#L51">src/models/VirtualizationUnitModel.ts:51</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member"><a id="contractTransactionStatus" class="tsd-anchor"></a>
@@ -80,24 +80,24 @@ any of the states like &#39;sending&#39;, &#39;sent&#39;, &#39;error&#39;, etc.<
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/VirtualizationUnitModel.ts#L29">src/models/VirtualizationUnitModel.ts:29</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/VirtualizationUnitModel.ts#L29">src/models/VirtualizationUnitModel.ts:29</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="contracts" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>contracts</span><a href="#contracts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">contracts</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
-<div class="tsd-comment tsd-typography"><p>An array containing the Ethereum addresses of the deployed contracts.
-Each address is expected to be a valid Ethereum address string.</p>
+<div class="tsd-comment tsd-typography"><p>An array containing the addresses of the deployed contracts.
+Each address is expected to be a valid address string.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/VirtualizationUnitModel.ts#L23">src/models/VirtualizationUnitModel.ts:23</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/VirtualizationUnitModel.ts#L23">src/models/VirtualizationUnitModel.ts:23</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="currentContract" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>current<wbr/>Contract</span><a href="#currentContract" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">current<wbr/>Contract</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
-<div class="tsd-comment tsd-typography"><p>The Ethereum address of the current active or recently deployed contract.</p>
+<div class="tsd-comment tsd-typography"><p>The address of the current active deployed contract.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/VirtualizationUnitModel.ts#L34">src/models/VirtualizationUnitModel.ts:34</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/VirtualizationUnitModel.ts#L34">src/models/VirtualizationUnitModel.ts:34</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="estimating" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>estimating</span><a href="#estimating" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">estimating</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
@@ -105,7 +105,7 @@ Each address is expected to be a valid Ethereum address string.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/VirtualizationUnitModel.ts#L39">src/models/VirtualizationUnitModel.ts:39</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/VirtualizationUnitModel.ts#L39">src/models/VirtualizationUnitModel.ts:39</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="gasEstimate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>gas<wbr/>Estimate</span><a href="#gasEstimate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">gas<wbr/>Estimate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -115,13 +115,13 @@ is sent.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/VirtualizationUnitModel.ts#L46">src/models/VirtualizationUnitModel.ts:46</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/VirtualizationUnitModel.ts#L46">src/models/VirtualizationUnitModel.ts:46</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="deploy" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>deploy</span><a href="#deploy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="deploy.deploy-1"><span class="tsd-kind-call-signature">deploy</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span>, <span class="tsd-kind-parameter">gas</span>, <span class="tsd-kind-parameter">web3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#deploy.deploy-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="deploy.deploy-1"><span class="tsd-kind-call-signature">deploy</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">gasLimit</span>, <span class="tsd-kind-parameter">provider</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#deploy.deploy-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Deploys the virtualization unit smart contract to the active chain.</p>
 <p>This method initiates the deployment, estimates the gas required, and sends
@@ -132,36 +132,48 @@ real-time feedback.</p>
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">from</span>: <span class="tsd-signature-type">string</span></h5>
-<div class="tsd-comment tsd-typography"><p>The account address from which the deployment transaction will be sent.</p>
+<h5><span class="tsd-kind-parameter">gasLimit</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The gas limit in wei to be used to deploy the contract.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li>
 <li>
-<h5><span class="tsd-kind-parameter">gas</span>: <span class="tsd-signature-type">string</span></h5></li>
-<li>
-<h5><span class="tsd-kind-parameter">web3</span>: <span class="tsd-signature-type ">Web3</span></h5>
-<div class="tsd-comment tsd-typography"><p>An instance of web3.js library to interact with the active chain.</p>
+<h5><span class="tsd-kind-parameter">provider</span>: <span class="tsd-signature-type ">BrowserProvider</span></h5>
+<div class="tsd-comment tsd-typography"><p>An instance of an ethers provider to interact with the active chain.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<div class="tsd-comment tsd-typography">
+<h4>Emits</h4><p><a href="../enums/enums_virtualizationUnit_enum.VirtualizationUnitModelEvent.html#UPDATE" class="tsd-kind-enum-member">UPDATE</a>
+Emitted to indicate synchronization with the current state.</p>
+
+<h4>Emits</h4><p><a href="../enums/enums_virtualizationUnit_enum.VirtualizationUnitModelEvent.html#TRANSACTION_CONFIRMED" class="tsd-kind-enum-member">TRANSACTION_CONFIRMED</a>
+Emitted when the deployment of the contract is confirmed.</p>
+
+<h4>Emits</h4><p><a href="../enums/enums_virtualizationUnit_enum.VirtualizationUnitModelEvent.html#TRANSACTION_ERROR" class="tsd-kind-enum-member">TRANSACTION_ERROR</a>
+Emitted when there is an error with the contract deployment.</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/VirtualizationUnitModel.ts#L79">src/models/VirtualizationUnitModel.ts:79</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/VirtualizationUnitModel.ts#L97">src/models/VirtualizationUnitModel.ts:97</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="estimateGas" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>estimate<wbr/>Gas</span><a href="#estimateGas" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="estimateGas.estimateGas-1"><span class="tsd-kind-call-signature">estimate<wbr/>Gas</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span>, <span class="tsd-kind-parameter">web3</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#estimateGas.estimateGas-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="estimateGas.estimateGas-1"><span class="tsd-kind-call-signature">estimate<wbr/>Gas</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">provider</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#estimateGas.estimateGas-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Estimates the gas required for deploying the virtualization unit contract.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">from</span>: <span class="tsd-signature-type">string</span></h5></li>
-<li>
-<h5><span class="tsd-kind-parameter">web3</span>: <span class="tsd-signature-type ">Web3</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">provider</span>: <span class="tsd-signature-type ">BrowserProvider</span></h5>
+<div class="tsd-comment tsd-typography"><p>An instance of an ethers provider to interact with the active chain.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A Promise that resolves when the gas estimation is complete.</p>
+
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/models/VirtualizationUnitModel.ts#L55">src/models/VirtualizationUnitModel.ts:55</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/models/VirtualizationUnitModel.ts#L64">src/models/VirtualizationUnitModel.ts:64</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -193,12 +205,14 @@ real-time feedback.</p>
 <ul class="tsd-small-nested-navigation">
 <li><a href="../modules/chains.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains</span></a></li>
 <li><a href="../modules/chains_arbitrum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/arbitrum</span></a></li>
+<li><a href="../modules/chains_arbitrumSepolia.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/arbitrum<wbr/>Sepolia</span></a></li>
 <li><a href="../modules/chains_bsc.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/bsc</span></a></li>
 <li><a href="../modules/chains_bscTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/bsc<wbr/>Testnet</span></a></li>
-<li><a href="../modules/chains_celo.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/celo</span></a></li>
+<li><a href="../modules/chains_conflux.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/conflux</span></a></li>
+<li><a href="../modules/chains_confluxTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/conflux<wbr/>Testnet</span></a></li>
 <li><a href="../modules/chains_ethereum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/ethereum</span></a></li>
 <li><a href="../modules/chains_ethereumSepolia.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/ethereum<wbr/>Sepolia</span></a></li>
-<li><a href="../modules/chains_klaytn.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/klaytn</span></a></li>
+<li><a href="../modules/chains_helaTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/hela<wbr/>Testnet</span></a></li>
 <li><a href="../modules/chains_polygon.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/polygon</span></a></li>
 <li><a href="../modules/chains_polygonMumbai.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/polygon<wbr/>Mumbai</span></a></li>
 <li><a href="../modules/constants.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>constants</span></a></li>
@@ -234,7 +248,7 @@ real-time feedback.</p>
 <li><a href="models_VirtualizationUnitModel.VirtualizationUnitModel.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-128"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>Virtualization<wbr/>Unit<wbr/>Model</span></a></li></ul></div></details></li>
 <li><a href="../modules/models_WalletModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Wallet<wbr/>Model</span></a></li>
 <li><a href="../modules/typeguards.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards</span></a></li>
-<li><a href="../modules/typeguards_isValidChain.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards/is<wbr/>Valid<wbr/>Chain</span></a></li>
+<li><a href="../modules/typeguards_isChain.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards/is<wbr/>Chain</span></a></li>
 <li><a href="../modules/types.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types</span></a></li>
 <li><a href="../modules/types_auth_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/auth.type</span></a></li>
 <li><a href="../modules/types_bytecode_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/bytecode.type</span></a></li>

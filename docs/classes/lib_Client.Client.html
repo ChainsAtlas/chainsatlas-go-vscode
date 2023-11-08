@@ -17,28 +17,11 @@
 <li><a href="lib_Client.Client.html">Client</a></li></ul>
 <h1>Class Client</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p><code>ChainsAtlasGO</code> is the primary class for the ChainsAtlas GO extension.</p>
-<p>This class manages the core functionalities of the extension, including:</p>
-<ul>
-<li>Models: Represents the application&#39;s state and logic for different
-components like the executor, transaction history, virtualization units,
-and the user&#39;s wallet.</li>
-<li>Controllers: Provides the logic to interact with the corresponding models,
-facilitating operations and user interactions.</li>
-<li>Views: Manages different views within the extension, including rendering
-and handling interactions.</li>
-<li>Provider: Facilitates blockchain interactions, transactions, and other
-related operations using the UniversalProvider.</li>
-<li>ViewStateGenerator: Utility for generating the state of views based on
-model data.</li>
-</ul>
-<p>The class also provides methods to initialize the components, add views,
-dispose of resources, and synchronize views. The constructor takes an
-extension context as its only argument, ensuring that the instance has the
-necessary context to operate within the VS Code environment.</p>
+<div class="tsd-comment tsd-typography"><p><code>Client</code> is the high order class that initializes all models and disposes
+of them correctly on deactivation.</p>
 </div>
 <div class="tsd-comment tsd-typography">
-<h4>Example</h4><pre><code class="language-ts"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-7">client</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-2">ChainsAtlasGOClient</span><span class="hl-1">(</span><span class="hl-3">extensionContext</span><span class="hl-1">);</span><br/><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-3">client</span><span class="hl-1">.</span><span class="hl-2">init</span><span class="hl-1">();</span><br/><span class="hl-3">client</span><span class="hl-1">.</span><span class="hl-2">addView</span><span class="hl-1">(</span><span class="hl-3">someView</span><span class="hl-1">);</span>
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-7">walletConnectProvider</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-3">UniversalProvider</span><span class="hl-1">.</span><span class="hl-2">init</span><span class="hl-1">(</span><span class="hl-7">PROVIDER_OPTIONS</span><span class="hl-1">);</span><br/><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-7">client</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-2">Client</span><span class="hl-1">(</span><span class="hl-3">walletConnectProvider</span><span class="hl-1">, </span><span class="hl-3">context</span><span class="hl-1">.</span><span class="hl-3">globalState</span><span class="hl-1">);</span>
 </code><button>Copy</button></pre>
 </div></section>
 <section class="tsd-panel tsd-hierarchy">
@@ -48,7 +31,7 @@ necessary context to operate within the VS Code environment.</p>
 <ul class="tsd-hierarchy">
 <li><span class="target">Client</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/lib/Client.ts#L39">src/lib/Client.ts:39</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/lib/Client.ts#L22">src/lib/Client.ts:22</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -60,12 +43,13 @@ necessary context to operate within the VS Code environment.</p>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Properties</h3>
-<div class="tsd-index-list"><a href="lib_Client.Client.html#executor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-1024"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)"></path></g></svg><span>executor</span></a>
-<a href="lib_Client.Client.html#provider" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>provider</span></a>
+<div class="tsd-index-list"><a href="lib_Client.Client.html#_globalState" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-1024"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)"></path></g></svg><span>_global<wbr/>State</span></a>
+<a href="lib_Client.Client.html#executor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>executor</span></a>
+<a href="lib_Client.Client.html#provider" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>provider?</span></a>
 <a href="lib_Client.Client.html#transactionHistory" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>transaction<wbr/>History</span></a>
 <a href="lib_Client.Client.html#virtualizationUnit" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>virtualization<wbr/>Unit</span></a>
 <a href="lib_Client.Client.html#wallet" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>wallet</span></a>
-<a href="lib_Client.Client.html#web3" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>web3?</span></a>
+<a href="lib_Client.Client.html#walletConnectProvider" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>wallet<wbr/>Connect<wbr/>Provider</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
@@ -76,49 +60,59 @@ necessary context to operate within the VS Code environment.</p>
 <section class="tsd-panel tsd-member"><a id="constructor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="constructor.new_Client"><span class="tsd-kind-constructor-signature">new <wbr/>Client</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">provider</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="lib_Client.Client.html" class="tsd-signature-type tsd-kind-class">Client</a><a href="#constructor.new_Client" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_Client"><span class="tsd-kind-constructor-signature">new <wbr/>Client</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">walletConnectProvider</span>, <span class="tsd-kind-parameter">_globalState</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="lib_Client.Client.html" class="tsd-signature-type tsd-kind-class">Client</a><a href="#constructor.new_Client" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">provider</span>: <span class="tsd-signature-type ">UniversalProvider</span></h5></li></ul></div>
+<h5><span class="tsd-kind-parameter">walletConnectProvider</span>: <span class="tsd-signature-type ">UniversalProvider</span></h5></li>
+<li>
+<h5><span class="tsd-kind-parameter">_globalState</span>: <span class="tsd-signature-type ">Memento</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{}</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="lib_Client.Client.html" class="tsd-signature-type tsd-kind-class">Client</a></h4><aside class="tsd-sources">
 <p>Overrides EventEmitter.constructor</p>
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/lib/Client.ts#L50">src/lib/Client.ts:50</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/lib/Client.ts#L33">src/lib/Client.ts:33</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_globalState" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>_global<wbr/>State</span><a href="#_globalState" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_global<wbr/>State</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Memento</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{}</span></div>
+<div class="tsd-type-declaration">
+<h4>Type declaration</h4>
+<ul class="tsd-parameters"></ul></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/lib/Client.ts#L35">src/lib/Client.ts:35</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="executor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>executor</span><a href="#executor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">executor</span><span class="tsd-signature-symbol">:</span> <a href="models_ExecutorModel.ExecutorModel.html" class="tsd-signature-type tsd-kind-class">ExecutorModel</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/lib/Client.ts#L40">src/lib/Client.ts:40</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/lib/Client.ts#L23">src/lib/Client.ts:23</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="provider" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>provider</span><a href="#provider" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">provider</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">UniversalProvider</span></div><aside class="tsd-sources">
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>provider</span><a href="#provider" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">provider</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type ">BrowserProvider</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/lib/Client.ts#L50">src/lib/Client.ts:50</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/lib/Client.ts#L31">src/lib/Client.ts:31</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="transactionHistory" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>transaction<wbr/>History</span><a href="#transactionHistory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">transaction<wbr/>History</span><span class="tsd-signature-symbol">:</span> <a href="models_TransactionHistoryModel.TransactionHistoryModel.html" class="tsd-signature-type tsd-kind-class">TransactionHistoryModel</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/lib/Client.ts#L42">src/lib/Client.ts:42</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/lib/Client.ts#L25">src/lib/Client.ts:25</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="virtualizationUnit" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>virtualization<wbr/>Unit</span><a href="#virtualizationUnit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">virtualization<wbr/>Unit</span><span class="tsd-signature-symbol">:</span> <a href="models_VirtualizationUnitModel.VirtualizationUnitModel.html" class="tsd-signature-type tsd-kind-class">VirtualizationUnitModel</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/lib/Client.ts#L44">src/lib/Client.ts:44</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/lib/Client.ts#L27">src/lib/Client.ts:27</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="wallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>wallet</span><a href="#wallet" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">wallet</span><span class="tsd-signature-symbol">:</span> <a href="models_WalletModel.WalletModel.html" class="tsd-signature-type tsd-kind-class">WalletModel</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/lib/Client.ts#L46">src/lib/Client.ts:46</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member"><a id="web3" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>web3</span><a href="#web3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">web3</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type ">Web3</span></div><aside class="tsd-sources">
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/lib/Client.ts#L29">src/lib/Client.ts:29</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="walletConnectProvider" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>wallet<wbr/>Connect<wbr/>Provider</span><a href="#walletConnectProvider" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">wallet<wbr/>Connect<wbr/>Provider</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">UniversalProvider</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/lib/Client.ts#L48">src/lib/Client.ts:48</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/lib/Client.ts#L34">src/lib/Client.ts:34</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="dispose" class="tsd-anchor"></a>
@@ -128,7 +122,7 @@ necessary context to operate within the VS Code environment.</p>
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/68aaca7/src/lib/Client.ts#L64">src/lib/Client.ts:64</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/ChainsAtlas/chainsatlas-go-vscode/blob/5cf26c0/src/lib/Client.ts#L50">src/lib/Client.ts:50</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -148,24 +142,27 @@ necessary context to operate within the VS Code environment.</p>
 <div class="tsd-accordion-details">
 <ul>
 <li><a href="#constructor" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
+<li><a href="#_globalState" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_global<wbr/>State</span></a></li>
 <li><a href="#executor" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>executor</span></a></li>
 <li><a href="#provider" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>provider</span></a></li>
 <li><a href="#transactionHistory" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>transaction<wbr/>History</span></a></li>
 <li><a href="#virtualizationUnit" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>virtualization<wbr/>Unit</span></a></li>
 <li><a href="#wallet" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>wallet</span></a></li>
-<li><a href="#web3" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>web3</span></a></li>
+<li><a href="#walletConnectProvider" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>wallet<wbr/>Connect<wbr/>Provider</span></a></li>
 <li><a href="#dispose" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>dispose</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>chainsatlas-<wbr/>go</span></a>
 <ul class="tsd-small-nested-navigation">
 <li><a href="../modules/chains.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains</span></a></li>
 <li><a href="../modules/chains_arbitrum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/arbitrum</span></a></li>
+<li><a href="../modules/chains_arbitrumSepolia.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/arbitrum<wbr/>Sepolia</span></a></li>
 <li><a href="../modules/chains_bsc.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/bsc</span></a></li>
 <li><a href="../modules/chains_bscTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/bsc<wbr/>Testnet</span></a></li>
-<li><a href="../modules/chains_celo.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/celo</span></a></li>
+<li><a href="../modules/chains_conflux.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/conflux</span></a></li>
+<li><a href="../modules/chains_confluxTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/conflux<wbr/>Testnet</span></a></li>
 <li><a href="../modules/chains_ethereum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/ethereum</span></a></li>
 <li><a href="../modules/chains_ethereumSepolia.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/ethereum<wbr/>Sepolia</span></a></li>
-<li><a href="../modules/chains_klaytn.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/klaytn</span></a></li>
+<li><a href="../modules/chains_helaTestnet.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/hela<wbr/>Testnet</span></a></li>
 <li><a href="../modules/chains_polygon.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/polygon</span></a></li>
 <li><a href="../modules/chains_polygonMumbai.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>chains/polygon<wbr/>Mumbai</span></a></li>
 <li><a href="../modules/constants.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>constants</span></a></li>
@@ -201,7 +198,7 @@ necessary context to operate within the VS Code environment.</p>
 <li><a href="../modules/models_VirtualizationUnitModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Virtualization<wbr/>Unit<wbr/>Model</span></a></li>
 <li><a href="../modules/models_WalletModel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>models/<wbr/>Wallet<wbr/>Model</span></a></li>
 <li><a href="../modules/typeguards.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards</span></a></li>
-<li><a href="../modules/typeguards_isValidChain.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards/is<wbr/>Valid<wbr/>Chain</span></a></li>
+<li><a href="../modules/typeguards_isChain.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>typeguards/is<wbr/>Chain</span></a></li>
 <li><a href="../modules/types.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types</span></a></li>
 <li><a href="../modules/types_auth_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/auth.type</span></a></li>
 <li><a href="../modules/types_bytecode_type.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>types/bytecode.type</span></a></li>

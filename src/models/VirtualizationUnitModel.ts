@@ -91,7 +91,7 @@ export class VirtualizationUnitModel extends EventEmitter {
    * @emits {@link VirtualizationUnitModelEvent.TRANSACTION_CONFIRMED}
    * Emitted when the deployment of the contract is confirmed.
    *
-   * @emits {@link ExecutorModelEvent.TRANSACTION_ERROR}
+   * @emits {@link VirtualizationUnitModelEvent.TRANSACTION_ERROR}
    * Emitted when there is an error with the contract deployment.
    */
   public async deploy(

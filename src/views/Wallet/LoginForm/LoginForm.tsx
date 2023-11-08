@@ -10,7 +10,7 @@ import type { AuthStatus } from "../../../types";
 
 const version = require("../../../../package.json").version;
 
-interface ILoginForm {
+export interface ILoginForm {
   authStatus?: AuthStatus;
 }
 

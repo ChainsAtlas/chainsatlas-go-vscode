@@ -11,12 +11,17 @@ All notable changes to this project will be documented in this file.
 - **Fixed** for any bug fixes.
 - **Security** in case of vulnerabilities.
 
-## 0.4.0 - 31 October 2023
+## 0.4.0 - 8 November 2023
 
 ### Added
 
 - Local storage for chain configurations.
 - Default RPC's for listed chains.
+- Replace web3.js for ethers.js for a smaller bundle size and performance.
+
+### Fixed
+
+- Wallet QRCode bug that prevented the QRCode from being refreshed when changing chains or disconnecting from the current active chain.
 
 ---
 

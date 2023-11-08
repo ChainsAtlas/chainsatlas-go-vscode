@@ -18,7 +18,7 @@ import type {
 import { AddChainForm } from "./AddChainForm/AddChainForm";
 import { EditChainForm } from "./EditChainForm/EditChainForm";
 
-interface IWalletConnector {
+export interface IWalletConnector {
   chain?: Chain;
   chainUpdateStatus?: ChainUpdateStatus;
   chains?: Chain[];
