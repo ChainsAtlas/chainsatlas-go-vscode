@@ -25,6 +25,10 @@ export class Api {
   /**
    * Constructs a new instance of the `Api` class.
    *
+   * @param _globalState
+   * The extension context global state where the auth token data will be
+   * stored and retrieved.
+   *
    * @param _fetch
    * A fetch function, primarily used for test stubbing. Defaults to the global
    * fetch function.
@@ -135,6 +139,13 @@ export class Api {
     this._updateAuthToken("");
   }
 
+  /**
+   * The `_updateAuthToken` method stores the value of the auth token and
+   * updates `authStatus` accordingly.
+   *
+   * @param value
+   * The token value to store. An empty string means no token.
+   */
   private _updateAuthToken(value: string): void {
     this.authStatus = value ? "authenticated" : undefined;
     this._authToken = value;
