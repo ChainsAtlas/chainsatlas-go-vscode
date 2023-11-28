@@ -50,11 +50,11 @@ suite("WalletModel", () => {
       stub(walletModel, "disconnect").resolves();
     });
 
-    test("should throw an error for an invalid chain ID", async () => {
-      const invalidChainId = 12345;
+    test("should throw an error for an invalid chain key", async () => {
+      const invalidChainKey = "someNamespace:12345";
 
       try {
-        await walletModel.connect(invalidChainId);
+        await walletModel.connect(invalidChainKey);
 
         expect.fail(ERROR_MESSAGE.INVALID_CHAIN_ID);
       } catch (error) {
@@ -68,7 +68,9 @@ suite("WalletModel", () => {
       const fakeAccounts = ["0x1234"];
       (mockWalletConnectProvider.enable as SinonStub).resolves(fakeAccounts);
 
-      await walletModel.connect(chains.ethereumSepolia.id);
+      await walletModel.connect(
+        `${chains.ethereumSepolia.namespace}:${chains.ethereumSepolia.id}`,
+      );
 
       expect(walletModel.chain).to.be.equal(chains.ethereumSepolia);
       expect(mockWalletConnectProvider.connect).to.have.been.calledOnce;

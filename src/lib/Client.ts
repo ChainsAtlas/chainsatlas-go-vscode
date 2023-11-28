@@ -38,7 +38,7 @@ export class Client extends EventEmitter {
 
     this.executor = new ExecutorModel();
     this.transactionHistory = new TransactionHistoryModel();
-    this.virtualizationUnit = new VirtualizationUnitModel();
+    this.virtualizationUnit = new VirtualizationUnitModel(this._globalState);
     this.wallet = new WalletModel(walletConnectProvider, this._globalState);
 
     walletConnectProvider.on("display_uri", (uri: string) => {

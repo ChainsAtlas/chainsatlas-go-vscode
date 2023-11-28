@@ -66,10 +66,10 @@ export const connect: ViewMessageHandler = async (
 
     await update(ViewType.WALLET);
 
-    const chainId = Number(data);
+    const chainKey = data;
 
     try {
-      await client.wallet.connect(chainId);
+      await client.wallet.connect(chainKey);
     } catch (error) {
       client.wallet.connectionStatus = "disconnected";
       client.wallet.uri = undefined;
@@ -85,10 +85,7 @@ export const connect: ViewMessageHandler = async (
 
     client.provider = new BrowserProvider(client.walletConnectProvider);
     client.wallet.account = (await client.provider.getSigner()).address;
-    client.virtualizationUnit.contractTransactionStatus = undefined;
-    client.virtualizationUnit.contracts = [];
-    client.virtualizationUnit.currentContract = undefined;
-    client.virtualizationUnit.gasEstimate = undefined;
+    client.virtualizationUnit.useChain(chainKey);
     client.transactionHistory.rows = [];
 
     reporter.sendTelemetryEvent(TelemetryEventName.CONNECT, {
@@ -119,10 +116,7 @@ export const disconnect: ViewMessageHandler = async (
 
     await client.wallet.disconnect();
 
-    client.virtualizationUnit.contractTransactionStatus = undefined;
-    client.virtualizationUnit.contracts = [];
-    client.virtualizationUnit.currentContract = undefined;
-    client.virtualizationUnit.gasEstimate = undefined;
+    client.virtualizationUnit.useChain();
     client.transactionHistory.rows = [];
 
     update(

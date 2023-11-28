@@ -19,8 +19,8 @@ All notable changes to this project will be documented in this file.
 
 #### Added
 
-- Local storage for previously deployed virtualization unit smart contracts.
-- Local storage for ChainsAtlas Authentication token.
+- Persistance in global state for previously deployed virtualization unit smart contracts.
+- Persistance in global state for ChainsAtlas' Authentication token.
 
 #### Fixed
 
