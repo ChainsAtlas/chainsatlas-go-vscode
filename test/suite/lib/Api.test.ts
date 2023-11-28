@@ -31,16 +31,29 @@ suite("Api", () => {
 
   setup(() => {
     mockGlobalState = {
-      get: stub().returns([]),
+      get: stub().returns(""),
       update: stub(),
     } as unknown as ExtensionContext["globalState"];
     fetchStub = stub();
-
     instance = new Api(mockGlobalState, fetchStub);
   });
 
   teardown(() => {
     restore();
+  });
+
+  suite("constructor", () => {
+    test("should get auth token from global state", () => {
+      expect(instance.authStatus).to.be.undefined;
+
+      mockGlobalState = {
+        get: stub().returns("mock"),
+        update: stub(),
+      } as unknown as ExtensionContext["globalState"];
+      instance = new Api(mockGlobalState, fetchStub);
+
+      expect(instance.authStatus).to.equal("authenticated");
+    });
   });
 
   suite("authenticate", () => {
