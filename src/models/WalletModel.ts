@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-len
 import type { UniversalProvider } from "@walletconnect/universal-provider/dist/types/UniversalProvider";
-import { ExtensionContext } from "vscode";
+import type { ExtensionContext } from "vscode";
 import * as chains from "../chains";
 import { EIP155_EVENTS, EIP155_METHODS, ERROR_MESSAGE } from "../constants";
 import { ChainNamespace } from "../enums";

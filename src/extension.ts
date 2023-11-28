@@ -71,7 +71,7 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
       PROVIDER_OPTIONS,
     );
     const client = new Client(walletConnectProvider, context.globalState);
-    const api = new Api();
+    const api = new Api(context.globalState);
 
     init(client, api, context);
 

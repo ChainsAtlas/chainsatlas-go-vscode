@@ -27,6 +27,10 @@ All notable changes to this project will be documented in this file.
 - Wallet QRCode bug that prevented the QRCode from being refreshed when toggling the extension webview.
 - Executor flow bug that freezes when the code has no arguments.
 
+#### Changed
+
+- Conflux eSpace and Conflux eSpace Testnet default RPC's are now set to their US servers.
+
 ---
 
 ### 0.4.0 - 8 November 2023

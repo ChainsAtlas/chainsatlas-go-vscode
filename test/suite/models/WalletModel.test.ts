@@ -2,7 +2,7 @@
 import UniversalProvider from "@walletconnect/universal-provider/dist/types/UniversalProvider";
 import { expect } from "chai";
 import { SinonStub, restore, stub } from "sinon";
-import { ExtensionContext } from "vscode";
+import type { ExtensionContext } from "vscode";
 import * as chains from "../../../src/chains";
 import {
   EIP155_EVENTS,

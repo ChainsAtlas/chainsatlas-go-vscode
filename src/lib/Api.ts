@@ -1,4 +1,5 @@
 import fetch from "cross-fetch";
+import type { ExtensionContext } from "vscode";
 import type { AuthStatus, BytecodeStructure, ExecutorFile } from "../types";
 
 /**
@@ -19,7 +20,7 @@ export class Api {
   /**
    * Stores the authentication token received after a successful login.
    */
-  private _authToken = "";
+  private _authToken: string;
 
   /**
    * Constructs a new instance of the `Api` class.
@@ -28,7 +29,13 @@ export class Api {
    * A fetch function, primarily used for test stubbing. Defaults to the global
    * fetch function.
    */
-  constructor(private readonly _fetch = fetch) {}
+  constructor(
+    private readonly _globalState: ExtensionContext["globalState"],
+    private readonly _fetch = fetch,
+  ) {
+    this._authToken = this._globalState.get("authToken", "");
+    this.authStatus = this._authToken ? "authenticated" : undefined;
+  }
 
   /**
    * The `authenticate` method attempts to authenticate a user with the
@@ -52,11 +59,9 @@ export class Api {
     });
 
     if (!response.ok) {
-      this.authStatus = undefined;
+      this._updateAuthToken("");
 
       if (response.status === 401) {
-        this._authToken = "";
-
         throw new Error("Invalid username and/or password.");
       }
 
@@ -67,8 +72,7 @@ export class Api {
 
     const json = await response.json();
 
-    this._authToken = json.token as string;
-    this.authStatus = "authenticated";
+    this._updateAuthToken(json.token as string);
   }
 
   /**
@@ -108,7 +112,7 @@ export class Api {
 
     if (!response.ok) {
       if (response.status === 401) {
-        this._authToken = "";
+        this._updateAuthToken("");
 
         throw new Error("Invalid username and/or password.");
       }
@@ -128,7 +132,12 @@ export class Api {
    * `authStatus` to undefined.
    */
   public logout(): void {
-    this._authToken = "";
-    this.authStatus = undefined;
+    this._updateAuthToken("");
+  }
+
+  private _updateAuthToken(value: string): void {
+    this.authStatus = value ? "authenticated" : undefined;
+    this._authToken = value;
+    this._globalState.update("authToken", value);
   }
 }
