@@ -1,4 +1,4 @@
-# **ChainsAtlas GO VSCode v0.4.0**
+# **ChainsAtlas GO VSCode v0.5.0-beta**
 
 Bring your favorite programming languages to any blockchain.
 
