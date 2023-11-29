@@ -35,7 +35,7 @@ export const WalletConnector = ({
   showWalletDataCallback,
   uri,
 }: IWalletConnector): ReactElement => {
-  const [displayQRCode, setDisplayQRCode] = useState<boolean>(false);
+  const [displayQRCode, setDisplayQRCode] = useState<boolean>(true);
   const [isAddingChain, setIsAddingChain] = useState<boolean>(false);
   const [isEditingChain, setIsEditingChain] = useState<boolean>(false);
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>(chain);
