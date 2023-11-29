@@ -62,7 +62,7 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
     });
 
     process.on("unhandledRejection", (reason) => {
-      window.showErrorMessage(`Rejection test: ${JSON.stringify(reason)}`);
+      window.showErrorMessage(`Rejection: ${JSON.stringify(reason)}`);
     });
 
     reporter.sendTelemetryEvent(TelemetryEventName.EXTENSION_ACTIVATION);
