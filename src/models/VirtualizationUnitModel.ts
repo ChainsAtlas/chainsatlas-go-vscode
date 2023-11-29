@@ -1,5 +1,6 @@
 import { BrowserProvider, ContractFactory } from "ethers";
 import EventEmitter from "events";
+import type { ExtensionContext } from "vscode";
 import { V_UNIT_ABI, V_UNIT_BYTECODE } from "../constants";
 import { VirtualizationUnitModelEvent } from "../enums";
 import type { ContractTransactionStatus } from "../types";
@@ -46,9 +47,15 @@ export class VirtualizationUnitModel extends EventEmitter {
   public gasEstimate?: string;
 
   /**
+   * Represents the current active chain. It is the combination of the chain
+   * namespace and id, separated by `:`. Example: `eip155:1`.
+   */
+  private _chainKey?: string;
+
+  /**
    * Initializes a new instance of the `VirtualizationUnitModel` class.
    */
-  constructor() {
+  constructor(private readonly _globalState: ExtensionContext["globalState"]) {
     super();
   }
 
@@ -120,6 +127,10 @@ export class VirtualizationUnitModel extends EventEmitter {
       this.contractTransactionStatus = undefined;
       this.gasEstimate = undefined;
       this.contracts.push(contractAddress);
+      this._globalState.update(
+        `vUnitContracts-${this._chainKey}`,
+        this.contracts,
+      );
       this.currentContract = contractAddress;
 
       this.emit(VirtualizationUnitModelEvent.TRANSACTION_CONFIRMED);
@@ -127,5 +138,23 @@ export class VirtualizationUnitModel extends EventEmitter {
       this.contractTransactionStatus = undefined;
       this.emit(VirtualizationUnitModelEvent.TRANSACTION_ERROR, error);
     }
+  }
+
+  /**
+   * Updates the data variables to comply with the current active chain. In case
+   * of no chainKey or an invalid chainKey, data variables are set to default
+   * values.
+   *
+   * @param chainKey
+   * The key of the chain or network to search for when updating and saving data
+   * to the global state. The chainKey is composed by the namespace and id of a
+   * chain separated by `:`. Example: `eip155:1`
+   */
+  public useChain(chainKey?: string): void {
+    this.contractTransactionStatus = undefined;
+    this.contracts = this._globalState.get(`vUnitContracts-${chainKey}`, []);
+    this.currentContract = this.contracts[0];
+    this.gasEstimate = undefined;
+    this._chainKey = chainKey;
   }
 }

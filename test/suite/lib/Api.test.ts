@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { SinonStub, restore, stub } from "sinon";
+import type { ExtensionContext } from "vscode";
 import { SupportedLanguage } from "../../../src/enums";
 import { Api } from "../../../src/lib";
 import type { BytecodeStructure, ExecutorFile } from "../../../src/types";
@@ -7,9 +8,9 @@ import type { BytecodeStructure, ExecutorFile } from "../../../src/types";
 suite("Api", () => {
   let instance: Api;
   let fetchStub: SinonStub;
+  let mockGlobalState: ExtensionContext["globalState"];
   const mockAuthToken = "mockAuthToken";
   const mockAuthBody = "mockAuthBody";
-
   const mockNargs = 0;
   const mockBytecode: BytecodeStructure = {
     bytecode: "mockBytecode",
@@ -29,12 +30,30 @@ suite("Api", () => {
   const mockHttpError = "Invalid username and/or password.";
 
   setup(() => {
+    mockGlobalState = {
+      get: stub().returns(""),
+      update: stub(),
+    } as unknown as ExtensionContext["globalState"];
     fetchStub = stub();
-    instance = new Api(fetchStub);
+    instance = new Api(mockGlobalState, fetchStub);
   });
 
   teardown(() => {
     restore();
+  });
+
+  suite("constructor", () => {
+    test("should get auth token from global state", () => {
+      expect(instance.authStatus).to.be.undefined;
+
+      mockGlobalState = {
+        get: stub().returns("mock"),
+        update: stub(),
+      } as unknown as ExtensionContext["globalState"];
+      instance = new Api(mockGlobalState, fetchStub);
+
+      expect(instance.authStatus).to.equal("authenticated");
+    });
   });
 
   suite("authenticate", () => {

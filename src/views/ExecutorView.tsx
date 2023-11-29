@@ -242,7 +242,7 @@ export const ExecutorView = (): ReactElement => {
         </div>
       )}
       <VSCodeDivider className="width-constraint" />
-      {_currentFile && _nargs ? (
+      {_currentFile && _nargs !== undefined ? (
         <>
           <VSCodeTextField
             className="width-constraint"

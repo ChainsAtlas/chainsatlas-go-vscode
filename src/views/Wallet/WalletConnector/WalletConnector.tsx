@@ -35,7 +35,7 @@ export const WalletConnector = ({
   showWalletDataCallback,
   uri,
 }: IWalletConnector): ReactElement => {
-  const [displayQRCode, setDisplayQRCode] = useState<boolean>(false);
+  const [displayQRCode, setDisplayQRCode] = useState<boolean>(true);
   const [isAddingChain, setIsAddingChain] = useState<boolean>(false);
   const [isEditingChain, setIsEditingChain] = useState<boolean>(false);
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>(chain);
@@ -49,10 +49,10 @@ export const WalletConnector = ({
     vscodeApi.postMessage({ command: WalletCommand.DISCONNECT });
   };
 
-  const connect = useCallback((chainId: number) => {
+  const connect = useCallback((chain: Chain) => {
     vscodeApi.postMessage({
       command: WalletCommand.CONNECT,
-      data: chainId.toString(),
+      data: `${chain.namespace}:${chain.id}`,
     });
   }, []);
 
@@ -112,7 +112,7 @@ export const WalletConnector = ({
       isChain(selectedChain) &&
       chainUpdateStatus !== "updating"
     ) {
-      connect(selectedChain.id);
+      connect(selectedChain);
       setDisplayQRCode(true);
     }
   }, [

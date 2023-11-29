@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-len
 import type { UniversalProvider } from "@walletconnect/universal-provider/dist/types/UniversalProvider";
-import { ExtensionContext } from "vscode";
+import type { ExtensionContext } from "vscode";
 import * as chains from "../chains";
 import { EIP155_EVENTS, EIP155_METHODS, ERROR_MESSAGE } from "../constants";
 import { ChainNamespace } from "../enums";
@@ -72,14 +72,18 @@ export class WalletModel {
    * This method initiates the connection, sets the selected chain,
    * and fetches the available accounts.
    *
-   * @param id
-   * The ID of the chain or network to connect to.
+   * @param chainKey
+   * The key of the chain or network to connect to composed by the namespace
+   * and id separated by `:`. Example: `eip155:1`
    *
    * @throws
    * Throws an error if the chain ID is invalid or the connection fails.
    */
-  public async connect(id: number): Promise<void> {
-    const chain = this.chains.find((c) => c.id === id);
+  public async connect(chainKey: string): Promise<void> {
+    const [namespace, id] = chainKey.split(":");
+    const chain = this.chains.find(
+      (c) => c.namespace === namespace && c.id.toString() === id,
+    );
 
     if (!chain) {
       throw new Error(ERROR_MESSAGE.INVALID_CHAIN_ID);
