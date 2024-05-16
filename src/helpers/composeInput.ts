@@ -35,12 +35,21 @@ export const composeInput = (
     throw new Error(ERROR_MESSAGE.ARGS_MISMATCH);
   }
 
-  for (let i = 0; i < nargs; i++) {
-    const lookup = (key + BigInt(i)).toString(16);
-    const replacement = BigInt(inputArgs[i]).toString(16).padStart(32, "0");
+  let packedHex = bytecode.replace(/[\da-f]{2}/gi, (byte) =>
+    (parseInt(byte, 16) ^ 0xff).toString(16).padStart(2, "0"),
+  );
 
-    if (bytecode.includes(lookup)) {
-      bytecode = bytecode.replace(lookup, replacement);
+  for (let i = 0; i < nargs; i++) {
+    const lookup = (key + BigInt(i)).toString(16).padStart(64, "0");
+    const replacement = BigInt(inputArgs[i]).toString(16).padStart(64, "0");
+
+    if (packedHex.includes(lookup)) {
+      packedHex = packedHex.replace(lookup, replacement);
+      bytecode = packedHex.replace(/[\da-f]{2}/gi, (byte) =>
+        (parseInt(byte, 16) ^ 0xff).toString(16).padStart(2, "0"),
+      );
+    } else {
+      throw new Error("Failed to adjust the bytecode.");
     }
   }
 
