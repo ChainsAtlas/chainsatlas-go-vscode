@@ -103,6 +103,7 @@ export class Api {
       entrypoint_nargs: nargs,
       language: file.extension,
       source_code: file.content,
+      version: "1.0.1"
     };
 
     const response = await this._fetch(`${Api._URL}/build/generate`, {
